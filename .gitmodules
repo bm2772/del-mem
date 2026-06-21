@@ -1,0 +1,4 @@
+[submodule "delta-Mem"]
+	path = delta-Mem
+	url = https://github.com/hrishikeshv-552/delta-Mem.git
+	branch = workmem-osam
