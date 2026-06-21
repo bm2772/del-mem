@@ -1,4 +1,3 @@
 [submodule "delta-Mem"]
 	path = delta-Mem
 	url = https://github.com/MindLab-Research/delta-Mem.git
-	branch = workmem-osam
