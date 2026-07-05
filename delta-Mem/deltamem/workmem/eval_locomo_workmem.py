@@ -12,9 +12,9 @@ from deltamem.runtime.session import DeltaMemChatSession
 from deltamem.workmem.osam_workmem import populate_osam_from_evidence, answer_with_osam
 
 DATA_FILE = "data/locomo10.json"
-BASE_MODEL_PATH = "/data6/rahulsiripur/models/Qwen3-4B-Instruct-2507"
-ADAPTER_DIR = "/data6/rahulsiripur/models/delta-mem_qwen3_4b-instruct"
-OUTPUT_FILE = "/data6/rahulsiripur/outputs/workmem_locomo_gold.json"
+BASE_MODEL_PATH = "/home/kbasu/arnavbhatt/workmem_test/models/Qwen3-4B-Instruct-2507"
+ADAPTER_DIR = "/home/kbasu/arnavbhatt/workmem_test/models/delta-mem-adapter"
+OUTPUT_FILE = "/home/kbasu/arnavbhatt/workmem_test/outputs/workmem_locomo_gold.json"
 MAX_SAMPLES = None  # bump to None once verified correct
 
 

@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+*.so
+*.whl
+*.log
+*.jsonl
+outputs/
+delta-Mem/outputs/
+delta-Mem/scripts/
+delta-Mem/.git/
+delta-Mem/data/

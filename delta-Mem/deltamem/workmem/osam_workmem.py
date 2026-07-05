@@ -23,9 +23,19 @@ def populate_osam_from_evidence(session, evidence_list, *, reset=True):
     
     return session.state_stats()  # verify S changed vs a fresh reset
 
-def answer_with_osam(session, query, **gen_kwargs):
-    """Phase 2. Token-granularity writes; generates on the evidence-populated S."""
-    set_delta_mem_write_granularity(session.model, "token")
-    formatted_query = OFFICIAL_QA_PROMPT.format(query)
-    gen_kwargs.setdefault("max_new_tokens", OFFICIAL_MAX_NEW_TOKENS)
+def answer_with_osam(session, query, system_instruction=None, **gen_kwargs):
+    try:
+        from deltamem.core.delta_impl import set_delta_mem_write_granularity
+        set_delta_mem_write_granularity(session.model, "token")
+    except ImportError:
+        pass
+        
+    if system_instruction:
+        formatted_query = f"""{system_instruction}
+Question: {query}
+Answer:"""
+    else:
+        from deltamem.eval.locomo_protocol import OFFICIAL_QA_PROMPT
+        formatted_query = OFFICIAL_QA_PROMPT.format(query)
+        
     return session.generate_reply(formatted_query, **gen_kwargs)
