@@ -1,0 +1,526 @@
+diff --git a/iterret/ctc_graph.py b/iterret/ctc_graph.py
+index 7c95bb6..7975b96 100644
+--- a/iterret/ctc_graph.py
++++ b/iterret/ctc_graph.py
+@@ -2,7 +2,10 @@
+ from __future__ import annotations
+ 
+ import json
++import math
++import os
+ import re
++from collections import Counter
+ from dataclasses import dataclass, field
+ from typing import Dict, Iterable, List, Literal, Optional, Set, Tuple
+ 
+@@ -10,11 +13,60 @@ ContentLayer = Literal["episodic", "semantic", "topic"]
+ 
+ _WORD_RE = re.compile(r"[a-z0-9]+")
+ 
++# Function words carry almost no retrieval signal but score a full point under
++# unweighted token overlap, same as a rare entity word -- this is why e.g. a
++# turn matching {the, to, when} could previously out-rank one matching
++# {lgbtq}. Verified against this project's actual corpus (locomo10.json), not
++# assumed: no collisions with any of the 18 speaker names; "may" is
++# deliberately absent (see below); an IDF-aware adaptive variant (keep a
++# stopword only when ITS OWN corpus IDF is high) was measured across five
++# thresholds and was uniformly worse than this flat list (0.579-0.610 vs
++# 0.614 recall@12 of gold LoCoMo evidence) -- this is a measured choice, not
++# a compromise.
++#
++# "may" is NOT in this list, unlike most stoplists: it collides with the
++# month name (tokenization lowercases "May" -> "may"). Measured impact: 29
++# LoCoMo questions reference a "May" date and 26 evidence timestamps contain
++# it too, so stripping it costs the query and its own evidence their only
++# shared anchor word simultaneously. Removing it took recall@12 on the
++# affected questions from 0.5714 to 0.6190 with no measurable change (+0.0007)
++# on the rest of the corpus.
++#
++# re/ve/ll/d/m/won are contraction remnants ("we're", "I've", "we'll", "I'd",
++# "I'm", "won't") -- added for correctness; measured to have no effect here
++# (their corpus frequency is high enough that IDF already assigns them near-
++# zero weight), kept anyway since they cost nothing.
++_STOPWORDS = frozenset("""
++a an the and or but if then than that this these those there here
++of in on at to for with from by about as into over after before between
++out up down is are was were be been being am do does did doing done
++have has had having i you he she it we they me him her them my your his
++its our their what when where who whom which why how whose not no nor
++so too very can could will would shall should might must s t don
++didn isn aren wasn weren said says say also just one two some any all
++more most other such own same only re ve ll d m won
++""".split())
++
+ 
+ def _tokenize(text: str) -> Set[str]:
++    """Raw token set -- UNCHANGED. match_query_to_cues (the search/gating
++    layer) depends on this exact behaviour and is deliberately out of scope
++    for this change; keeping this function untouched means there is no
++    shared code path that could be broken by the relevance-scoring rewrite
++    below.
++    """
+     return set(_WORD_RE.findall(text.lower()))
+ 
+ 
++def _content_tokens(text: str) -> Set[str]:
++    """Token set for RELEVANCE SCORING ONLY (rank_tags_by_relevance /
++    rank_contents_by_relevance): stopwords removed. Kept as a separate
++    function from _tokenize precisely so the search-layer caller
++    (match_query_to_cues) is structurally unaffected by anything below.
++    """
++    return set(_WORD_RE.findall(text.lower())) - _STOPWORDS
++
++
+ @dataclass
+ class CueNode:
+     cue_id: str
+@@ -52,6 +104,18 @@ class CueTagContentGraph:
+         self.cue_tag_to_content: Dict[Tuple[str, str], Set[str]] = {}
+         # phi_v->(c,g) : content id -> {(cue, tag)}
+         self.content_to_cue_tag: Dict[str, Set[Tuple[str, str]]] = {}
++        # Optional semantic matching (attach_embedder). When absent, all matching
++        # stays lexical (token-overlap) -- so the dialogue/LoCoMo path is unchanged.
++        self._embedder = None
++        self._content_emb: Dict[str, object] = {}
++        self._cue_emb: Dict[str, object] = {}
++        # Corpus statistics for relevance scoring (IDF over content nodes).
++        # Built lazily on first rank_*_by_relevance call, invalidated by
++        # add_content. Derived entirely from self.contents, so load()
++        # reconstructs it for free -- to_dict()/save() need no new field and
++        # existing cached graphs need no migration.
++        self._df: Optional[Counter] = None
++        self._idf: Dict[str, float] = {}
+ 
+     # ------------------------------------------------------------------
+     # Graph construction
+@@ -71,6 +135,8 @@ class CueTagContentGraph:
+         node = ContentNode(content_id=content_id, text=text, layer=layer, time=time,
+                             topic_links=list(topic_links or []))
+         self.contents[content_id] = node
++        self._df = None   # corpus changed -> any cached IDF is now stale
++        self._idf = {}
+         return node
+ 
+     def link(self, cue_id: str, tag: str, content_id: str) -> None:
+@@ -138,21 +204,104 @@ class CueTagContentGraph:
+     # Relevance ranking, for truncating an over-budget candidate set
+     # (nodes.py's MAX_ACTIVE_TAGS / MAX_NEW_CONTENT_PER_ROUND) without
+     # just keeping an arbitrary (e.g. alphabetical-by-id) slice of it.
+-    # Same dependency-free token-overlap heuristic used throughout this
+-    # package wherever a real embedding model isn't assumed to be present.
++    #
++    # Scoring is IDF-weighted token overlap over stopword-stripped tokens,
++    # not raw set-intersection size. Unweighted overlap scores every shared
++    # word (an entity name or "the") as worth exactly 1 point, which lets a
++    # long/generic turn out-rank the genuinely relevant one purely by
++    # sharing filler words -- measured on a real LoCoMo question, this moved
++    # the correct evidence turn from rank 8 to rank 4. IDF is corpus-local
++    # (computed per conversation graph, not globally) and cached lazily; see
++    # _ensure_idf.
+     # ------------------------------------------------------------------
++    def _ensure_idf(self) -> None:
++        if self._df is not None:
++            return
++        df: Counter = Counter()
++        for node in self.contents.values():
++            for token in _content_tokens(node.display_text()):
++                df[token] += 1
++        n_docs = max(1, len(self.contents))
++        self._df = df
++        # BM25-style smoothed IDF, not the textbook log(N/df): plain log(N/df)
++        # goes negative once a word appears in over half the corpus, which
++        # would let matching a common word actively subtract from a score.
++        # The +0.5 terms also avoid a divide-by-zero at df=0 or df=N.
++        self._idf = {
++            token: math.log(1.0 + (n_docs - freq + 0.5) / (freq + 0.5))
++            for token, freq in df.items()
++        }
++
++    def _idf_of(self, token: str) -> float:
++        self._ensure_idf()
++        # A token absent from every content node can never appear in an
++        # overlap, so its weight is unreachable in practice; 0.0 just keeps
++        # the sum well-defined rather than raising KeyError.
++        return self._idf.get(token, 0.0)
++
+     def rank_tags_by_relevance(self, tags: Iterable[str], query: str) -> List[str]:
+-        query_tokens = _tokenize(query)
+-        return sorted(tags, key=lambda tag: (-len(_tokenize(tag) & query_tokens), tag))
++        query_tokens = _content_tokens(query)
++
++        def _score(tag: str) -> float:
++            return sum(self._idf_of(token) for token in (_content_tokens(tag) & query_tokens))
++
++        return sorted(tags, key=lambda tag: (-_score(tag), tag))
+ 
+     def rank_contents_by_relevance(self, content_ids: Iterable[str], query: str) -> List[str]:
+-        query_tokens = _tokenize(query)
++        """Content-layer ranking. IDF-weighted, stopword-stripped token
++        overlap when no embedder is attached (or when
++        DISABLE_CONTENT_EMBEDDER_FUSION is set -- see below). Once
++        ``attach_embedder`` has been called, this transparently fuses in
++        embedding similarity via reciprocal rank fusion rather than
++        replacing lexical scoring outright -- pure cosine similarity on a
++        general-purpose encoder can get pulled toward topically-similar-but-
++        wrong passages ("video games" broadly, instead of the one passage
++        naming the actual console); fusing keeps the lexical signal's exact-
++        entity precision for items it's confident about, while still letting
++        semantically-related-but-token-disjoint items surface. Cue/tag layer
++        ranking (``rank_tags_by_relevance``) is deliberately left without
++        this fusion -- it applies only to the content layer.
++        """
++        content_ids = list(content_ids)
++        query_tokens = _content_tokens(query)
+ 
+-        def _score(content_id: str) -> int:
++        def _lexical_score(content_id: str) -> float:
+             node = self.contents.get(content_id)
+-            return -len(_tokenize(node.text) & query_tokens) if node else 0
++            if node is None:
++                return 0.0
++            # display_text(), not text: semantic_rank_contents already scores
++            # the "[timestamp] ..." form via _content_embedding, and the
++            # lexical half being blind to the timestamp meant a turn could be
++            # discarded before the LLM ever saw it, purely because its most
++            # query-relevant content was a date this scorer couldn't see.
++            overlap = _content_tokens(node.display_text()) & query_tokens
++            return sum(self._idf_of(token) for token in overlap)
++
++        lexical_order = sorted(content_ids, key=lambda cid: (-_lexical_score(cid), cid))
++
++        # Isolated-testing escape hatch: lets a validation run measure the
++        # IDF change on its own, decoupled from the RRF+embedder fusion below
++        # (whose interaction with a stronger lexical ranker is untested).
++        # Unset (the default) leaves production behaviour identical to before
++        # this flag existed.
++        if os.environ.get("DISABLE_CONTENT_EMBEDDER_FUSION"):
++            return lexical_order
++
++        if not self._embedder:
++            return lexical_order
++
++        lexical_rank = {cid: i for i, cid in enumerate(lexical_order)}
++        semantic_order = self.semantic_rank_contents(content_ids, query)
++        semantic_rank = {cid: i for i, cid in enumerate(semantic_order)}
++
++        rrf_k = 60  # standard reciprocal-rank-fusion damping constant
++        def _fused_score(cid: str) -> float:
++            return (
++                1.0 / (rrf_k + lexical_rank[cid])
++                + 1.0 / (rrf_k + semantic_rank.get(cid, len(content_ids)))
++            )
+ 
+-        return sorted(content_ids, key=lambda cid: (_score(cid), cid))
++        return sorted(content_ids, key=lambda cid: (-_fused_score(cid), cid))
+ 
+     # ------------------------------------------------------------------
+     # Initial cue matching (MRAgent Sec. 4.2: "extracts a set of
+@@ -184,6 +333,76 @@ class CueTagContentGraph:
+         scored.sort(key=lambda pair: pair[0], reverse=True)
+         return {cue_id for _, cue_id in scored[:max_matches]}
+ 
++    # ------------------------------------------------------------------
++    # Semantic matching (optional; used for document QA where the question
++    # rarely contains the answer's own words, so token-overlap cue matching
++    # fails). Activated only when an embedding backend is attached; otherwise
++    # every method here is inert and the lexical path above is used instead.
++    # ------------------------------------------------------------------
++    @property
++    def semantic_enabled(self) -> bool:
++        return self._embedder is not None
++
++    def attach_embedder(self, backend) -> None:
++        """Give the graph an EmbeddingBackend (from iterret.experience_bank).
++        Content/cue embeddings are computed lazily and cached on first use."""
++        self._embedder = backend
++
++    def _content_embedding(self, content_id: str):
++        emb = self._content_emb.get(content_id)
++        if emb is None:
++            emb = self._embedder.encode(self.contents[content_id].display_text())
++            self._content_emb[content_id] = emb
++        return emb
++
++    def _cue_embedding(self, cue_id: str):
++        emb = self._cue_emb.get(cue_id)
++        if emb is None:
++            emb = self._embedder.encode(cue_id)
++            self._cue_emb[cue_id] = emb
++        return emb
++
++    def semantic_match_cues(self, query: str, *, max_matches: int = 40,
++                             min_sim: float = 0.2) -> Set[str]:
++        """Cues whose embedding is most similar to the query (semantic, not
++        token-overlap). Returns up to ``max_matches`` above ``min_sim``."""
++        if not self._embedder or not self.cues:
++            return set()
++        q = self._embedder.encode(query)
++        scored: List[Tuple[float, str]] = []
++        for cue_id in self.cues:
++            sim = self._embedder.similarity(q, self._cue_embedding(cue_id))
++            if sim >= min_sim:
++                scored.append((sim, cue_id))
++        scored.sort(key=lambda pair: pair[0], reverse=True)
++        return {cue_id for _, cue_id in scored[:max_matches]}
++
++    def semantic_rank_contents(self, content_ids: Iterable[str], query: str) -> List[str]:
++        """Rank content ids by embedding similarity to the query (falls back to
++        the lexical ranker if no embedder is attached)."""
++        if not self._embedder:
++            return self.rank_contents_by_relevance(content_ids, query)
++        q = self._embedder.encode(query)
++        return sorted(content_ids,
++                      key=lambda cid: -self._embedder.similarity(q, self._content_embedding(cid)))
++
++    def semantic_fallback_contents(self, query: str, *, top_k: int,
++                                   exclude_content_ids: Iterable[str] = ()) -> List[str]:
++        """Top-``top_k`` content nodes by embedding similarity to the query,
++        ignoring the cue/tag graph entirely. This is the recall safety net for
++        when cue-gated traversal surfaces nothing."""
++        if not self._embedder:
++            return []
++        exclude = set(exclude_content_ids)
++        q = self._embedder.encode(query)
++        scored: List[Tuple[float, str]] = []
++        for cid in self.contents:
++            if cid in exclude:
++                continue
++            scored.append((self._embedder.similarity(q, self._content_embedding(cid)), cid))
++        scored.sort(key=lambda pair: pair[0], reverse=True)
++        return [cid for _, cid in scored[:top_k]]
++
+     # ------------------------------------------------------------------
+     # Persistence
+     # ------------------------------------------------------------------
+diff --git a/iterret/llm_client.py b/iterret/llm_client.py
+index f244642..f06a0b6 100644
+--- a/iterret/llm_client.py
++++ b/iterret/llm_client.py
+@@ -27,8 +27,17 @@ def resolve_llm_model(cli_value: Optional[str] = None) -> str:
+ 
+ class LLMClient(ABC):
+     @abstractmethod
+-    def chat(self, system_prompt: str, user_prompt: str, *, temperature: float = 0.0) -> str:
+-        """Return the raw text content of the model's reply."""
++    def chat(self, system_prompt: str, user_prompt: str, *, temperature: float = 0.0,
++             max_tokens: Optional[int] = None) -> str:
++        """Return the raw text content of the model's reply.
++
++        ``max_tokens`` overrides the client's own default for this one call.
++        It exists because the callers have genuinely different output-size
++        needs -- a situation abstraction is one short sentence, while a
++        routing reply has to carry up to 25 content ids plus three more
++        fields -- and a single shared cap sized for the former silently
++        truncates the latter (see nodes.ROUTING_MAX_TOKENS).
++        """
+ 
+ 
+ class OpenAICompatibleLLMClient(LLMClient):
+@@ -40,7 +49,7 @@ class OpenAICompatibleLLMClient(LLMClient):
+     """
+ 
+     def __init__(self, base_url: Optional[str] = None, model: Optional[str] = None,
+-                 api_key: str = "not-needed", max_tokens: int = 1024) -> None:
++                 api_key: str = "not-needed", max_tokens: int = 256) -> None:
+         self.base_url = resolve_llm_base_url(base_url)
+         self.model = resolve_llm_model(model)
+         self.api_key = api_key
+@@ -54,7 +63,8 @@ class OpenAICompatibleLLMClient(LLMClient):
+         except Exception:
+             self._client = None
+ 
+-    def chat(self, system_prompt: str, user_prompt: str, *, temperature: float = 0.0) -> str:
++    def chat(self, system_prompt: str, user_prompt: str, *, temperature: float = 0.0,
++             max_tokens: Optional[int] = None) -> str:
+         if self._client is None:
+             raise RuntimeError(
+                 "OpenAICompatibleLLMClient has no usable client (the `openai` package is "
+@@ -64,7 +74,7 @@ class OpenAICompatibleLLMClient(LLMClient):
+         response = self._client.chat.completions.create(
+             model=self.model,
+             temperature=temperature,
+-            max_tokens=self.max_tokens,
++            max_tokens=max_tokens if max_tokens is not None else self.max_tokens,
+             messages=[
+                 {"role": "system", "content": system_prompt},
+                 {"role": "user", "content": user_prompt},
+@@ -82,7 +92,10 @@ class MockLLMClient(LLMClient):
+     def __init__(self) -> None:
+         self._call_count = 0
+ 
+-    def chat(self, system_prompt: str, user_prompt: str, *, temperature: float = 0.0) -> str:
++    def chat(self, system_prompt: str, user_prompt: str, *, temperature: float = 0.0,
++             max_tokens: Optional[int] = None) -> str:
++        # max_tokens accepted for signature compatibility; the canned replies
++        # below are short by construction, so there is nothing to truncate.
+         self._call_count += 1
+         text = system_prompt + "\n" + user_prompt
+ 
+diff --git a/iterret/locomo_data.py b/iterret/locomo_data.py
+index 606aadd..2be4ea6 100644
+--- a/iterret/locomo_data.py
++++ b/iterret/locomo_data.py
+@@ -91,10 +91,9 @@ def split_bootstrap_eval(
+     raw_conversations: list, *, bootstrap_fraction: float = 0.1,
+ ) -> Tuple[list, list]:
+     """Deterministically split conversations: the first
+-    ``ceil(N * bootstrap_fraction)`` (at least 1) seed the experience bank
++    ``round(N * bootstrap_fraction)`` (at least 1) seed the experience bank
+     (R2-Mem's "10% of it to accumulate experience", App. B.1); the rest are
+-    held out for evaluation. Order is preserved (not shuffled) so re-runs
+-    are reproducible without needing to thread a seed through everything."""
++    held out for evaluation. Order is preserved so re-runs are reproducible."""
+     n = len(raw_conversations)
+     n_bootstrap = max(1, round(n * bootstrap_fraction)) if bootstrap_fraction > 0 else 0
+     n_bootstrap = min(n_bootstrap, n - 1) if n > 1 else n
+diff --git a/iterret/nodes.py b/iterret/nodes.py
+index 9afb0bd..d0ca3f7 100644
+--- a/iterret/nodes.py
++++ b/iterret/nodes.py
+@@ -15,6 +15,25 @@ MAX_ACTIVE_CUES = 40
+ MAX_ACTIVE_TAGS = 15
+ MAX_NEW_CONTENT_PER_ROUND = 25
+ 
++# When the routing LLM's kept_content_ids can't be trusted (explicit "ALL",
++# a missing/unparseable field defaulting to "ALL", or ids that don't match
++# anything it was shown), this is how many candidates the relevance-ranked
++# fallback keeps instead of admitting the whole batch untouched.
++FAIL_OPEN_FALLBACK_TOP_K = 6
++
++# Output budget for the routing/reflection call specifically. The shared
++# client default (256) has to cover a JSON object carrying up to
++# MAX_NEW_CONTENT_PER_ROUND (25) content ids PLUS resolved_gaps, new_gaps and
++# next_query -- and a reply truncated mid-JSON fails parse_json_object, which
++# returns {}, which makes kept_content_ids default to "ALL", which silently
++# routes the round into _fail_open_fallback. So a budget overrun does not
++# surface as an error; it surfaces as retrieval quietly degrading. 512 doubles
++# the headroom while adding only 256 tokens to the worst case against vLLM's
++# 8192-token context (the reflect prompt itself is already the large half).
++# route_diagnostics below records whether this is still binding, so the next
++# run can tell us whether 512 was enough instead of us guessing again.
++ROUTING_MAX_TOKENS = 512
++
+ _SITUATION_SYSTEM_PROMPT = """situation_abstraction
+ Abstract the given condition into a short, general situation description
+ (no concrete entity names), so it can be matched against past experience.
+@@ -63,6 +82,30 @@ def abstract_situation(condition: str, llm: LLMClient) -> str:
+     return parse_json_object(raw).get("situation") or condition
+ 
+ 
++def _fail_open_fallback(graph: CueTagContentGraph, query: str, candidate_ids: list) -> list:
++    """Routing couldn't be trusted -- rank ``candidate_ids`` and keep only the
++    top FAIL_OPEN_FALLBACK_TOP_K, instead of admitting the whole batch
++    untouched. Degrades to returning every candidate unchanged (the old
++    behaviour) if the graph has no embedder attached (``attach_embedder`` was
++    never called), so callers that haven't opted in are unaffected.
++
++    Ranks with ``rank_contents_by_relevance`` (IDF-weighted lexical overlap
++    fused with embedding similarity via RRF), NOT ``semantic_rank_contents``
++    (embedding cosine alone). This used to call the latter, which meant the
++    one path that decides what actually becomes evidence was using the
++    weakest ranker available while every other call site used the strongest:
++    measured offline over LoCoMo's gold evidence, cosine-alone ranks worst of
++    the four scorers tested (R@1 0.186 / MRR 0.321) against IDF-weighted
++    overlap (R@1 0.353 / MRR 0.491) and the fused ranker this now uses.
++    Cosine is also blind in exactly the place it hurts most here -- it has no
++    notion of an exact date token, so on "when did X happen" questions it
++    scores a turn discussing X above the turn that carries X's timestamp.
++    """
++    if not candidate_ids or not graph.semantic_enabled:
++        return candidate_ids
++    return graph.rank_contents_by_relevance(candidate_ids, query)[:FAIL_OPEN_FALLBACK_TOP_K]
++
++
+ def retrieve_node(state: IterRetState, graph: CueTagContentGraph, bank: ExperienceBank,
+                    llm: LLMClient) -> IterRetState:
+     query = state.get("current_refined_query") or state["original_query"]
+@@ -86,6 +129,11 @@ def retrieve_node(state: IterRetState, graph: CueTagContentGraph, bank: Experien
+     })
+     raw = llm.chat(_ACTION_SELECTION_SYSTEM_PROMPT, selection_prompt)
+     parsed = parse_json_object(raw)
++    if not parsed:
++        # Same silent-degradation shape as the routing call below: an
++        # unparseable reply falls through to the default action pair without
++        # anything recording that the LLM's actual choice was never used.
++        state["action_parse_failures"] = state.get("action_parse_failures", 0) + 1
+     actions = parsed.get("actions") or ["cue_to_tag", "tag_to_content"]
+     exclude_tags = set(parsed.get("exclude_tags", []))
+ 
+@@ -159,24 +207,57 @@ def reflect_node(state: IterRetState, graph: CueTagContentGraph, bank: Experienc
+         "new_content": new_content_payload,
+         "reflection_advice": advice_text,
+     })
+-    raw = llm.chat(_ROUTING_SYSTEM_PROMPT, routing_prompt)
++    raw = llm.chat(_ROUTING_SYSTEM_PROMPT, routing_prompt, max_tokens=ROUTING_MAX_TOKENS)
+     parsed = parse_json_object(raw)
++    # parse_json_object returns {} on failure, which is indistinguishable from
++    # a valid-but-empty reply once it reaches .get() below -- capture it here,
++    # while the difference still exists, so route_mode can tell "the model
++    # chose ALL" apart from "we never understood the model's answer".
++    route_parse_ok = bool(parsed)
+ 
+     kept = parsed.get("kept_content_ids", "ALL")
+     if kept == "ALL":
+-        kept_ids = new_content_ids
++        # Explicit "keep everything", or the field was missing/unparseable
++        # and silently defaulted here -- don't trust that at face value.
++        # Rank by relevance instead of admitting the whole batch untouched
++        # (falls back to the old keep-everything behaviour only if no
++        # embedder is attached to the graph).
++        kept_ids = _fail_open_fallback(graph, original_query, new_content_ids)
++        route_mode = "fail_open_all" if route_parse_ok else "fail_open_parse_failed"
+     else:
+         kept_ids = [cid for cid in kept if cid in graph.contents]
+         if not kept_ids and new_content_ids:
+             # The model didn't return ids that match anything it was shown
+-            # (e.g. it echoed text instead of ids) -- fail open instead of
+-            # silently discarding everything that was just retrieved.
+-            kept_ids = new_content_ids
++            # (e.g. it echoed text instead of ids) -- same fallback, not
++            # "keep everything": a formatting mistake isn't evidence that
++            # every candidate is relevant.
++            kept_ids = _fail_open_fallback(graph, original_query, new_content_ids)
++            route_mode = "fail_open_invalid_ids"
++        else:
++            route_mode = "explicit"
+     kept_texts = [graph.contents[cid].display_text() for cid in kept_ids]
+     made_progress = bool(kept_texts)
+-    for text in kept_texts:
++    # Track ids alongside texts so downstream consumers can report WHICH graph
++    # nodes became evidence, not just how many. Appended in lockstep under the
++    # same dedup condition as `evidence` so the two lists stay index-aligned.
++    evidence_ids = state.setdefault("accumulated_evidence_ids", [])
++    for cid, text in zip(kept_ids, kept_texts):
+         if text not in evidence:
+             evidence.append(text)
++            evidence_ids.append(cid)
++
++    # Per-round record of how this round's evidence was actually chosen. Until
++    # now nothing anywhere logged whether f_route made a real decision or the
++    # fallback made it, so "is routing degenerate?" was unanswerable from a
++    # finished run's artifacts. raw_len is kept because a reply truncated at
++    # the token cap is the leading suspected cause of parse failure.
++    state.setdefault("route_diagnostics", []).append({
++        "iteration": state.get("iteration_count", 0),
++        "route_mode": route_mode,
++        "n_candidates": len(new_content_ids),
++        "n_kept": len(kept_ids),
++        "raw_len": len(raw or ""),
++    })
+ 
+     resolved = set(parsed.get("resolved_gaps", []))
+     remaining_gaps = [g for g in gaps if g not in resolved]
+diff --git a/iterret/state.py b/iterret/state.py
+index 29fc0b0..63ed8b4 100644
+--- a/iterret/state.py
++++ b/iterret/state.py
+@@ -17,6 +17,9 @@ class IterRetState(TypedDict, total=False):
+     original_query: str  # q
+     current_refined_query: str  # q^ret_k = q (+) delta_q_k  (MemR3 Eq. 5)
+     accumulated_evidence: List[str]  # E_k / H^(t)
++    accumulated_evidence_ids: List[str]  # content ids, index-aligned with accumulated_evidence
++    route_diagnostics: List[dict]  # per-round record of how f_route actually decided
++    action_parse_failures: int  # rounds where the action-selection reply was unparseable
+     information_gaps: List[str]  # G_k
+     active_set: Dict[str, List[str]]  # Z^(t): {"cues": [...], "tags": [...], "contents": [...]}
+     visited_content_ids: List[str]  # masked retrieval, MemR3 Eq. 5: M \ M_ret_{k-1}

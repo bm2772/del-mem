@@ -1,6 +1,7 @@
 """Minimal OpenAI-compatible chat endpoint for ITERRET's LLM calls.
 Backed by plain Qwen3-4B-Instruct (no delta-mem adapter).
 """
+import os
 import time
 import torch
 import uvicorn
@@ -8,7 +9,11 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-MODEL_PATH = "/home/kbasu/arnavbhatt/workmem_test/models/Qwen3-4B-Instruct-2507"
+# Paths resolve from CAIMMS_ROOT so this file runs unchanged on the A100 SLURM
+# cluster (defaults below are the original absolute paths) and on any other box
+# that exports CAIMMS_ROOT -- see env.sh at the bundle root.
+_ROOT = os.environ.get("CAIMMS_ROOT", "/home/kbasu/arnavbhatt/workmem_test")
+MODEL_PATH = os.environ.get("CAIMMS_MODEL_PATH", f"{_ROOT}/models/Qwen3-4B-Instruct-2507")
 MAX_INPUT_TOKENS = 3072
 MAX_OUTPUT_TOKENS = 512
 

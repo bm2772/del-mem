@@ -21,10 +21,15 @@ from iterret.experience_bank import ExperienceBank, build_default_embedding_back
 from iterret.memory_builder import DialogueTurn, build_ctc_graph_from_dialogue
 from iterret.ctc_graph import CueTagContentGraph
 
-MODEL_PATH   = "/home/kbasu/arnavbhatt/workmem_test/models/Qwen3-4B-Instruct-2507"
-ADAPTER_DIR  = "/home/kbasu/arnavbhatt/workmem_test/models/delta-mem-adapter"
-DATA_FILE    = "/home/kbasu/arnavbhatt/workmem_test/workmem-vertical/delta-Mem/data/locomo10.json"
-VLLM_BASE_URL   = "http://localhost:8000/v1"
+# Paths resolve from CAIMMS_ROOT so this file runs unchanged on the A100 SLURM
+# cluster (defaults below are the original absolute paths) and on any other box
+# that exports CAIMMS_ROOT -- see env.sh at the bundle root.
+_ROOT = os.environ.get("CAIMMS_ROOT", "/home/kbasu/arnavbhatt/workmem_test")
+MODEL_PATH   = os.environ.get("CAIMMS_MODEL_PATH",  f"{_ROOT}/models/Qwen3-4B-Instruct-2507")
+ADAPTER_DIR  = os.environ.get("CAIMMS_ADAPTER_DIR", f"{_ROOT}/models/delta-mem-adapter")
+DATA_FILE    = os.environ.get("CAIMMS_DATA_FILE",   f"{_ROOT}/workmem-vertical/delta-Mem/data/locomo10.json")
+# Overridable because port 8000 is not guaranteed free on a shared workstation.
+VLLM_BASE_URL   = os.environ.get("CAIMMS_VLLM_BASE_URL", "http://localhost:8000/v1")
 VLLM_MODEL_NAME = "Qwen/Qwen3-4B-Instruct-2507"
 ITERRET_MAX_ITERATIONS = 5
 
@@ -36,7 +41,7 @@ ITERRET_MAX_ITERATIONS = 5
 # otherwise be picked up by the real run's checkpoint-resume and silently skipped.
 OUTPUT_FILE = os.environ.get(
     "WORKMEM_OUTPUT_FILE",
-    "/home/kbasu/arnavbhatt/workmem_test/outputs/workmem_iterret_full.jsonl",
+    f"{_ROOT}/outputs/workmem_iterret_full.jsonl",
 )
 MAX_SAMPLES = int(os.environ["WORKMEM_MAX_SAMPLES"]) if os.environ.get("WORKMEM_MAX_SAMPLES") else None
 

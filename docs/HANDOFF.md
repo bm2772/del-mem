@@ -26,10 +26,9 @@ Benchmark: **LoCoMo**, 1540 scored questions (adversarial excluded — its corre
 
 | | |
 |---|---|
-| **Local Mac** | `~/Documents/C-AIMMS/` — `workmem-vertical/` is the repo (branch `workmem-vertical`, remote `nitinvetcha/C-AIMMS`). `IterRet/` alongside it is the legacy standalone checkout on the `IterRet` branch; **the canonical copy is now vendored at `workmem-vertical/IterRet/`** — see §9. `outputs/` and `models/` are deliberately outside the repo. |
-| **Transfer bundle** | `~/Documents/ashwinGPU/` — what runs on resiliente-2003. Four files are `CAIMMS_ROOT`-path-patched; merge changes into these, don't blind-copy. |
-| **resiliente-2003** | `ashwinkm@10.24.32.171`, `~/ashwinGPU/`. 2× RTX 4090, no scheduler. **Primary run environment.** |
-| **Mahamathi** | `arnavbhatt@mahamathi2`, SLURM, 8× A100. Secondary — see §8 for its unresolved issue. |
+| **Local Mac** | `~/Documents/C-AIMMS/` — a workspace, NOT a repo. Contains `workmem-vertical/` (the repo, branch `workmem-vertical`, remote `nitinvetcha/C-AIMMS`), plus `models/` and `outputs/` deliberately outside git. IterRet is vendored inside the repo; there is no sibling copy any more. |
+| **resiliente-2003** | `ashwinkm@10.24.32.171`, `~/C-AIMMS/`. 2× RTX 4090, no scheduler. **Primary run environment.** Same layout as the Mac. |
+| **Mahamathi** | `arnavbhatt@mahamathi2`, `/home/kbasu/arnavbhatt/workmem_test/`. SLURM, 8× A100. Same layout. Secondary — see §9. |
 | **Papers** | `~/Downloads/COLM_Cognitive_AI_Memory_Architecture_Project (1).pdf` (this project's spec), `~/Downloads/2605.12357v1.pdf` (δ-mem method paper), `~/Downloads/Version_2.pdf`. Not in the repo. |
 
 Key files (repo root = `workmem-vertical/`):
@@ -54,28 +53,49 @@ IterRet/iterret/                VENDORED into this branch (see §9)
 
 ## 3. How to run
 
+Identical on every machine — `env.sh` resolves all paths from its own location.
+
 ```bash
-rsync -av --exclude='.hf' --exclude='outputs' --exclude='__pycache__' ~/Documents/ashwinGPU/ ashwinkm@10.24.32.171:~/ashwinGPU/
-ssh ashwinkm@10.24.32.171
-cd ~/ashwinGPU/outputs && mv workmem_iterret_full.jsonl "workmem_iterret_full_$(date +%Y%m%d_%H%M%S).jsonl"   # §8 TRAP 1 — full run does NOT clear its own checkpoint
+# from the repo root
+source env.sh
+
+# archive the old checkpoint FIRST -- a full run does NOT clear it (see §8 trap 1)
+cd "$CAIMMS_OUTPUT_DIR" && mv workmem_iterret_full.jsonl "workmem_iterret_full_$(date +%Y%m%d_%H%M%S).jsonl"
+
 tmux new -s caimms
-bash ~/ashwinGPU/run_pipeline.sh              # full, ~30-35h. Add --smoke for 152q/~1h
+bash scripts/run_pipeline.sh              # full, ~30-35h. Add --smoke for 152q/~1h
 ```
 
-No-GPU static check before committing to a run: `cd ~/ashwinGPU && PYTHONPATH=".:IterRet:delta-Mem" python3 dryrun_pipeline.py`
+No-GPU static check before committing to a run (5s, no model or weights needed):
+```bash
+source env.sh && cd scripts && PYTHONPATH=".:$PYTHONPATH" python3 dryrun_pipeline.py
+```
 
-Score: `python ~/ashwinGPU/score_calculator.py ~/ashwinGPU/outputs/workmem_iterret_full.jsonl`
+Score: `python3 scripts/score_calculator.py "$CAIMMS_OUTPUT_DIR/workmem_iterret_full.jsonl"`
 
-Pull results back: `rsync -avP ashwinkm@10.24.32.171:~/ashwinGPU/outputs/workmem_iterret_full.jsonl ~/Documents/C-AIMMS/outputs/workmem_runNN_<date>.jsonl` (rename on arrival — never overwrite a prior run's file).
+Sync the repo to a cluster (run from the Mac; `--delete` keeps the remote honest,
+and `models/`+`outputs/` live outside the repo so they are never touched):
+```bash
+rsync -av --delete --exclude='__pycache__' --exclude='.git' \
+  ~/Documents/C-AIMMS/workmem-vertical/ ashwinkm@10.24.32.171:~/C-AIMMS/workmem-vertical/
+```
+
+Pull results back (rename on arrival — never overwrite a prior run's file):
+```bash
+rsync -avP ashwinkm@10.24.32.171:~/C-AIMMS/outputs/workmem_iterret_full.jsonl \
+  ~/Documents/C-AIMMS/outputs/workmem_runNN_$(date +%Y-%m-%d).jsonl
+```
 
 **Env knobs**, all default to current pipeline behavior:
 
 | var | default | effect |
 |---|---|---|
+| `CAIMMS_WORKSPACE` | parent of repo | where `models/` and `outputs/` live |
 | `OSAM_PHASE1_GRANULARITY` | `message_mean` | measured not to matter (§7) |
-| `OSAM_PHASE2_PROMPT_WRITE` | `1` | `0` = prefill reads S without overwriting it — **this is the closest existing knob to the paper's actual Phase 2 spec, see §6 item 2** |
-| `WORKMEM_TEMPORAL_NARROWING` | `0` | `1` restores temporal evidence narrowing (was hurting the category, see §7) |
+| `OSAM_PHASE2_PROMPT_WRITE` | `1` | `0` = prefill reads S without overwriting it — closest knob to the paper's Phase 2 spec (§5 item 2) |
+| `WORKMEM_TEMPORAL_NARROWING` | `0` | `1` restores temporal evidence narrowing (was hurting the category, §7) |
 | `OSAM_TEMPORAL_QUERY_PATTERN` | built-in regex | override the timing-question detector |
+| `VLLM_PORT` | `8000` | override if the port is taken |
 
 ---
 
@@ -146,8 +166,9 @@ Full writeup with code citations and the mechanism given in the session that pro
 
 ## 9. Ownership and admin — unfinished
 
-- **`IterRet/` is now VENDORED into `workmem-vertical`** (2026-08-20). It lives at `workmem-vertical/IterRet/` and is tracked by this branch, so a clone of `workmem-vertical` is self-contained and gets the retrieval fixes the current results depend on (IDF/RRF content ranking, fail-open via the fused ranker, `ROUTING_MAX_TOKENS`, retrieval diagnostics). Previously it was a separate checkout on the `IterRet` branch, meaning anyone cloning this branch alone got a pipeline that couldn't reproduce the results.
-  - **It is still Pragnya's vertical and still unreconciled with her copy.** Vendoring made the branch self-contained; it did **not** resolve ownership. The upstream `IterRet` branch is untouched by this — these changes have not been pushed there.
-  - **Drift risk, now live:** the legacy standalone checkout at `~/Documents/C-AIMMS/IterRet/` still exists locally and is byte-identical as of vendoring. Two copies of the same code is exactly how this project already produced three divergent `CATEGORY_MAP` definitions. Treat `workmem-vertical/IterRet/` as canonical and retire the standalone one once the cluster `PYTHONPATH`s are repointed.
+- **`IterRet/` is VENDORED and there is now exactly ONE copy** (2026-08-20). It lives at `workmem-vertical/IterRet/`, tracked by this branch. The standalone sibling checkout was **deleted** — two copies of the same package with nothing syncing them is precisely how this project already produced three divergent `CATEGORY_MAP` definitions, and the risk is now removed rather than documented.
+  - `docs/patches/iterret-workmem-modifications.patch` preserves the exact diff vs Pragnya's upstream `IterRet` branch (`949d4a3`), so the reconciliation task is still actionable without the standalone checkout. `episode_segmenter.py` and `tests/` are new files, not in the patch — take them from the vendored tree.
+  - **Still Pragnya's vertical, still unreconciled.** Vendoring made the branch self-contained; it did not resolve ownership. The upstream `IterRet` branch is untouched.
+- **The repo is now self-sufficient — the separate `ashwinGPU` deployment bundle is gone** (2026-08-20). `env.sh` at the repo root derives every path from two roots (`CAIMMS_ROOT` = the repo, `CAIMMS_WORKSPACE` = its parent, holding `models/` and `outputs/`), so the identical tree runs on the Mac, Mahamathi and resiliente-2003 with no per-machine patching. The four `deltamem/workmem/*.py` files that used to exist in two versions (repo copy with hardcoded Mahamathi paths, bundle copy with env-var paths) are now the single env-var version. Deployment scripts (`run_pipeline.sh`, `setup_env.sh`, `download_assets.sh`, `dryrun_pipeline.py`, …) live in `scripts/`.
 - **Mahamathi job kills**: `cn6`/`a100` jobs get `CANCELLED by 0` (root) after 40min-1.5h. Ruled out: QOS, preemption, self-cancellation. Leading hypothesis: oversubscribed-node contention. **Admins never asked.** Largely moot while resiliente-2003 is primary.
 - **`pydantic` version untested**: `setup.md` says `2.9.2` is critical for vLLM/FastAPI; `requirements_exact.txt` pins `2.13.4`, which is what both boxes actually ran successfully. Which one actually matters has never been isolated.

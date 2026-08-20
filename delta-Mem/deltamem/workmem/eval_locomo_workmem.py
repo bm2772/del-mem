@@ -4,6 +4,7 @@ Phase 2: generate the answer; score with the official scorer.
 Compare overall/category F1 against the full_history_replay baseline (0.4491).
 """
 import json
+import os
 from pathlib import Path
 
 from deltamem.eval.locomo_delta import load_base_model, attach_delta_adapter_in_place
@@ -12,9 +13,13 @@ from deltamem.runtime.session import DeltaMemChatSession
 from deltamem.workmem.osam_workmem import populate_osam_from_evidence, answer_with_osam
 
 DATA_FILE = "data/locomo10.json"
-BASE_MODEL_PATH = "/home/kbasu/arnavbhatt/workmem_test/models/Qwen3-4B-Instruct-2507"
-ADAPTER_DIR = "/home/kbasu/arnavbhatt/workmem_test/models/delta-mem-adapter"
-OUTPUT_FILE = "/home/kbasu/arnavbhatt/workmem_test/outputs/workmem_locomo_gold.json"
+# Paths resolve from CAIMMS_ROOT so this file runs unchanged on the A100 SLURM
+# cluster (defaults below are the original absolute paths) and on any other box
+# that exports CAIMMS_ROOT -- see env.sh at the bundle root.
+_ROOT = os.environ.get("CAIMMS_ROOT", "/home/kbasu/arnavbhatt/workmem_test")
+BASE_MODEL_PATH = os.environ.get("CAIMMS_MODEL_PATH",   f"{_ROOT}/models/Qwen3-4B-Instruct-2507")
+ADAPTER_DIR = os.environ.get("CAIMMS_ADAPTER_DIR",      f"{_ROOT}/models/delta-mem-adapter")
+OUTPUT_FILE = os.environ.get("CAIMMS_GOLD_OUTPUT",      f"{_ROOT}/outputs/workmem_locomo_gold.json")
 MAX_SAMPLES = None  # bump to None once verified correct
 
 
