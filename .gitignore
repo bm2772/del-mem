@@ -1,13 +1,24 @@
+# Bytecode / build
 __pycache__/
 *.pyc
 *.pyo
 *.egg-info/
 *.so
 *.whl
+
+# Run artifacts -- NEVER commit these. outputs/ is 100s of MB of server logs
+# and result checkpoints; it lives outside the repo by design.
+outputs/
 *.log
 *.jsonl
-outputs/
 delta-Mem/outputs/
+
+# Model weights (multi-GB, redownloadable)
+models/
+delta-Mem/data/
 delta-Mem/scripts/
 delta-Mem/.git/
-delta-Mem/data/
+
+# OS / editor cruft
+.DS_Store
+*.bak

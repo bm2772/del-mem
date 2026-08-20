@@ -1,3 +1,29 @@
+# C-AIMMS / WORKMEM -- exact pinned environment (pip freeze).
+#
+# Python 3.11. This is the environment that produced every result in
+# docs/HANDOFF.md, verified running on BOTH a 2x A100 SLURM node (Mahamathi)
+# and a 2x RTX 4090 workstation (resiliente-2003).
+#
+# Install:  conda create -n workmem python=3.11 -y -c conda-forge --override-channels
+#           conda activate workmem && pip install -r requirements_exact.txt
+#
+# Two things worth knowing before you change a pin:
+#
+#  * flash_attn points at the PUBLIC GitHub wheel. It previously pinned a
+#    file:///home/kbasu/... path that exists only on Mahamathi, which made
+#    this file uninstallable anywhere else. Same version, portable source.
+#
+#  * pydantic is pinned to 2.13.4, NOT the 2.9.2 that setup.md calls
+#    "critical for FastAPI schema conflicts with vLLM 0.8.5". 2.13.4 is what
+#    both machines actually ran successfully for every recorded result. The
+#    2.9.2 claim has never been reproduced or isolated -- treat it as
+#    unverified folklore, not a requirement, unless vLLM startup actually
+#    breaks. See docs/HANDOFF.md section 9.
+#
+# IterRet's own IterRet/requirements.txt lists only its three direct deps
+# (langgraph, openai, sentence-transformers); it is a subset of this file and
+# exists for running IterRet standalone.
+
 accelerate==1.14.0
 aiohappyeyeballs==2.6.2
 aiohttp==3.14.1
@@ -32,7 +58,7 @@ fastapi-cli==0.0.27
 fastapi-cloud-cli==0.20.0
 fastar==0.11.0
 filelock==3.29.0
-flash_attn @ file:///home/kbasu/arnavbhatt/flash_attn-2.7.4.post1%2Bcu12torch2.6cxx11abiFALSE-cp311-cp311-linux_x86_64.whl#sha256=58853b28a5a926cae14402bfd8d4d93a45ebf8f9e79533f37ab09d0d77a99c05
+flash_attn @ https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.4.post1/flash_attn-2.7.4.post1+cu12torch2.6cxx11abiFALSE-cp311-cp311-linux_x86_64.whl
 frozenlist==1.8.0
 fsspec==2026.4.0
 gguf==0.19.0
