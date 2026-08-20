@@ -2122,16 +2122,14 @@ class DeltaMemAttention(nn.Module):
         else:
             self.last_write_routes = None
             self.last_read_routes = None
-        osam_two_phase = getattr(self.config, "osam_two_phase", True)
+        # Write granularity is whatever the caller configured via
+        # set_delta_mem_write_granularity() -- it is NOT inferred from seq_len.
+        # The two-phase OSAM protocol is expressed by the caller (see
+        # deltamem/workmem/osam_workmem.py): segment-level ("message_mean")
+        # writes while ingesting retrieved evidence, token-level ("token")
+        # writes during generation.
         effective_write_enabled = self.write_enabled
         effective_granularity = self.memory_write_granularity
-
-        if osam_two_phase:
-            if seq_len > 1:
-                effective_granularity = "sentence_mean"
-            else:
-                effective_granularity = "token"
-                effective_write_enabled = True
 
         if effective_write_enabled:
             state_before_write = state

@@ -14,6 +14,7 @@ from deltamem.chat_templates import apply_chat_template as apply_project_chat_te
 from deltamem.core.delta import (
     HFDeltaMemConfig,
     attach_delta_mem,
+    collect_delta_mem_output_ratio_stats,
     collect_delta_mem_state_stats,
     get_delta_mem_online_state,
     load_delta_mem_adapter,
@@ -691,10 +692,30 @@ class DeltaMemChatSession:
         top_k: int = 0,
         sample_seed: int | None = None,
         write_enabled: bool = True,
+        prompt_write_enabled: bool | None = None,
         include_debug: bool = False,
     ) -> dict[str, object]:
+        """``prompt_write_enabled`` controls online-state writes during the
+        PROMPT PREFILL only, separately from ``write_enabled`` which governs
+        the decode loop. Defaults to ``write_enabled`` (unchanged behaviour).
+
+        The two are separable because they do very different amounts of
+        damage to the online state. The prefill scans the entire instruction
+        block plus the question -- ~250-330 tokens for this project's prompts
+        -- and at token granularity every one of them is its own gated
+        erase-then-write against an 8x8 state that a preceding retrieval
+        phase may have written only ~12 items into. The read that produces
+        the FIRST generated token happens at the last prefill position, so
+        by construction it sees the state only after that entire block has
+        already written through it. Setting this to False lets the prefill
+        read the retrieval-populated state without overwriting it first,
+        while leaving decode-time writes intact.
+        """
         started_at = time.perf_counter()
-        set_delta_mem_write_enabled(self.model, write_enabled)
+        effective_prompt_write = (
+            write_enabled if prompt_write_enabled is None else prompt_write_enabled
+        )
+        set_delta_mem_write_enabled(self.model, effective_prompt_write)
         try:
             self.messages.append({"role": "user", "content": user_text})
             prompt_ids = self._tokenize_messages(
@@ -705,6 +726,24 @@ class DeltaMemChatSession:
             if next_token_logits is None:
                 raise RuntimeError("Prompt suffix was empty; cannot start generation.")
             prompt_ingest_stats = dict(self.last_ingest_stats)
+            # Snapshot how much OSAM's readout contributed to the output AT
+            # THE MOMENT the prompt has just been fully read -- i.e. the read
+            # that produces the logits for the FIRST generated token. This is
+            # last_delta_o_ratio per layer (delta_o's norm vs the backbone's
+            # own attention-output norm, computed every forward() call but
+            # never collected anywhere until now), averaged via
+            # collect_delta_mem_output_ratio_stats. It's a snapshot of the
+            # LAST forward call specifically, which at this point in the
+            # method is exactly the prefill -- not an average across decode.
+            # This is the instrument the open "online_gain has never been
+            # measured" item was missing: previously there was no way to ask
+            # "how much is OSAM actually contributing" for any real question.
+            prompt_output_ratio_stats = collect_delta_mem_output_ratio_stats(self.model)
+            # Restore the decode-phase setting before generation. Must happen
+            # after the prefill ingest and before _decode_generate, so the two
+            # phases genuinely get different write behaviour when they differ.
+            if effective_prompt_write != write_enabled:
+                set_delta_mem_write_enabled(self.model, write_enabled)
             rng_devices = []
             if torch.cuda.is_available() and self.device.startswith("cuda"):
                 rng_devices = [torch.device(self.device)]
@@ -734,6 +773,8 @@ class DeltaMemChatSession:
 
             self.last_turn_stats = {
                 "prompt_ingest": prompt_ingest_stats,
+                "prompt_write_enabled": bool(effective_prompt_write),
+                "decode_write_enabled": bool(write_enabled),
                 "decode": dict(self.last_decode_stats),
                 "assistant_materialize": materialize_stats,
                 "sample_seed": sample_seed,
@@ -745,6 +786,12 @@ class DeltaMemChatSession:
                 "assistant": response_raw,
                 "assistant_display": response_raw.strip(),
                 "state_stats": self.state_stats(),
+                # Always included, not gated behind include_debug: this is
+                # the one measurement that answers "how much did OSAM
+                # actually contribute", and it costs nothing extra to
+                # compute (the underlying numbers are already sitting on
+                # each module from the forward pass that just ran).
+                "prompt_output_ratio_stats": prompt_output_ratio_stats,
             }
             if include_debug:
                 result["turn_stats"] = dict(self.last_turn_stats)

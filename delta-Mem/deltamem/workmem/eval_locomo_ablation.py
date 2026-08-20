@@ -11,7 +11,10 @@ import gc, json, re, torch
 from pathlib import Path
 from typing import List, Tuple, Set
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from deltamem.eval.locomo_protocol import score_locomo_prediction
+from deltamem.eval.locomo_protocol import (
+    CATEGORY_DISPLAY_NAMES,
+    score_locomo_prediction,
+)
 from iterret.llm_client import OpenAICompatibleLLMClient
 from iterret.experience_bank import ExperienceBank, build_default_embedding_backend
 from iterret.memory_builder import DialogueTurn, build_ctc_graph_from_dialogue
@@ -353,10 +356,6 @@ def main() -> None:
     print(f"ABLATION (IterRet + direct, NO OSAM)", flush=True)
     print(f"F1 (all {len(all_r)} incl. skipped): {avg_all:.4f}", flush=True)
     print(f"F1 (answered only, {len(answered)}):  {avg_answered:.4f}", flush=True)
-    CATEGORY_MAP = {
-        1: "MULTI_HOP", 2: "TEMPORAL", 3: "OPEN_DOMAIN",
-        4: "SINGLE_HOP", 5: "ADVERSARIAL"
-    }
     cat_scores: dict = {}
     for r in all_r:
         try:
@@ -364,7 +363,7 @@ def main() -> None:
             cat_scores.setdefault(cat, []).append(r["score"])
         except (TypeError, ValueError):
             continue
-    for cat_id, cat_name in sorted(CATEGORY_MAP.items()):
+    for cat_id, cat_name in sorted(CATEGORY_DISPLAY_NAMES.items()):
         if cat_id in cat_scores:
             sc = cat_scores[cat_id]
             print(

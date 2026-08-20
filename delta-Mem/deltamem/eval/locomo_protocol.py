@@ -26,6 +26,35 @@ CATEGORY_NAMES = {
     5: "adversarial",
 }
 
+# LoCoMo's adversarial category. Named rather than written as a bare `5` at the
+# ~6 call sites that special-case it, because the literal carries no hint of
+# WHY it is special: its correct answer is a refusal, which rides the same
+# refusal bias that hurts every other category, so the WORKMEM vertical
+# excludes it from generation and from every aggregate.
+ADVERSARIAL_CATEGORY = 5
+
+# Uppercase display names for the workmem eval scripts' per-category reporting.
+# Defined here, once. Three separate scripts each carried a private copy of
+# this dict and they had ALREADY drifted apart -- eval_locomo_ablation.py
+# included category 5 while eval_locomo_iterret_mock.py and
+# ab_write_granularity.py did not -- so the same run could report a different
+# set of categories depending on which script printed it.
+CATEGORY_DISPLAY_NAMES = {
+    1: "MULTI_HOP",
+    2: "TEMPORAL",
+    3: "OPEN_DOMAIN",
+    4: "SINGLE_HOP",
+    5: "ADVERSARIAL",
+}
+
+# The categories the WORKMEM vertical actually scores. Derived from the map
+# above rather than written out again, so adding a category needs one edit.
+SCORED_CATEGORY_DISPLAY_NAMES = {
+    category: name
+    for category, name in CATEGORY_DISPLAY_NAMES.items()
+    if category != ADVERSARIAL_CATEGORY
+}
+
 ALL_LOCOMO_MECHANISMS = (
     "full_history_replay",
 )
