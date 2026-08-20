@@ -1,4 +1,6 @@
 import json
+import os
+import sys
 
 # 1. Define the category mapping based on LoCoMo standards
 CATEGORY_MAP = {
@@ -8,11 +10,32 @@ CATEGORY_MAP = {
     4: "single_hop"
 }
 
-# 2. Load the raw results from your successful run.
-# This is the live checkpoint file (one JSON object per line) that every
-# pipeline run actually appends to -- the sibling ".json" (no "l") file is
-# a stale, pre-run-1 snapshot with an outdated schema. Don't point back at it.
-file_path = "/home/kbasu/arnavbhatt/workmem_test/outputs/workmem_iterret_full.jsonl"
+# 2. Load the raw results.
+#
+# Path resolution, in priority order:
+#   1. argv[1]                -- score any file:  score_calculator.py path/to/run.jsonl
+#   2. $CAIMMS_OUTPUT_DIR     -- set by env.sh, works on every machine
+#   3. the original Mahamathi absolute path, as a last-resort fallback
+#
+# This used to be a bare hardcoded /home/kbasu/... path, which meant the script
+# only ran on one machine and silently ignored any filename you passed it.
+_DEFAULT_DIR = os.environ.get(
+    "CAIMMS_OUTPUT_DIR", "/home/kbasu/arnavbhatt/workmem_test/outputs"
+)
+file_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
+    _DEFAULT_DIR, "workmem_iterret_full.jsonl"
+)
+if not os.path.exists(file_path):
+    sys.exit(
+        f"No such results file: {file_path}\n"
+        "Pass one explicitly:  python3 scripts/score_calculator.py <run.jsonl>\n"
+        "or `source env.sh` first so CAIMMS_OUTPUT_DIR is set."
+    )
+print(f"scoring: {file_path}\n")
+
+# NOTE: this must be the live ".jsonl" checkpoint (one JSON object per line)
+# that pipeline runs append to -- not a sibling ".json" (no "l"), which is a
+# stale pre-run-1 snapshot with an outdated schema.
 results = []
 with open(file_path, "r") as f:
     for line in f:
