@@ -18,6 +18,7 @@ from deltamem.eval.locomo_protocol import (
 from iterret.llm_client import OpenAICompatibleLLMClient
 from iterret.experience_bank import ExperienceBank, build_default_embedding_backend
 from iterret.memory_builder import DialogueTurn, build_ctc_graph_from_dialogue
+from iterret.ctc_graph import CueTagContentGraph
 from deltamem.workmem.iterret_bridge import get_iterret_evidence
 
 # ── configuration ─────────────────────────────────────────────────────────────
@@ -28,11 +29,18 @@ _ROOT = os.environ.get("CAIMMS_ROOT", "/home/kbasu/arnavbhatt/workmem_test")
 MODEL_PATH   = os.environ.get("CAIMMS_MODEL_PATH", f"{_ROOT}/models/Qwen3-4B-Instruct-2507")
 # NO ADAPTER — base model only
 DATA_FILE    = os.environ.get("CAIMMS_DATA_FILE",  f"{_ROOT}/workmem-vertical/delta-Mem/data/locomo10.json")
-OUTPUT_FILE  = os.environ.get("CAIMMS_ABLATION_OUTPUT", f"{_ROOT}/outputs/workmem_ablation_direct.jsonl")
+# outputs/ lives in CAIMMS_WORKSPACE (the repo's PARENT), not inside the repo.
+# Falling back to f"{_ROOT}/outputs/..." wrote into the repo and, worse, meant
+# the graph cache alongside it was never found.
+_OUT_DIR = os.environ.get("CAIMMS_OUTPUT_DIR", f"{_ROOT}/outputs")
+OUTPUT_FILE  = os.environ.get("CAIMMS_ABLATION_OUTPUT", f"{_OUT_DIR}/workmem_ablation_direct.jsonl")
 VLLM_BASE_URL   = os.environ.get("CAIMMS_VLLM_BASE_URL", "http://localhost:8000/v1")
 VLLM_MODEL_NAME = "Qwen/Qwen3-4B-Instruct-2507"
 ITERRET_MAX_ITERATIONS = 5
-MAX_SAMPLES  = None
+# Scope, env-overridable so a short ablation needs no file edit. Mirrors
+# WORKMEM_MAX_SAMPLES in the main eval; ABLATION_MAX_SAMPLES wins if both set.
+_max_s = os.environ.get("ABLATION_MAX_SAMPLES") or os.environ.get("WORKMEM_MAX_SAMPLES")
+MAX_SAMPLES  = int(_max_s) if _max_s else None
 MAX_EVIDENCE_TOKENS = 2048  # cap evidence to avoid context overflow
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -181,8 +189,13 @@ def main() -> None:
 
     Path(OUTPUT_FILE).parent.mkdir(parents=True, exist_ok=True)
 
+    # Same graph cache the main eval uses -- keyed to the outputs dir, not to
+    # this script's own output file, so both pipelines share one set of graphs.
+    GRAPH_CACHE_DIR = Path(_OUT_DIR) / "graph_cache"
+    GRAPH_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
     # Experience bank — load if exists, empty otherwise
-    BANK_PATH = os.environ.get("CAIMMS_BANK_PATH", f"{_ROOT}/outputs/experience_bank.json")
+    BANK_PATH = os.environ.get("CAIMMS_BANK_PATH", f"{_OUT_DIR}/experience_bank.json")
 
     graph_llm    = OpenAICompatibleLLMClient(base_url=VLLM_BASE_URL, model=VLLM_MODEL_NAME)
     question_llm = OpenAICompatibleLLMClient(base_url=VLLM_BASE_URL, model=VLLM_MODEL_NAME)
@@ -223,17 +236,26 @@ def main() -> None:
             print(f"[sample {sample_idx}] no turns, skipping.", flush=True)
             continue
 
-        print(
-            f"[sample {sample_idx}] Building CTC graph "
-            f"({len(turns)} turns, {len(questions)} questions)...",
-            flush=True,
-        )
         graph = None
         bank  = None
+        # Share the main eval's graph cache. The CTC graph depends only on the
+        # dialogue, not on which generation path consumes it, so rebuilding it
+        # here would burn ~600 vLLM calls per conversation reproducing a graph
+        # that already exists on disk.
+        cache_path = GRAPH_CACHE_DIR / f"sample_{sample_idx}.json"
         try:
-            graph = build_ctc_graph_from_dialogue(turns, graph_llm)
-            n_nodes = len(graph.nodes) if hasattr(graph, "nodes") else "?"
-            print(f"[sample {sample_idx}] Graph ready: {n_nodes} nodes.", flush=True)
+            if cache_path.exists():
+                print(f"[sample {sample_idx}] Loading cached CTC graph from {cache_path}...", flush=True)
+                graph = CueTagContentGraph.load(str(cache_path))
+            else:
+                print(
+                    f"[sample {sample_idx}] Building CTC graph "
+                    f"({len(turns)} turns, {len(questions)} questions)...",
+                    flush=True,
+                )
+                graph = build_ctc_graph_from_dialogue(turns, graph_llm)
+                graph.save(str(cache_path))
+            print(f"[sample {sample_idx}] Graph ready: {len(graph.contents)} nodes.", flush=True)
             if Path(BANK_PATH).exists():
                 bank = ExperienceBank.load(BANK_PATH, build_default_embedding_backend())
                 print(
