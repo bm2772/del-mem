@@ -382,25 +382,28 @@ def narrow_evidence_by_score_gap(question: str, evidence_list, encode_fn):
     return evidence_list  # no clear natural boundary -- keep everything
 
 
-def answer_with_osam(session, query, system_instruction=None, *,
-                     allow_abstention: bool = False, **gen_kwargs):
-    """Generate an answer with OSAM live.
+def build_answer_prompt(query, system_instruction=None, *,
+                        allow_abstention: bool = False,
+                        evidence_carries_dates: bool = True) -> str:
+    """Build the instruction block + question, WITHOUT generating anything.
+
+    Extracted from answer_with_osam so the OSAM pipeline and the no-OSAM
+    ablation can share ONE definition of the prompt. They previously had
+    separate ones -- the ablation still carried run-6-era category-branching
+    prompts (including a timestamp-format hint that was factually wrong) while
+    the main pipeline had been rewritten. That made the ablation measure
+    "IterRet + old prompts" against "IterRet + OSAM + new prompts", i.e. two
+    variables at once, so it could not isolate OSAM at all.
 
     ``allow_abstention``: when False (the default, and what the LoCoMo cats-1-4
-    eval wants), the model is instructed never to decline to answer. This is a
-    metric-driven choice, not a general-purpose one -- see the instruction
-    comment below. Callers that DO evaluate LoCoMo category 5 (adversarial),
-    where the correct answer genuinely is a refusal, must pass True;
-    eval_locomo_workmem.py is the one such caller in this repo (it buckets by
-    category without excluding cat 5) and would need updating before it is
-    used again.
-    """
-    try:
-        from deltamem.core.delta_impl import set_delta_mem_write_granularity
-        set_delta_mem_write_granularity(session.model, "token")
-    except ImportError:
-        pass
+    eval wants), the model is instructed never to decline to answer. Callers
+    that DO evaluate LoCoMo category 5 (adversarial), where the correct answer
+    genuinely is a refusal, must pass True.
 
+    ``evidence_carries_dates``: whether the evidence actually has timestamp
+    prefixes, so the timing instruction does not assert structure that is not
+    there. Callers holding a session should pass _evidence_carries_dates(session).
+    """
     # These grounding instructions apply to every question regardless of type
     # (run 6's data: first-person suppression and the anti-refusal grounding
     # both helped broadly) -- previously they were only applied on the
@@ -509,7 +512,7 @@ def answer_with_osam(session, query, system_instruction=None, *,
     trailing_instruction = None
     if _needs_temporal_grounding(query):
         trailing_instruction = _temporal_answer_instruction(
-            evidence_carries_dates=_evidence_carries_dates(session)
+            evidence_carries_dates=evidence_carries_dates
         )
     elif _is_yes_no_question(query):
         instructions.append(
@@ -563,6 +566,29 @@ def answer_with_osam(session, query, system_instruction=None, *,
     # `instructions` above instead of here.
     if trailing_instruction:
         formatted_query += "\n" + trailing_instruction
+
+    return formatted_query
+
+
+def answer_with_osam(session, query, system_instruction=None, *,
+                     allow_abstention: bool = False, **gen_kwargs):
+    """Generate an answer with OSAM live. Phase 2 of the two-phase protocol.
+
+    The prompt itself comes from build_answer_prompt, shared with the no-OSAM
+    ablation so the two differ only in the memory mechanism.
+    """
+    try:
+        from deltamem.core.delta_impl import set_delta_mem_write_granularity
+        set_delta_mem_write_granularity(session.model, "token")
+    except ImportError:
+        pass
+
+    formatted_query = build_answer_prompt(
+        query,
+        system_instruction,
+        allow_abstention=allow_abstention,
+        evidence_carries_dates=_evidence_carries_dates(session),
+    )
 
     # gen_kwargs wins if a caller passes prompt_write_enabled explicitly (the
     # A/B harness does), so the module default never silently overrides an

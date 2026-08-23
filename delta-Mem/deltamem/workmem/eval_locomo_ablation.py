@@ -21,6 +21,7 @@ from iterret.experience_bank import ExperienceBank, build_default_embedding_back
 from iterret.memory_builder import DialogueTurn, build_ctc_graph_from_dialogue
 from iterret.ctc_graph import CueTagContentGraph
 from deltamem.workmem.iterret_bridge import get_iterret_evidence
+from deltamem.workmem.osam_workmem import build_answer_prompt
 
 # ── configuration ─────────────────────────────────────────────────────────────
 # Paths resolve from CAIMMS_ROOT so this file runs unchanged on the A100 SLURM
@@ -104,32 +105,31 @@ def generate_direct(
     cat_int: int,
     device: str = "cuda:0",
 ) -> str:
-    """Generate answer directly from evidence context — no OSAM, no adapter."""
-    if cat_int == 5:
-        prompt_text = (
-            f"Evidence from conversation:\n{evidence_context}\n\n"
-            f"Question: {query}\n"
-            f"Answer ONLY with one of these two options exactly as written: "
-            f"'No information available' or the specific answer from the conversation. "
-            f"Do not write any other text.\nAnswer:"
-        )
-    elif cat_int == 2:
-        prompt_text = (
-            f"Evidence from conversation:\n{evidence_context}\n\n"
-            f"Question: {query}\n"
-            f"IMPORTANT: Use the timestamps in the evidence to convert any relative dates "
-            f"(yesterday, last week, etc.) into exact absolute dates. "
-            f"Answer with a specific date or time period in third person.\nAnswer:"
-        )
-    else:
-        prompt_text = (
-            f"Evidence from conversation:\n{evidence_context}\n\n"
-            f"Based on the evidence above, answer the following question in third person "
-            f"using exact words from the evidence where possible. "
-            f"Answer in a few words only. "
-            f"Do NOT answer as one of the characters.\n"
-            f"Question: {query}\nAnswer:"
-        )
+    """Generate answer directly from evidence context — no OSAM, no adapter.
+
+    Uses build_answer_prompt, the SAME instruction block the OSAM pipeline
+    uses. It previously had its own run-6-era category-branching prompts
+    (including a timestamp-format hint that was factually wrong, and a
+    cat_int==5 branch for questions this script no longer processes), which
+    meant the ablation compared "IterRet + old prompts" against "IterRet +
+    OSAM + new prompts" -- two variables, so it could not isolate OSAM.
+
+    cat_int is no longer used for prompt selection: build_answer_prompt gates
+    on the QUESTION TEXT, not the dataset's ground-truth category label, which
+    also removes the answer-key leakage the old branching had.
+    """
+    # Evidence is prepended as plain context -- that IS the ablation: same
+    # evidence, same instructions, reaching the model through the ordinary
+    # context window instead of through OSAM.
+    instruction_block = build_answer_prompt(
+        query,
+        allow_abstention=False,
+        # The context block below is built from the same "[timestamp] Speaker: ..."
+        # strings the OSAM path writes into S, so the timing instruction's
+        # premise holds here too.
+        evidence_carries_dates=True,
+    )
+    prompt_text = f"Evidence from conversation:\n{evidence_context}\n\n{instruction_block}"
 
     messages = [
         {"role": "system", "content": "You are a helpful assistant that answers questions about conversations accurately and concisely."},
