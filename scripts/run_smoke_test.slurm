@@ -33,7 +33,8 @@ pkill -f "vllm.entrypoints" 2>/dev/null || true
 sleep 5
 
 DELTA_MEM_ROOT="/home/kbasu/arnavbhatt/workmem_test/workmem-vertical/delta-Mem"
-ITERRET_ROOT="/home/kbasu/arnavbhatt/workmem_test/IterRet"
+# IterRet is vendored in the repo; the old sibling path is now IterRet.RETIRED.
+ITERRET_ROOT="${CAIMMS_ROOT:-/home/kbasu/arnavbhatt/workmem_test/workmem-vertical}/IterRet"
 OUTPUT_DIR="/home/kbasu/arnavbhatt/workmem_test/outputs"
 SERVER_LOG="${OUTPUT_DIR}/smoke_server_${SLURM_JOB_ID}.log"
 MAX_WAIT=300

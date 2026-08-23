@@ -10,7 +10,8 @@
 set -euo pipefail
 
 DELTA_MEM_ROOT="/home/kbasu/arnavbhatt/workmem_test/workmem-vertical/delta-Mem"
-ITERRET_ROOT="/home/kbasu/arnavbhatt/workmem_test/IterRet"
+# IterRet is vendored in the repo; the old sibling path is now IterRet.RETIRED.
+ITERRET_ROOT="${CAIMMS_ROOT:-/home/kbasu/arnavbhatt/workmem_test/workmem-vertical}/IterRet"
 OUTPUT_DIR="/home/kbasu/arnavbhatt/workmem_test/outputs"
 SERVER_LOG="${OUTPUT_DIR}/offline_server_${SLURM_JOB_ID}.log"
 
@@ -43,9 +44,10 @@ echo "Server online."
 
 echo "[3/3] Running offline bank construction..."
 python3 -u << 'PYEOF'
-import json, sys
-sys.path.insert(0, "/home/kbasu/arnavbhatt/workmem_test/workmem-vertical/delta-Mem")
-sys.path.insert(0, "/home/kbasu/arnavbhatt/workmem_test/IterRet")
+import json, os, sys
+_root = os.environ.get("CAIMMS_ROOT", "/home/kbasu/arnavbhatt/workmem_test/workmem-vertical")
+sys.path.insert(0, f"{_root}/delta-Mem")
+sys.path.insert(0, f"{_root}/IterRet")   # vendored; old sibling path is IterRet.RETIRED
 
 from iterret.llm_client import OpenAICompatibleLLMClient
 from iterret.experience_bank import ExperienceBank, build_default_embedding_backend
