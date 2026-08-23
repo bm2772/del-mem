@@ -60,6 +60,33 @@ done
 
 NGPU="$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)"
 [ "${NGPU}" -ge 2 ] || { echo "ERROR: need 2 GPUs, found ${NGPU}."; exit 1; }
+
+# GPU availability preflight. This box is SHARED -- other users' jobs routinely
+# occupy both cards, and without this check vLLM starts, spends ~30s loading,
+# then dies with a CUDA OOM buried ~90 lines deep in its log behind a useless
+# "Engine core initialization failed. See root cause above."
+NEED_MIB="${CAIMMS_MIN_FREE_MIB:-12000}"
+BUSY=0
+while read -r idx free; do
+    if [ "${free}" -lt "${NEED_MIB}" ]; then
+        echo "GPU ${idx}: only ${free} MiB free (need >= ${NEED_MIB} MiB)"
+        BUSY=1
+    else
+        echo "GPU ${idx}: ${free} MiB free -- OK"
+    fi
+done < <(nvidia-smi --query-gpu=index,memory.free --format=csv,noheader,nounits | tr -d ',')
+
+if [ "${BUSY}" = "1" ]; then
+    echo
+    echo "ERROR: not enough free GPU memory. Who is using the cards:"
+    nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv | sed 's/^/    /'
+    echo
+    echo "  These may belong to another user on this shared machine -- check before"
+    echo "  killing anything. Wait for them to finish, or run on Mahamathi instead."
+    echo "  To override this guard (e.g. you know a smaller footprint will fit):"
+    echo "      CAIMMS_MIN_FREE_MIB=4000 bash $0 $*"
+    exit 1
+fi
 echo "GPUs:"
 nvidia-smi --query-gpu=index,name,memory.used,memory.total --format=csv,noheader | sed 's/^/  /'
 
@@ -121,13 +148,13 @@ echo "[2/3] Waiting for server (up to ${MAX_WAIT}s)..."
 until curl -sf "http://localhost:${VLLM_PORT}/v1/models" > /dev/null 2>&1; do
     if ! kill -0 "${SERVER_PID}" 2>/dev/null; then
         echo "ERROR: vLLM died during startup. Tail of ${SERVER_LOG}:"
-        tail -40 "${SERVER_LOG}"
+        grep -nE "OutOfMemory|CUDA|Error|Traceback|Address already in use" "${SERVER_LOG}" | tail -15; echo "--- last 25 lines ---"; tail -25 "${SERVER_LOG}"
         exit 1
     fi
     sleep ${INTERVAL}; ELAPSED=$((ELAPSED + INTERVAL))
     if [ ${ELAPSED} -ge ${MAX_WAIT} ]; then
         echo "ERROR: server did not come up within ${MAX_WAIT}s."
-        tail -40 "${SERVER_LOG}"
+        grep -nE "OutOfMemory|CUDA|Error|Traceback|Address already in use" "${SERVER_LOG}" | tail -15; echo "--- last 25 lines ---"; tail -25 "${SERVER_LOG}"
         exit 1
     fi
     echo "      ...${ELAPSED}s"
