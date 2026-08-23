@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=locomo_eval
-#SBATCH --output=locomo_eval_%j.log    # The %j gets replaced with the Job ID
+#SBATCH --output=../outputs/locomo_eval_%j.log   # relative to submit dir (repo root) -> workspace outputs/
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8              # 8 CPU cores for fast data loading

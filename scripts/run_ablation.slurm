@@ -15,7 +15,10 @@
 #SBATCH --gres=gpu:2
 #SBATCH --time=24:00:00
 #SBATCH --requeue
-#SBATCH --output=%x_%j.log
+# Relative to the submit dir, which is the repo root -- so this lands in the
+# workspace outputs/, NOT inside the repo. When it wrote to the repo (%x_%j.log)
+# an `rsync --delete` of the repo deleted the log of a RUNNING job.
+#SBATCH --output=../outputs/caimms_ablation_%j.log
 
 set -euo pipefail
 
