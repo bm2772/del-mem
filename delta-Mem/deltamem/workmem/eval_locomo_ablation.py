@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import List, Tuple, Set
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from deltamem.eval.locomo_protocol import (
+    ADVERSARIAL_CATEGORY,
     CATEGORY_DISPLAY_NAMES,
     score_locomo_prediction,
 )
@@ -296,6 +297,15 @@ def main() -> None:
                 cat_int = int(question.get("category", 0))
             except (TypeError, ValueError):
                 cat_int = 0
+
+            # Adversarial excluded, matching eval_locomo_iterret_mock.py. This
+            # script used to process all 1986 questions while the OSAM pipeline
+            # it is compared against does 1540, and score_calculator drops
+            # category 5 from BOTH -- so those 446 questions were computed and
+            # then thrown away, ~29% of the run for nothing, and the two row
+            # counts never lined up.
+            if cat_int == ADVERSARIAL_CATEGORY:
+                continue
 
             # IterRet retrieval — identical to OSAM pipeline
             evidence: List[str] = []
