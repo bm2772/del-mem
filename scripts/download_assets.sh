@@ -8,6 +8,20 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${HERE}/../env.sh"
 caimms_activate
 
+echo "=== Delta-Mem adapter -> ${CAIMMS_ADAPTER_DIR} ==="
+# On a fresh clone the trained adapter ships INSIDE the repo (trained_models/),
+# but the eval loads it from the workspace models/ dir. Provision it there.
+if [ -f "${CAIMMS_ADAPTER_DIR}/delta_mem_config.json" ]; then
+    echo "  already present, skipping."
+else
+    mkdir -p "${CAIMMS_ADAPTER_DIR}"
+    cp "${CAIMMS_ROOT}/trained_models/delta_mem_adapter.pt" \
+       "${CAIMMS_ROOT}/trained_models/delta_mem_config.json" \
+       "${CAIMMS_ADAPTER_DIR}/"
+    echo "  copied from ${CAIMMS_ROOT}/trained_models/ ($(du -h "${CAIMMS_ADAPTER_DIR}/delta_mem_adapter.pt" | cut -f1))"
+fi
+
+echo
 echo "=== Qwen3-4B-Instruct-2507 -> ${CAIMMS_MODEL_PATH} (~8GB) ==="
 if [ -f "${CAIMMS_MODEL_PATH}/config.json" ]; then
     echo "  already present, skipping."
