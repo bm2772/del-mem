@@ -40,7 +40,14 @@ def new_state(original_query: str, *, max_iterations: int = DEFAULT_MAX_ITERATIO
         original_query=original_query,
         current_refined_query=original_query,
         accumulated_evidence=[],
-        information_gaps=["initial: no evidence gathered yet"],
+        # Empty, NOT a literal sentinel string. A seeded sentinel like
+        # "initial: no evidence gathered yet" only clears if reflect_node's LLM
+        # echoes it verbatim in resolved_gaps -- which it never does -- so the
+        # "gaps empty -> answer" early-exit route was dead (docs/HANDOFF.md Sec.
+        # 6). Seeding [] lets the loop's own gap dynamics drive termination:
+        # reflect adds real gaps and can resolve them, so the loop can exit
+        # early once evidence is sufficient instead of always running to budget.
+        information_gaps=[],
         active_set={"cues": [], "tags": [], "contents": []},
         visited_content_ids=[],
         search_trajectory=[],

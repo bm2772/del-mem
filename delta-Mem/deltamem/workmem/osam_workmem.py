@@ -168,6 +168,32 @@ PHASE1_WRITE_GRANULARITY = os.environ.get("OSAM_PHASE1_GRANULARITY", "message_me
 # was the dominant force; an equally null result points at the second cause.
 PHASE2_PROMPT_WRITE = os.environ.get("OSAM_PHASE2_PROMPT_WRITE", "1") != "0"
 
+# Paper-faithful routing: the COLM spec (abstract, Sec. 1.5 prose, eq. 10
+# caption) says retrieved evidence must influence generation ONLY through the
+# online state S -- "the prompt context carries no retrieved content." The
+# current default leaves Phase-1 evidence in session.messages + the KV cache, so
+# it is ALSO attended in Phase 2. Set OSAM_EVIDENCE_IN_PROMPT=0 to wipe the
+# evidence text + KV context before Phase 2 (WITHOUT touching S), so the model
+# sees only the question and reaches the evidence purely via OSAM.
+#   * This is spec-correct AND fixes the osam_contribution 0.0/0.0/0.0 bug
+#     (HANDOFF Sec. 5.3/8.5): with no attached evidence cache, Phase 2 is a
+#     fresh ingest, so the attention mask is valid and the delta_o ratio reads.
+#   * DEFAULT IS 1 (evidence in prompt) DELIBERATELY: a paired A/B measured the
+#     S-only path at -0.2585 F1 (HANDOFF Sec. 5.1/7) -- the adapter as trained
+#     is too weak to carry the answer from S alone. Flip to 0 only when probing
+#     spec-fidelity / OSAM's standalone signal, not for a headline run, until a
+#     stronger/retrained adapter closes that gap.
+EVIDENCE_IN_PROMPT = os.environ.get("OSAM_EVIDENCE_IN_PROMPT", "1") != "0"
+
+# Prompt engineering is OPT-IN. Default (0) uses ONLY LoCoMo's official QA prompt
+# (locomo_protocol.OFFICIAL_QA_PROMPT) -- the benchmark standard. Set
+# OSAM_PROMPT_ENGINEERING=1 to add the category-specific instruction block
+# (first-person suppression, hard anti-abstention, yes/no scoping, name-a-thing,
+# temporal grounding). That block raises token-F1 on LoCoMo but is tuned to this
+# scorer's quirks (e.g. gold truncated at ';'), so it's kept optional rather than
+# the default, to keep the headline number on the standard benchmark prompt.
+PROMPT_ENGINEERING = os.environ.get("OSAM_PROMPT_ENGINEERING", "0") == "1"
+
 
 def populate_osam_from_evidence(session, evidence_list, *, reset=True,
                                 write_granularity=None):
@@ -404,6 +430,13 @@ def build_answer_prompt(query, system_instruction=None, *,
     prefixes, so the timing instruction does not assert structure that is not
     there. Callers holding a session should pass _evidence_carries_dates(session).
     """
+    # Benchmark-standard default: LoCoMo's own QA prompt, nothing added. The
+    # category-specific instruction block below is opt-in (OSAM_PROMPT_ENGINEERING=1)
+    # so the headline number stays on the standard prompt (see PROMPT_ENGINEERING).
+    if not PROMPT_ENGINEERING:
+        base = OFFICIAL_QA_PROMPT.format(query)
+        return f"{system_instruction}\n\n{base}" if system_instruction else base
+
     # These grounding instructions apply to every question regardless of type
     # (run 6's data: first-person suppression and the anti-refusal grounding
     # both helped broadly) -- previously they were only applied on the
@@ -582,6 +615,15 @@ def answer_with_osam(session, query, system_instruction=None, *,
         set_delta_mem_write_granularity(session.model, "token")
     except ImportError:
         pass
+
+    if not EVIDENCE_IN_PROMPT:
+        # Paper-faithful (Sec. 1.5): evidence is already written into S by
+        # Phase 1; drop it from the prompt + KV context so Phase 2 attends only
+        # the question and reaches the evidence solely through OSAM. Clear
+        # messages and past_key_values directly -- do NOT call session.reset(),
+        # which also resets the delta-mem state S we just populated.
+        session.messages = []
+        session.past_key_values = None
 
     formatted_query = build_answer_prompt(
         query,

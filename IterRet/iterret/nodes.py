@@ -112,7 +112,17 @@ def retrieve_node(state: IterRetState, graph: CueTagContentGraph, bank: Experien
     active_set = state.setdefault("active_set", {"cues": [], "tags": [], "contents": []})
     visited = set(state.get("visited_content_ids", []))
 
-    if not active_set["cues"]:
+    if graph.semantic_enabled:
+        # Semantic seeding: re-match cues against the CURRENT (refined) query
+        # EVERY round and union them in, so query refinement across iterations
+        # can expand/repair the anchor set. Replaces the strict-issubset
+        # match_query_to_cues seed-once path (docs/HANDOFF.md Sec. 6: "the
+        # suspected largest ceiling") -- questions rarely share tokens with the
+        # answer's cues, so the lexical gate seeds empty and retrieval stalls.
+        matched = graph.semantic_match_cues(query, max_matches=MAX_ACTIVE_CUES)
+        merged = list(dict.fromkeys(list(active_set["cues"]) + sorted(matched)))
+        active_set["cues"] = merged[:MAX_ACTIVE_CUES]
+    elif not active_set["cues"]:
         active_set["cues"] = sorted(graph.match_query_to_cues(query, max_matches=MAX_ACTIVE_CUES))
 
     # Planning experience retrieval (R2-Mem Eq. 12, c_i = q_i)
@@ -162,6 +172,14 @@ def retrieve_node(state: IterRetState, graph: CueTagContentGraph, bank: Experien
     # reading a long list pays the most attention to what's earliest in it -- re-sorting
     # alphabetically here would undo that by burying e.g. "LGBTQ Support Group" behind 50+
     # alphabetically-earlier but irrelevant tags before the model ever reads that far.
+    # Recall safety net: if cue-gated traversal surfaced nothing new this round,
+    # pull the k closest content nodes by embedding similarity directly
+    # (semantic only), bypassing the cue gate. Without this an empty cue match
+    # guarantees an unanswerable question (HANDOFF.md Sec. 6 ceiling).
+    if graph.semantic_enabled and not new_contents:
+        new_contents = set(graph.semantic_fallback_contents(
+            query, top_k=MAX_NEW_CONTENT_PER_ROUND, exclude_content_ids=visited))
+
     active_set["tags"] = graph.rank_tags_by_relevance(new_tags, query)
     active_set["contents"] = sorted(set(active_set["contents"]) | new_contents)
 

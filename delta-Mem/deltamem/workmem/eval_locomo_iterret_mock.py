@@ -158,8 +158,13 @@ def main() -> None:
             for dialog in conv_block.get(session_key, []):
                 speaker = dialog.get("speaker", "Unknown")
                 text    = dialog.get("text", "")
-                temporal_text = f"[{session_ts}] {speaker}: {text}"
-                turns.append(DialogueTurn(speaker=speaker, text=temporal_text, time=str(session_ts)))
+                # Pass RAW text. memory_builder prepends "Speaker:" and the
+                # content node's display_text() prepends "[time]", so the
+                # rendered evidence is already "[ts] Speaker: text". Pre-baking
+                # "[ts] Speaker:" here as well produced "[ts] Speaker: [ts]
+                # Speaker: text" -- timestamp and speaker each duplicated,
+                # wasting tokens and inflating token-overlap ranking (HANDOFF Sec. 6).
+                turns.append(DialogueTurn(speaker=speaker, text=text, time=str(session_ts)))
 
         if not turns:
             print(f"[sample {sample_idx}] no turns, skipping.", flush=True)

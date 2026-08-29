@@ -162,10 +162,10 @@ def build_ctc_graph_from_dialogue(
         graph.add_content(content_id, semantic["content"], layer="semantic")
         graph.link(semantic["cue"], semantic["tag"], content_id)
 
-    # 3. Abstraction layer: topic nodes wired to their constituent episodes.
-    for k, topic in enumerate(_abstract_topics(episode_summaries, llm, max_chars=max_chars_per_call)):
-        content_id = f"t{k + 1}"
-        graph.add_content(content_id, f"Topic: {topic['topic']}", layer="topic",
-                           topic_links=topic["episode_ids"])
+    # NOTE: the topic/abstraction layer was removed (HANDOFF Sec. 6 "dead code").
+    # _abstract_topics built "topic" nodes with topic_links but never .link()'d
+    # them into the cue->tag->content graph, so retrieval (which only traverses
+    # cue->tag->content) could never reach them -- pure LLM-call waste on
+    # unreachable, redundant summaries of episodes that already exist as nodes.
 
     return graph
