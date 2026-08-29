@@ -18,6 +18,10 @@
 # ---------------------------------------------------------------------------
 set -euo pipefail
 source env.sh
+# env.sh only DEFINES caimms_activate; call it (as run_pipeline.sh does) so the
+# workmem conda env is active and python3 sees torch/deltamem. Fails loudly with
+# "run scripts/setup_env.sh first" if the env doesn't exist yet.
+caimms_activate
 
 N="${N:-4}"
 OUT="${CAIMMS_OUTPUT_DIR:-outputs}"
