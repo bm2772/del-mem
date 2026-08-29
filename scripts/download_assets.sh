@@ -22,6 +22,19 @@ else
 fi
 
 echo
+echo "=== LoCoMo dataset -> ${CAIMMS_DATA_FILE} ==="
+# delta-Mem/data/ is gitignored, so locomo10.json is not in the repo. Fetch the
+# public snap-research copy (the same file the benchmark ships).
+if [ -f "${CAIMMS_DATA_FILE}" ]; then
+    echo "  already present, skipping."
+else
+    mkdir -p "$(dirname "${CAIMMS_DATA_FILE}")"
+    curl -sL -o "${CAIMMS_DATA_FILE}" \
+        https://raw.githubusercontent.com/snap-research/locomo/main/data/locomo10.json
+    echo "  downloaded ($(du -h "${CAIMMS_DATA_FILE}" | cut -f1))"
+fi
+
+echo
 echo "=== Qwen3-4B-Instruct-2507 -> ${CAIMMS_MODEL_PATH} (~8GB) ==="
 if [ -f "${CAIMMS_MODEL_PATH}/config.json" ]; then
     echo "  already present, skipping."
