@@ -32,6 +32,11 @@ if HAS_SMOLLM3:
 
 
 VALID_DELTA_HEADS = ("q", "k", "v", "o")
+# Test-time multiplier on the OSAM q/o correction (see forward()). Default 1.0
+# leaves trained behaviour unchanged; raise it to probe a larger effective gain
+# without retraining. Read once at import.
+_OSAM_DELTA_GAIN = float(os.environ.get("OSAM_DELTA_GAIN", "1.0"))
+
 VALID_STATE_UPDATE_MODES = ("standard", "lambda_outside", "no_lambda")
 VALID_MEMORY_PARTITION_ROUTING = ("soft",)
 VALID_MEMORY_PARTITION_BASIS = ("shared",)
@@ -2209,6 +2214,18 @@ class DeltaMemAttention(nn.Module):
 
         delta_q, delta_k, delta_v = self._compute_delta_qkv_from_reads(reads)
         delta_o = self._project_delta_head(reads, self.delta_o_proj, "o")
+
+        # Test-time OSAM gain probe. The adapter was TRAINED at online_gain=0.05,
+        # which is why the measured delta_o correction is only ~2.9% of the base
+        # attention output. OSAM_DELTA_GAIN multiplies the trained correction at
+        # inference so its effect can be swept WITHOUT retraining. Emulating a
+        # different online_gain G: OSAM_DELTA_GAIN = G / 0.05  (0.1->2, 0.2->4,
+        # 0.5->10). Default 1.0 = unchanged / trained behaviour.
+        if _OSAM_DELTA_GAIN != 1.0:
+            if delta_q is not None:
+                delta_q = delta_q * _OSAM_DELTA_GAIN
+            if delta_o is not None:
+                delta_o = delta_o * _OSAM_DELTA_GAIN
 
         input_shape = hidden_states.shape[:-1]
         hidden_shape = (*input_shape, -1, self.base.head_dim)
