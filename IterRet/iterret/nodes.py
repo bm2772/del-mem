@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 from typing import Literal
 
 from .ctc_graph import CueTagContentGraph
@@ -14,6 +15,19 @@ MAX_ACTIVE_CUES = 40
 
 MAX_ACTIVE_TAGS = 15
 MAX_NEW_CONTENT_PER_ROUND = 25
+
+# Recall top-up threshold. When cue-gated traversal returns FEWER than this many
+# new content nodes in a round, supplement (not replace) with the closest unseen
+# nodes by embedding similarity, up to MAX_NEW_CONTENT_PER_ROUND total.
+#
+# The old behaviour only fired the semantic fallback when the cue gate returned
+# NOTHING at all (an implicit threshold of 1), so a thin-but-nonempty round --
+# e.g. 3 nodes, none of them the answer -- suppressed the safety net entirely
+# and locked in a low-recall round. That is exactly the "partial-but-wrong
+# retrieval blocks the fallback" gap. Any value >=1 subsumes the old empty-only
+# behaviour as its extreme (an empty round still tops up all 25). Env-overridable
+# so the threshold can be swept; set to 1 to reproduce the pre-fix behaviour.
+FALLBACK_TOPUP_MIN = int(os.environ.get("ITERRET_FALLBACK_TOPUP_MIN", "8"))
 
 # When the routing LLM's kept_content_ids can't be trusted (explicit "ALL",
 # a missing/unparseable field defaulting to "ALL", or ids that don't match
@@ -167,19 +181,34 @@ def retrieve_node(state: IterRetState, graph: CueTagContentGraph, bank: Experien
             if len(new_tags) < MAX_ACTIVE_TAGS:
                 new_tags.add(tag)
 
+    # Recall safety net / top-up: when cue-gated traversal surfaced FEW (or no)
+    # new nodes this round, fill the rest of the round's budget with the closest
+    # unseen content by embedding similarity, bypassing the cue gate. This is a
+    # UNION (top-up), not a replacement: nodes that DID pass the cue gate are
+    # kept, and the fallback only adds up to MAX_NEW_CONTENT_PER_ROUND total.
+    #
+    # Firing on "thin", not just "empty", closes the gap where a partial cue
+    # match (say 3 nodes, none the answer) previously blocked the fallback
+    # entirely and locked in a low-recall round (HANDOFF.md Sec. 6 ceiling). The
+    # old empty-only behaviour is the FALLBACK_TOPUP_MIN=1 extreme of this.
+    n_topup = 0
+    if graph.semantic_enabled and len(new_contents) < FALLBACK_TOPUP_MIN:
+        need = MAX_NEW_CONTENT_PER_ROUND - len(new_contents)
+        if need > 0:
+            # Exclude both already-consumed nodes AND this round's cue-gated
+            # hits, so the fallback strictly ADDS and can't just re-propose them.
+            topup = graph.semantic_fallback_contents(
+                query, top_k=need, exclude_content_ids=visited | new_contents)
+            topup_set = set(topup) - new_contents
+            n_topup = len(topup_set)
+            new_contents |= topup_set
+    state["fallback_topup_total"] = state.get("fallback_topup_total", 0) + n_topup
+
     # Order by relevance to the current query, not alphabetically: the whole point of capping
     # via rank_*_by_relevance above is to put the genuinely relevant items first, and an LLM
     # reading a long list pays the most attention to what's earliest in it -- re-sorting
     # alphabetically here would undo that by burying e.g. "LGBTQ Support Group" behind 50+
     # alphabetically-earlier but irrelevant tags before the model ever reads that far.
-    # Recall safety net: if cue-gated traversal surfaced nothing new this round,
-    # pull the k closest content nodes by embedding similarity directly
-    # (semantic only), bypassing the cue gate. Without this an empty cue match
-    # guarantees an unanswerable question (HANDOFF.md Sec. 6 ceiling).
-    if graph.semantic_enabled and not new_contents:
-        new_contents = set(graph.semantic_fallback_contents(
-            query, top_k=MAX_NEW_CONTENT_PER_ROUND, exclude_content_ids=visited))
-
     active_set["tags"] = graph.rank_tags_by_relevance(new_tags, query)
     active_set["contents"] = sorted(set(active_set["contents"]) | new_contents)
 
@@ -193,7 +222,7 @@ def retrieve_node(state: IterRetState, graph: CueTagContentGraph, bank: Experien
         module="Planning",
         query_used=query,
         action_taken="+".join(actions) + (f" (excluded tags: {sorted(exclude_tags)})" if exclude_tags else ""),
-        found_summary=f"{len(new_contents)} new content node(s)",
+        found_summary=f"{len(new_contents)} new content node(s)" + (f" (+{n_topup} semantic top-up)" if n_topup else ""),
         decision="retrieve",
     ))
     return state

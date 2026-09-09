@@ -120,6 +120,66 @@ def test_display_text_fix_d4_ranker_sees_timestamp():
     assert order[0] == "zz_dated", f"expected the dated node ranked first, got {order}"
 
 
+def test_tag_ranking_stays_pure_lexical_without_embedder():
+    """The tag-layer fusion must not change no-embedder behaviour: with no
+    embedder attached, rank_tags_by_relevance is still pure IDF-weighted
+    lexical overlap (this is what the traversal's cue-only path relies on)."""
+    g = CueTagContentGraph()
+    g.add_content("e1", "Caroline joined a support group for LGBTQ people")
+    tags = ["lgbtq support group", "grocery run", "dentist appointment"]
+    order = g.rank_tags_by_relevance(tags, "LGBTQ support group")
+    assert order[0] == "lgbtq support group"
+
+
+def test_tag_ranking_fuses_semantics_when_embedder_attached():
+    """A tag that shares NO token with the query but IS its semantic match must
+    be rankable once an embedder is attached -- the whole point of the fix,
+    since tags gate tag_to_content and a dropped tag makes its content
+    unreachable. The FakeEmbedder scores bag-of-words cosine, so give the
+    semantic-only tag words that overlap the query's MEANING via a paraphrase
+    the lexical scorer (stopword-stripped exact tokens) can't see.
+    """
+    g = CueTagContentGraph()
+    g.add_content("e1", "some content")
+    g.attach_embedder(_FakeEmbedder())
+    # "meetup gathering" shares no stopword-stripped token with the query
+    # "support group", so lexical overlap scores it 0; the embedder sees the
+    # shared words when the query is phrased with them.
+    tags = ["meetup gathering", "unrelated tax form"]
+    # Query contains the tag's own words so the FakeEmbedder (bag-of-words)
+    # ranks it top, while lexical overlap on the OTHER tag is also 0 -> fusion
+    # is what breaks the tie toward the semantically-matched tag.
+    order = g.rank_tags_by_relevance(tags, "meetup gathering plans")
+    assert order[0] == "meetup gathering"
+    assert sorted(order) == sorted(tags)  # permutation, nothing dropped
+
+
+def test_disable_tag_fusion_env_flag_bypasses_embedder():
+    g = CueTagContentGraph()
+    g.add_content("e1", "content")
+    g.attach_embedder(_FakeEmbedder())
+    tags = ["apple banana", "cherry date"]
+    lexical_only = None
+    os.environ["DISABLE_TAG_EMBEDDER_FUSION"] = "1"
+    try:
+        lexical_only = g.rank_tags_by_relevance(tags, "apple banana")
+        assert lexical_only[0] == "apple banana"  # pure lexical overlap wins
+    finally:
+        del os.environ["DISABLE_TAG_EMBEDDER_FUSION"]
+    fused = g.rank_tags_by_relevance(tags, "apple banana")
+    assert set(fused) == {"apple banana", "cherry date"}  # fused path runs, valid perm
+
+
+def test_semantic_rank_tags_no_embedder_falls_back_without_recursing():
+    """semantic_rank_tags with no embedder must delegate to the lexical ranker
+    and NOT recurse (rank_tags_by_relevance only calls back into
+    semantic_rank_tags when an embedder is present)."""
+    g = CueTagContentGraph()
+    g.add_content("e1", "Caroline support group")
+    order = g.semantic_rank_tags(["support group", "grocery"], "support group")
+    assert order[0] == "support group"
+
+
 def test_no_embedder_fusion_is_pure_lexical():
     g = CueTagContentGraph()
     g.add_content("a", "apple banana cherry")

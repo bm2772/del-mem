@@ -114,6 +114,11 @@ def get_iterret_evidence(
             "rounds": rounds,
             "stop_reason": stop_reason,
             "action_parse_failures": state.get("action_parse_failures", 0),
+            # Total content nodes added by the semantic recall top-up across all
+            # rounds of this question (nodes.py FALLBACK_TOPUP_MIN). Lets a
+            # finished run measure how much of the evidence came from the cue
+            # gate vs. the top-up safety net, per question.
+            "fallback_topup_total": state.get("fallback_topup_total", 0),
             "route_modes": [d.get("route_mode") for d in route_diagnostics],
             # Longest raw routing reply seen this question. If this sits at
             # roughly the character equivalent of ROUTING_MAX_TOKENS on the

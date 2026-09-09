@@ -109,6 +109,7 @@ class CueTagContentGraph:
         self._embedder = None
         self._content_emb: Dict[str, object] = {}
         self._cue_emb: Dict[str, object] = {}
+        self._tag_emb: Dict[str, object] = {}
         # Corpus statistics for relevance scoring (IDF over content nodes).
         # Built lazily on first rank_*_by_relevance call, invalidated by
         # add_content. Derived entirely from self.contents, so load()
@@ -240,12 +241,49 @@ class CueTagContentGraph:
         return self._idf.get(token, 0.0)
 
     def rank_tags_by_relevance(self, tags: Iterable[str], query: str) -> List[str]:
+        """Tag-layer ranking. IDF-weighted, stopword-stripped token overlap when
+        no embedder is attached; once ``attach_embedder`` has been called it
+        fuses in embedding similarity via reciprocal rank fusion, exactly as
+        ``rank_contents_by_relevance`` does for the content layer.
+
+        This REVISES the earlier decision to leave the tag layer purely lexical.
+        That decision's stated worry was that pure cosine on a general-purpose
+        encoder drifts toward topically-similar-but-wrong items -- but the fix
+        for that is RRF fusion (which keeps the lexical signal's exact-entity
+        precision), not abstaining from semantics entirely. Leaving tags lexical
+        had a concrete cost: tags GATE the tag_to_content lookup, so a tag whose
+        wording shares no token with the query (e.g. the tag "Support Meetup"
+        against "Where did Caroline go on Fridays?") was dropped at nodes.py's
+        MAX_ACTIVE_TAGS cap, and every content node reachable only through that
+        tag became unreachable -- the semantic cue seeding upstream could not
+        rescue it because the loss happened one hop later, at the tag cap.
+
+        DISABLE_TAG_EMBEDDER_FUSION reproduces the old pure-lexical order for
+        isolated measurement, mirroring DISABLE_CONTENT_EMBEDDER_FUSION.
+        """
+        tags = list(tags)
         query_tokens = _content_tokens(query)
 
-        def _score(tag: str) -> float:
+        def _lexical_score(tag: str) -> float:
             return sum(self._idf_of(token) for token in (_content_tokens(tag) & query_tokens))
 
-        return sorted(tags, key=lambda tag: (-_score(tag), tag))
+        lexical_order = sorted(tags, key=lambda tag: (-_lexical_score(tag), tag))
+
+        if os.environ.get("DISABLE_TAG_EMBEDDER_FUSION") or not self._embedder:
+            return lexical_order
+
+        lexical_rank = {tag: i for i, tag in enumerate(lexical_order)}
+        semantic_order = self.semantic_rank_tags(tags, query)
+        semantic_rank = {tag: i for i, tag in enumerate(semantic_order)}
+
+        rrf_k = 60  # standard reciprocal-rank-fusion damping constant
+        def _fused_score(tag: str) -> float:
+            return (
+                1.0 / (rrf_k + lexical_rank[tag])
+                + 1.0 / (rrf_k + semantic_rank.get(tag, len(tags)))
+            )
+
+        return sorted(tags, key=lambda tag: (-_fused_score(tag), tag))
 
     def rank_contents_by_relevance(self, content_ids: Iterable[str], query: str) -> List[str]:
         """Content-layer ranking. IDF-weighted, stopword-stripped token
@@ -361,6 +399,24 @@ class CueTagContentGraph:
             emb = self._embedder.encode(cue_id)
             self._cue_emb[cue_id] = emb
         return emb
+
+    def _tag_embedding(self, tag: str):
+        emb = self._tag_emb.get(tag)
+        if emb is None:
+            emb = self._embedder.encode(tag)
+            self._tag_emb[tag] = emb
+        return emb
+
+    def semantic_rank_tags(self, tags: Iterable[str], query: str) -> List[str]:
+        """Rank tags by embedding similarity to the query (falls back to the
+        lexical tag ranker if no embedder is attached). The semantic half of the
+        RRF fusion in ``rank_tags_by_relevance``."""
+        tags = list(tags)
+        if not self._embedder:
+            return self.rank_tags_by_relevance(tags, query)
+        q = self._embedder.encode(query)
+        return sorted(tags,
+                      key=lambda tag: -self._embedder.similarity(q, self._tag_embedding(tag)))
 
     def semantic_match_cues(self, query: str, *, max_matches: int = 40,
                              min_sim: float = 0.2) -> Set[str]:
