@@ -1019,15 +1019,36 @@ class DeltaMemAttention(nn.Module):
         if attention_mask.dim() == 2:
             return attention_mask[:, -seq_len:].to(device=device).ne(0)
         if attention_mask.dim() == 4:
-            if attention_mask.size(0) != batch_size:
-                raise ValueError(
-                    "attention_mask batch dimension does not match hidden_states batch size"
-                )
-            if attention_mask.size(-2) < seq_len or attention_mask.size(-1) < seq_len:
-                raise ValueError("attention_mask is shorter than the current sequence length")
-            query_mask = attention_mask[:, 0, -seq_len:, -seq_len:]
-            diagonal = query_mask.diagonal(dim1=-2, dim2=-1)
-            return diagonal.eq(0)
+            # CAUSAL-MASK FIX (ported from workmem-vertical run 12a, 2026-09-10).
+            #
+            # The old code took the bottom-right seq_len x seq_len block of the
+            # 4-D causal mask and read its diagonal as "each query token's
+            # self-position". That is only correct on a FRESH forward pass. On
+            # the INCREMENTAL path (Phase-2 read-back, evidence KV cache still
+            # attached, only the new question suffix re-forwarded) the query
+            # positions are offset by the cache length, so [-seq_len:, -seq_len:]
+            # is the wrong block and its diagonal comes back masked -> token_mask
+            # all-False -> reads zeroed -> delta_q/o EXACTLY 0 (no bias term) ->
+            # the backbone ran bit-identical to no adapter at all. Measured in
+            # our own outputs: Arm A (with-evidence, incremental) delta_o_ratio
+            # was 0.0 on every row, while Arm B (S-only, fresh ingest) read 0.029.
+            #
+            # This project never batches (batch_size==1 always), so the 4-D
+            # branch's whole reason to exist -- detecting padding across a batch
+            # -- has nothing legitimate to detect. Skip it: with a single
+            # sequence there is no padding, every real token is valid, and
+            # returning None means exactly that to every token_mask consumer.
+            # batch_size>1 raises rather than silently reusing a heuristic
+            # already shown wrong, so adding batching later fails loudly.
+            if batch_size == 1:
+                return None
+            raise NotImplementedError(
+                "Delta-Mem state updates support batch_size==1 only. The 4-D "
+                "attention_mask padding heuristic was measured to deny tokens "
+                "their own position on the incremental forward pass (run 12a); "
+                "batched inference must supply a validated per-token mask before "
+                "this path can be re-enabled."
+            )
         raise ValueError(
             f"Unsupported attention_mask shape for Delta-Mem state updates: {tuple(attention_mask.shape)}"
         )

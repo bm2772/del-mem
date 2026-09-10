@@ -267,12 +267,29 @@ class CueTagContentGraph:
         def _lexical_score(tag: str) -> float:
             return sum(self._idf_of(token) for token in (_content_tokens(tag) & query_tokens))
 
-        lexical_order = sorted(tags, key=lambda tag: (-_lexical_score(tag), tag))
+        scores = {tag: _lexical_score(tag) for tag in tags}
+        # Positive-scoring tags get distinct ranks by descending score; the many
+        # zero-lexical tags (measured ~94% of a ~350-tag fanout on LoCoMo) are
+        # all COLLAPSED to one shared rank. Without this collapse, sorting the
+        # zeros alphabetically hands each a distinct lexical rank, and RRF then
+        # reads that pure alphabetical noise as a real vote -- e.g. a tag simply
+        # for starting with "a" out-ranks an equally-uninformative one starting
+        # with "z", drowning the semantic signal that is supposed to break these
+        # ties. (This is the bug the parallel workmem-vertical session caught
+        # mid-implementation of run 12b; our earlier version had it.)
+        positive = sorted((t for t in tags if scores[t] > 0), key=lambda t: (-scores[t], t))
+        zero_tags = sorted(t for t in tags if scores[t] <= 0)
+        lexical_rank = {t: i for i, t in enumerate(positive)}
+        shared_zero_rank = len(positive)  # every zero-lexical tag shares this rank
+        for t in zero_tags:
+            lexical_rank[t] = shared_zero_rank
 
+        # Pure-lexical order (no-embedder / disabled path): positives by score,
+        # then zeros alphabetically -- byte-identical to the old behaviour.
+        lexical_order = positive + zero_tags
         if os.environ.get("DISABLE_TAG_EMBEDDER_FUSION") or not self._embedder:
             return lexical_order
 
-        lexical_rank = {tag: i for i, tag in enumerate(lexical_order)}
         semantic_order = self.semantic_rank_tags(tags, query)
         semantic_rank = {tag: i for i, tag in enumerate(semantic_order)}
 

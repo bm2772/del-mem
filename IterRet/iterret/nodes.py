@@ -24,10 +24,19 @@ MAX_NEW_CONTENT_PER_ROUND = 25
 # NOTHING at all (an implicit threshold of 1), so a thin-but-nonempty round --
 # e.g. 3 nodes, none of them the answer -- suppressed the safety net entirely
 # and locked in a low-recall round. That is exactly the "partial-but-wrong
-# retrieval blocks the fallback" gap. Any value >=1 subsumes the old empty-only
-# behaviour as its extreme (an empty round still tops up all 25). Env-overridable
-# so the threshold can be swept; set to 1 to reproduce the pre-fix behaviour.
+# retrieval blocks the fallback" gap. Env-overridable so the threshold can be
+# swept; set to 1 to reproduce the pre-fix empty-only trigger.
 FALLBACK_TOPUP_MIN = int(os.environ.get("ITERRET_FALLBACK_TOPUP_MIN", "8"))
+
+# Max NEW nodes the top-up may add PER ROUND -- its weightage. The first version
+# filled all the way to MAX_NEW_CONTENT_PER_ROUND (25) whenever it fired, which
+# on LoCoMo saturated: the cue gate is thin nearly every round, so the fallback
+# effectively replaced graph traversal with 25-way semantic top-k (67% of
+# questions topped up >=75 across rounds, evidence 35->51/q, open-domain -0.048).
+# Capping the ADDITION keeps the top-up a supplement to cue-gated retrieval, not
+# a takeover of it. Env-overridable so it can be swept independently of the
+# trigger threshold.
+FALLBACK_TOPUP_ADD = int(os.environ.get("ITERRET_FALLBACK_TOPUP_ADD", "5"))
 
 # When the routing LLM's kept_content_ids can't be trusted (explicit "ALL",
 # a missing/unparseable field defaulting to "ALL", or ids that don't match
@@ -193,7 +202,9 @@ def retrieve_node(state: IterRetState, graph: CueTagContentGraph, bank: Experien
     # old empty-only behaviour is the FALLBACK_TOPUP_MIN=1 extreme of this.
     n_topup = 0
     if graph.semantic_enabled and len(new_contents) < FALLBACK_TOPUP_MIN:
-        need = MAX_NEW_CONTENT_PER_ROUND - len(new_contents)
+        # Add at most FALLBACK_TOPUP_ADD nodes (weightage cap), and never exceed
+        # the round's overall MAX_NEW_CONTENT_PER_ROUND budget.
+        need = min(FALLBACK_TOPUP_ADD, MAX_NEW_CONTENT_PER_ROUND - len(new_contents))
         if need > 0:
             # Exclude both already-consumed nodes AND this round's cue-gated
             # hits, so the fallback strictly ADDS and can't just re-propose them.

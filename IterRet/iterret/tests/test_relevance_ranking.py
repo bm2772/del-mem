@@ -154,6 +154,21 @@ def test_tag_ranking_fuses_semantics_when_embedder_attached():
     assert sorted(order) == sorted(tags)  # permutation, nothing dropped
 
 
+def test_tag_fusion_collapses_zero_lexical_so_alphabet_does_not_vote():
+    """The zero-lexical-collapse fix: when two tags both score lexical 0, their
+    order must be decided by SEMANTICS, not by alphabetical tie-break leaking
+    into RRF. 'zzz meetup' is alphabetically last but the semantic match; the
+    fused ranker must still put it first. Without the collapse, 'aaa tax' gets
+    lexical rank 0 purely for starting with 'a' and can win on that noise.
+    """
+    g = CueTagContentGraph()
+    g.add_content("e1", "content")  # neither tag's words appear -> both lexical 0
+    g.attach_embedder(_FakeEmbedder())
+    tags = ["aaa tax", "zzz meetup"]
+    order = g.rank_tags_by_relevance(tags, "zzz meetup schedule")
+    assert order[0] == "zzz meetup", f"semantics must break the zero-lexical tie, got {order}"
+
+
 def test_disable_tag_fusion_env_flag_bypasses_embedder():
     g = CueTagContentGraph()
     g.add_content("e1", "content")
