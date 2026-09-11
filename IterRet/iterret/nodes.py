@@ -36,7 +36,15 @@ FALLBACK_TOPUP_MIN = int(os.environ.get("ITERRET_FALLBACK_TOPUP_MIN", "8"))
 # Capping the ADDITION keeps the top-up a supplement to cue-gated retrieval, not
 # a takeover of it. Env-overridable so it can be swept independently of the
 # trigger threshold.
-FALLBACK_TOPUP_ADD = int(os.environ.get("ITERRET_FALLBACK_TOPUP_ADD", "5"))
+#
+# Default 10, chosen by a conv-0 sweep (guided path, 152 Q): ADD in {5,10,15}
+# scored overall {0.327, 0.371, 0.367}. 5 starves multi-hop (0.326) by cutting
+# evidence to 28/q; 15 over-feeds it (0.529) but drowns open-domain (0.163) and
+# temporal (0.182). 10 is best-or-near-best in EVERY category at once (MULTI
+# 0.474, TEMP 0.210, OPEN 0.214, SINGLE 0.438) at ~37 evidence/q -- the same
+# volume as the pre-topup baseline but better composed. Confirm on the full
+# 10-conversation run before treating this as final.
+FALLBACK_TOPUP_ADD = int(os.environ.get("ITERRET_FALLBACK_TOPUP_ADD", "10"))
 
 # When the routing LLM's kept_content_ids can't be trusted (explicit "ALL",
 # a missing/unparseable field defaulting to "ALL", or ids that don't match
