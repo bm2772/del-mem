@@ -45,6 +45,14 @@ OUTPUT_FILE = os.environ.get(
 )
 MAX_SAMPLES = int(os.environ["WORKMEM_MAX_SAMPLES"]) if os.environ.get("WORKMEM_MAX_SAMPLES") else None
 
+# Defensive early-abort: a broken/stale vLLM graph server returns unparseable
+# output, so EVERY IterRet round routes via "fail_open_parse_failed" and
+# retrieval degrades to a single fail-open round (n_ev == FAIL_OPEN_FALLBACK_TOP_K).
+# That silently produced an entire invalid 1540-question run once. If the first
+# GRAPH_LLM_CHECK_AFTER answered questions are almost all fully fail-open, the
+# graph LLM is dead -- bail immediately instead of grinding through the whole set.
+GRAPH_LLM_CHECK_AFTER = int(os.environ.get("WORKMEM_GRAPH_LLM_CHECK_AFTER", "15"))
+
 
 
 def extract_prediction(out, session) -> str:
@@ -131,6 +139,10 @@ def main() -> None:
 
     graph_llm    = OpenAICompatibleLLMClient(base_url=VLLM_BASE_URL, model=VLLM_MODEL_NAME)
     question_llm = OpenAICompatibleLLMClient(base_url=VLLM_BASE_URL, model=VLLM_MODEL_NAME)
+
+    # Graph-LLM health tracking (see GRAPH_LLM_CHECK_AFTER). Counts freshly
+    # answered questions this process produced -- not checkpoint-resumed ones.
+    graph_health = {"checked": 0, "dead": 0}
 
     for sample_idx, sample in enumerate(samples):
         if MAX_SAMPLES is not None and sample_idx >= MAX_SAMPLES:
@@ -332,6 +344,28 @@ def main() -> None:
             ratio_str = f"{ratio:.4f}" if ratio is not None else "?"
             print(f"[sample {sample_idx}.{q_idx}] score={score:.3f} n_ev={n_ev} "
                   f"osam_ratio={ratio_str} pred={prediction[:60]!r}", flush=True)
+
+            # Graph-LLM health check: a question whose every routing round was
+            # fail_open_parse_failed means the graph LLM returned no parseable
+            # JSON for it. If nearly all of the first GRAPH_LLM_CHECK_AFTER
+            # answered questions look like that, the vLLM server is dead/stale --
+            # abort before wasting the whole run (this is recoverable: fix vLLM,
+            # then re-run and the checkpoint resumes what's already good).
+            route_modes = (retrieval_diag.get("route_modes") or [])
+            if route_modes:
+                graph_health["checked"] += 1
+                if all(m == "fail_open_parse_failed" for m in route_modes):
+                    graph_health["dead"] += 1
+                if (graph_health["checked"] >= GRAPH_LLM_CHECK_AFTER
+                        and graph_health["dead"] >= 0.9 * graph_health["checked"]):
+                    raise SystemExit(
+                        f"[FATAL] graph LLM appears dead: {graph_health['dead']}/"
+                        f"{graph_health['checked']} of the first answered questions routed "
+                        "ENTIRELY via fail_open_parse_failed -- the vLLM server at "
+                        f"{VLLM_BASE_URL} is not returning parseable JSON (stale/wrong "
+                        "server or crashed). Fix vLLM and re-run; the checkpoint keeps "
+                        "what is already done. Refusing to grind through the full set."
+                    )
 
             del session
             torch.cuda.empty_cache()

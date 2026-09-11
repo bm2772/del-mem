@@ -115,6 +115,31 @@ PY
 pkill -u "$USER" -f "vllm.entrypoints" 2>/dev/null || true
 sleep 3
 
+# The bare pkill+sleep above is not enough on its own: if a stale server (ours,
+# mid-shutdown, or another user's) is STILL holding VLLM_PORT, the fresh server
+# below dies with "Address already in use" -- but the health check further down
+# is a plain `curl /v1/models`, which the stale server ANSWERS, so the eval
+# silently proceeds against the wrong server. That exact race invalidated a full
+# 1540-question run (every question routed via fail_open_parse_failed, n_ev=6).
+# So: actively wait for the port to be FREE before starting, and abort loudly if
+# something else won't let go of it.
+echo "Ensuring port ${VLLM_PORT} is free..."
+FREE_WAIT=0
+while curl -sf "http://localhost:${VLLM_PORT}/v1/models" > /dev/null 2>&1; do
+    pkill -9 -u "$USER" -f "vllm.entrypoints" 2>/dev/null || true   # our own stragglers, harder
+    sleep 3; FREE_WAIT=$((FREE_WAIT + 3))
+    if [ ${FREE_WAIT} -ge 30 ]; then
+        echo "ERROR: port ${VLLM_PORT} is still serving after ${FREE_WAIT}s -- a vLLM"
+        echo "  server we cannot kill (likely another user's) is holding it. Point"
+        echo "  this run at a different port and retry:  VLLM_PORT=8001 bash $0 $*"
+        echo "  Current occupant /v1/models says:"
+        curl -s "http://localhost:${VLLM_PORT}/v1/models" | head -c 300; echo
+        exit 1
+    fi
+    echo "      ...still occupied after ${FREE_WAIT}s, retrying kill"
+done
+echo "      port ${VLLM_PORT} free."
+
 SERVER_PID=""
 cleanup() {
     if [ -n "${SERVER_PID}" ] && kill -0 "${SERVER_PID}" 2>/dev/null; then
@@ -159,7 +184,24 @@ until curl -sf "http://localhost:${VLLM_PORT}/v1/models" > /dev/null 2>&1; do
     fi
     echo "      ...${ELAPSED}s"
 done
-echo "      server online."
+
+# Confirm the server that answered is the one WE started and serving the model
+# we expect -- a stale/foreign server on this port would also answer /v1/models
+# but may serve a different model or return unusable output. Belt-and-suspenders
+# on top of the port-free wait above.
+if ! kill -0 "${SERVER_PID}" 2>/dev/null; then
+    echo "ERROR: our vLLM (pid ${SERVER_PID}) is not alive but the port answers --"
+    echo "  a different server is on ${VLLM_PORT}. Refusing to run against it."
+    grep -nE "Address already in use|Error|Traceback" "${SERVER_LOG}" | tail -10
+    exit 1
+fi
+MODELS_JSON="$(curl -sf "http://localhost:${VLLM_PORT}/v1/models" || true)"
+if ! printf '%s' "${MODELS_JSON}" | grep -q "Qwen/Qwen3-4B-Instruct-2507"; then
+    echo "ERROR: server on ${VLLM_PORT} is not serving Qwen/Qwen3-4B-Instruct-2507:"
+    printf '%s\n' "${MODELS_JSON}" | head -c 400; echo
+    exit 1
+fi
+echo "      server online (pid ${SERVER_PID}, model verified)."
 
 # ── 3. eval on GPU 1 ──────────────────────────────────────────────────────────
 echo "[3/3] Starting eval on GPU 1..."
