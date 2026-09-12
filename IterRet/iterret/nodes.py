@@ -59,6 +59,12 @@ CONTENT_KNN_K = int(os.environ.get("ITERRET_CONTENT_KNN_K", "5"))       # neighb
 CONTENT_KNN_ADD = int(os.environ.get("ITERRET_CONTENT_KNN_ADD", "10"))  # max added per round
 CONTIGUITY_ENABLED = os.environ.get("ITERRET_CONTIGUITY", "0") == "1"
 CONTIGUITY_WINDOW = int(os.environ.get("ITERRET_CONTIGUITY_WINDOW", "1"))
+CONTIGUITY_ADD = int(os.environ.get("ITERRET_CONTIGUITY_ADD", "6"))  # max added per round
+# Expand from only the top query-relevant hits, not all ~25. The first version
+# seeded from every hit with UNCAPPED contiguity, which flooded evidence (86
+# contiguity nodes/q on the 584 set), pushed the relevant cue-gated node out of
+# reflect's fail-open top-6, and produced 109 'no_relevant_evidence' skips.
+EXPAND_MAX_SEEDS = int(os.environ.get("ITERRET_EXPAND_MAX_SEEDS", "8"))
 
 # When the routing LLM's kept_content_ids can't be trusted (explicit "ALL",
 # a missing/unparseable field defaulting to "ALL", or ids that don't match
@@ -218,19 +224,24 @@ def retrieve_node(state: IterRetState, graph: CueTagContentGraph, bank: Experien
     # Flag-gated; both default off, so behaviour is unchanged unless enabled.
     n_knn = 0
     n_contig = 0
-    seeds = list(new_contents) if new_contents else list(active_set["contents"])
-    if seeds and (CONTIGUITY_ENABLED or (CONTENT_KNN_ENABLED and graph.semantic_enabled)):
+    raw_seeds = list(new_contents) if new_contents else list(active_set["contents"])
+    if raw_seeds and (CONTIGUITY_ENABLED or (CONTENT_KNN_ENABLED and graph.semantic_enabled)):
+        # Expand only from the most query-relevant hits, so both channels stay
+        # small supplements (see EXPAND_MAX_SEEDS / the flooding it prevents).
+        seeds = graph.rank_contents_by_relevance(raw_seeds, query)[:EXPAND_MAX_SEEDS]
         seen_all = set(visited) | new_contents
-        # Contiguity: pull temporally adjacent episodic nodes (cheap, no embedder).
+        # Contiguity: pull temporally adjacent episodic nodes (cheap, no embedder),
+        # then cap the addition -- an uncapped version floods (see CONTIGUITY_ADD).
         if CONTIGUITY_ENABLED:
             contig: set = set()
             for cid in seeds:
                 for nb in graph.content_contiguity_neighbors(cid, window=CONTIGUITY_WINDOW):
                     if nb not in seen_all:
                         contig.add(nb)
-            n_contig = len(contig)
-            new_contents |= contig
-            seen_all |= contig
+            contig_list = graph.rank_contents_by_relevance(contig, query)[:CONTIGUITY_ADD]
+            n_contig = len(contig_list)
+            new_contents |= set(contig_list)
+            seen_all |= set(contig_list)
         # Similarity k-NN: pull nodes near the found nodes, then rank that
         # neighbourhood by query relevance and cap -- biases toward the found
         # evidence's locality (multi-hop chaining) without global topical drift.

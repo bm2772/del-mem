@@ -87,9 +87,11 @@ Retrieval (`IterRet/iterret/nodes.py`):
 | `ITERRET_FALLBACK_TOPUP_ADD` | 10 | max nodes the top-up adds per round (its weightage) |
 | `ITERRET_CONTIGUITY` | 0 | 1 = add timeline-adjacent episodic nodes (EM-LLM contiguity) |
 | `ITERRET_CONTIGUITY_WINDOW` | 1 | ± window for contiguity |
+| `ITERRET_CONTIGUITY_ADD` | 6 | max contiguity nodes added per round (cap; uncapped floods) |
 | `ITERRET_CONTENT_KNN` | 0 | 1 = add k-NN similarity neighbours of found nodes |
 | `ITERRET_CONTENT_KNN_K` | 5 | neighbours pulled per seed node |
 | `ITERRET_CONTENT_KNN_ADD` | 10 | max k-NN nodes added per round (query-RRF ranked) |
+| `ITERRET_EXPAND_MAX_SEEDS` | 8 | expand contiguity/k-NN only from the top-N query-relevant hits |
 | `DISABLE_TAG_EMBEDDER_FUSION` | unset | reproduce pure-lexical tag ranking |
 | `DISABLE_CONTENT_EMBEDDER_FUSION` | unset | reproduce pure-lexical content ranking |
 
@@ -194,11 +196,14 @@ pkill -f 'vllm.entrypoints.openai.api_server'; sleep 3; lsof -ti:8000 | xargs -r
 1. **Prompt-engineering ablation:** `OSAM_PROMPT_ENGINEERING=1` full run — expect
    TEMPORAL ~0.22→~0.40 and overall likely > 0.4214. Report as labelled ablation,
    keep 0.4142 as the architecture number.
-2. **EM-LLM channels (7239a23) — measure on the 584 set:** baseline vs
-   `ITERRET_CONTIGUITY=1` vs `ITERRET_CONTENT_KNN=1` vs both. Prior: contiguity is
-   the safer, more dialogue-appropriate bet (adjacent turns complete answers, low
-   drift); k-NN helps multi-hop but risks open-domain. Watch `open_domain` and the
-   `knn_expand_total` / `contiguity_expand_total` diagnostics.
+2. **EM-LLM channels — first measurement (both on, 584 set) HURT: 0.4053 →
+   0.3267**, with 109 `no_relevant_evidence` skips. Root cause: contiguity was
+   UNCAPPED (86 nodes/q), flooding the pool and pushing the relevant cue-gated
+   node out of reflect's fail-open top-6. Fixed in the follow-up commit
+   (`CONTIGUITY_ADD` cap + `EXPAND_MAX_SEEDS` top-seed gating). **Re-measure with
+   the caps, and SEPARATELY** — contiguity-alone then k-NN-alone — not both at
+   once. Prior still stands: contiguity is the safer dialogue bet; k-NN risks
+   open-domain. Watch skips, `open_domain`, and the expand-total diagnostics.
 3. **LLM-judge secondary metric:** `deltamem/.../llm_judge.py` exists but the eval
    scores token-F1 only. A judge would credit "twice"="2", "Yeah"="Yes",
    "my daughter"="Melanie's daughter" — separating format artifacts from real
