@@ -227,6 +227,42 @@ def test_disable_fusion_env_flag_bypasses_embedder():
     assert set(fused) == {"a", "b"}
 
 
+def test_contiguity_neighbors_are_timeline_adjacent_episodics():
+    g = CueTagContentGraph()
+    for i in range(1, 5):
+        g.add_content(f"e{i}", f"event {i}", layer="episodic")
+    g.add_content("s1", "a stable fact", layer="semantic")  # no timeline position
+    assert set(g.content_contiguity_neighbors("e2", window=1)) == {"e1", "e3"}
+    assert set(g.content_contiguity_neighbors("e1", window=2)) == {"e2", "e3"}
+    assert g.content_contiguity_neighbors("e4", window=1) == ["e3"]
+    assert g.content_contiguity_neighbors("s1") == []          # semantic: no timeline
+    assert g.content_contiguity_neighbors("missing") == []
+
+
+def test_similarity_neighbors_pull_nearest_content_nodes():
+    g = CueTagContentGraph()
+    g.add_content("e1", "apple banana cherry")
+    g.add_content("e2", "apple banana")          # most similar to e1
+    g.add_content("e3", "durian elderberry fig")  # unrelated
+    assert g.content_similarity_neighbors("e1", k=2) == []  # inert without embedder
+    g.attach_embedder(_FakeEmbedder())
+    nn = g.content_similarity_neighbors("e1", k=1)
+    assert nn == ["e2"], f"expected e2 as nearest neighbour, got {nn}"
+    assert "e1" not in g.content_similarity_neighbors("e1", k=5)  # never itself
+
+
+def test_add_content_invalidates_knn_and_timeline_caches():
+    g = CueTagContentGraph()
+    g.add_content("e1", "one", layer="episodic")
+    g.attach_embedder(_FakeEmbedder())
+    _ = g.content_similarity_neighbors("e1", k=1)          # populate caches
+    _ = g.content_contiguity_neighbors("e1")
+    g.add_content("e2", "two", layer="episodic")           # must invalidate both
+    assert g._content_knn == {}
+    assert g._episodic_order_cache is None
+    assert set(g.content_contiguity_neighbors("e1", window=1)) == {"e2"}
+
+
 def test_load_reconstructs_same_idf_as_build():
     """IDF must derive entirely from self.contents so load() (which never
     touches _df/_idf directly) reproduces identical scores -- this is what

@@ -46,6 +46,20 @@ FALLBACK_TOPUP_MIN = int(os.environ.get("ITERRET_FALLBACK_TOPUP_MIN", "8"))
 # 10-conversation run before treating this as final.
 FALLBACK_TOPUP_ADD = int(os.environ.get("ITERRET_FALLBACK_TOPUP_ADD", "10"))
 
+# EM-LLM-style content-graph expansion (node->node), OFF by default so the
+# current pipeline is unchanged. Both expand from THIS round's cue-gated hits:
+#   ITERRET_CONTENT_KNN=1  -> spreading activation over a content<->content k-NN
+#                             similarity graph (pull nodes near found nodes).
+#   ITERRET_CONTIGUITY=1   -> pull temporally adjacent episodic nodes (EM-LLM's
+#                             contiguity buffer); cheap, no embedder needed.
+# These COMPLEMENT the query->node seeding/top-up above; they do not replace it
+# (a node->node graph can't know what is relevant to the query on its own).
+CONTENT_KNN_ENABLED = os.environ.get("ITERRET_CONTENT_KNN", "0") == "1"
+CONTENT_KNN_K = int(os.environ.get("ITERRET_CONTENT_KNN_K", "5"))       # neighbours per seed
+CONTENT_KNN_ADD = int(os.environ.get("ITERRET_CONTENT_KNN_ADD", "10"))  # max added per round
+CONTIGUITY_ENABLED = os.environ.get("ITERRET_CONTIGUITY", "0") == "1"
+CONTIGUITY_WINDOW = int(os.environ.get("ITERRET_CONTIGUITY_WINDOW", "1"))
+
 # When the routing LLM's kept_content_ids can't be trusted (explicit "ALL",
 # a missing/unparseable field defaulting to "ALL", or ids that don't match
 # anything it was shown), this is how many candidates the relevance-ranked
@@ -198,6 +212,41 @@ def retrieve_node(state: IterRetState, graph: CueTagContentGraph, bank: Experien
             if len(new_tags) < MAX_ACTIVE_TAGS:
                 new_tags.add(tag)
 
+    # EM-LLM-style content-graph expansion (node->node), from THIS round's
+    # cue-gated hits. Runs BEFORE the top-up so it counts as a recall channel:
+    # anything it adds reduces how much the query->node fallback has to fill.
+    # Flag-gated; both default off, so behaviour is unchanged unless enabled.
+    n_knn = 0
+    n_contig = 0
+    seeds = list(new_contents) if new_contents else list(active_set["contents"])
+    if seeds and (CONTIGUITY_ENABLED or (CONTENT_KNN_ENABLED and graph.semantic_enabled)):
+        seen_all = set(visited) | new_contents
+        # Contiguity: pull temporally adjacent episodic nodes (cheap, no embedder).
+        if CONTIGUITY_ENABLED:
+            contig: set = set()
+            for cid in seeds:
+                for nb in graph.content_contiguity_neighbors(cid, window=CONTIGUITY_WINDOW):
+                    if nb not in seen_all:
+                        contig.add(nb)
+            n_contig = len(contig)
+            new_contents |= contig
+            seen_all |= contig
+        # Similarity k-NN: pull nodes near the found nodes, then rank that
+        # neighbourhood by query relevance and cap -- biases toward the found
+        # evidence's locality (multi-hop chaining) without global topical drift.
+        if CONTENT_KNN_ENABLED and graph.semantic_enabled:
+            pool: set = set()
+            for cid in seeds:
+                for nb in graph.content_similarity_neighbors(cid, k=CONTENT_KNN_K):
+                    if nb not in seen_all:
+                        pool.add(nb)
+            if pool:
+                ranked = graph.rank_contents_by_relevance(pool, query)[:CONTENT_KNN_ADD]
+                n_knn = len(ranked)
+                new_contents |= set(ranked)
+    state["knn_expand_total"] = state.get("knn_expand_total", 0) + n_knn
+    state["contiguity_expand_total"] = state.get("contiguity_expand_total", 0) + n_contig
+
     # Recall safety net / top-up: when cue-gated traversal surfaced FEW (or no)
     # new nodes this round, fill the rest of the round's budget with the closest
     # unseen content by embedding similarity, bypassing the cue gate. This is a
@@ -241,7 +290,10 @@ def retrieve_node(state: IterRetState, graph: CueTagContentGraph, bank: Experien
         module="Planning",
         query_used=query,
         action_taken="+".join(actions) + (f" (excluded tags: {sorted(exclude_tags)})" if exclude_tags else ""),
-        found_summary=f"{len(new_contents)} new content node(s)" + (f" (+{n_topup} semantic top-up)" if n_topup else ""),
+        found_summary=(f"{len(new_contents)} new content node(s)"
+                       + (f" (+{n_contig} contiguity)" if n_contig else "")
+                       + (f" (+{n_knn} knn)" if n_knn else "")
+                       + (f" (+{n_topup} semantic top-up)" if n_topup else "")),
         decision="retrieve",
     ))
     return state

@@ -119,6 +119,10 @@ def get_iterret_evidence(
             # finished run measure how much of the evidence came from the cue
             # gate vs. the top-up safety net, per question.
             "fallback_topup_total": state.get("fallback_topup_total", 0),
+            # EM-LLM-style content-graph expansion counts (0 unless the
+            # ITERRET_CONTENT_KNN / ITERRET_CONTIGUITY flags are set).
+            "knn_expand_total": state.get("knn_expand_total", 0),
+            "contiguity_expand_total": state.get("contiguity_expand_total", 0),
             "route_modes": [d.get("route_mode") for d in route_diagnostics],
             # Longest raw routing reply seen this question. If this sits at
             # roughly the character equivalent of ROUTING_MAX_TOKENS on the

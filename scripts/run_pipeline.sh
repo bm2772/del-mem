@@ -34,6 +34,13 @@ if [ "${SMOKE}" = "1" ]; then
     export WORKMEM_OUTPUT_FILE="${CAIMMS_OUTPUT_DIR}/smoke_results.jsonl"
     rm -f "${WORKMEM_OUTPUT_FILE}"
     MODE="SMOKE (1 sample / 152 questions)"
+elif [ -n "${WORKMEM_MAX_SAMPLES:-}" ]; then
+    # SUBSET: caller pinned WORKMEM_MAX_SAMPLES (e.g. =4 -> the ~584-question,
+    # 4-conversation set). Give it its OWN checkpoint so it never collides with
+    # the full run's workmem_iterret_full.jsonl (which resume would otherwise
+    # treat as already-done). Not auto-cleared; archive it yourself between runs.
+    export WORKMEM_OUTPUT_FILE="${CAIMMS_OUTPUT_DIR}/workmem_iterret_n${WORKMEM_MAX_SAMPLES}.jsonl"
+    MODE="SUBSET (${WORKMEM_MAX_SAMPLES} sample(s))"
 else
     export WORKMEM_OUTPUT_FILE="${CAIMMS_OUTPUT_DIR}/workmem_iterret_full.jsonl"
     MODE="FULL (10 samples / 1540 questions)"

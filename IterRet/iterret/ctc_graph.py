@@ -110,6 +110,12 @@ class CueTagContentGraph:
         self._content_emb: Dict[str, object] = {}
         self._cue_emb: Dict[str, object] = {}
         self._tag_emb: Dict[str, object] = {}
+        # EM-LLM-style retrieval structure over CONTENT nodes (node->node, not
+        # query->node): a cached k-NN similarity list per node, and a cached
+        # timeline order for contiguity. Both are retrieval-only and derived at
+        # runtime -- nothing here is persisted, so load() rebuilds them for free.
+        self._content_knn: Dict[str, List[str]] = {}
+        self._episodic_order_cache: Optional[List[str]] = None
         # Corpus statistics for relevance scoring (IDF over content nodes).
         # Built lazily on first rank_*_by_relevance call, invalidated by
         # add_content. Derived entirely from self.contents, so load()
@@ -138,6 +144,8 @@ class CueTagContentGraph:
         self.contents[content_id] = node
         self._df = None   # corpus changed -> any cached IDF is now stale
         self._idf = {}
+        self._content_knn = {}          # corpus changed -> k-NN neighbours stale
+        self._episodic_order_cache = None
         return node
 
     def link(self, cue_id: str, tag: str, content_id: str) -> None:
@@ -458,6 +466,54 @@ class CueTagContentGraph:
         q = self._embedder.encode(query)
         return sorted(content_ids,
                       key=lambda cid: -self._embedder.similarity(q, self._content_embedding(cid)))
+
+    # ------------------------------------------------------------------
+    # EM-LLM-style content-graph retrieval (node->node). Complements the
+    # query->node matching above: given nodes already found relevant, pull
+    # nodes NEAR THEM -- by embedding similarity (spreading activation) or by
+    # timeline adjacency (contiguity). Used as an expansion operator in
+    # nodes.py, flag-gated; not for episode creation.
+    # ------------------------------------------------------------------
+    def _episodic_order(self) -> List[str]:
+        """Episodic content ids in timeline order. Insertion order of
+        self.contents IS build order, and memory_builder adds e1..eN in event
+        order, so this is the timeline without needing to parse ids or times."""
+        if self._episodic_order_cache is None:
+            self._episodic_order_cache = [
+                cid for cid, n in self.contents.items() if n.layer == "episodic"
+            ]
+        return self._episodic_order_cache
+
+    def content_contiguity_neighbors(self, content_id: str, *, window: int = 1) -> List[str]:
+        """Temporally adjacent episodic nodes (EM-LLM contiguity buffer), the
+        +/-``window`` events around ``content_id`` on the timeline. Non-episodic
+        nodes (semantic/topic) have no timeline position and return []."""
+        order = self._episodic_order()
+        try:
+            i = order.index(content_id)
+        except ValueError:
+            return []
+        lo, hi = max(0, i - window), min(len(order), i + window + 1)
+        return [order[j] for j in range(lo, hi) if j != i]
+
+    def content_similarity_neighbors(self, content_id: str, *, k: int = 5) -> List[str]:
+        """Top-``k`` content nodes most similar to ``content_id`` by embedding
+        cosine (EM-LLM-style k-NN over content, node->node). Cached per node;
+        inert (returns []) without an embedder attached."""
+        if not self._embedder or content_id not in self.contents:
+            return []
+        cached = self._content_knn.get(content_id)
+        if cached is None:
+            q = self._content_embedding(content_id)
+            scored: List[Tuple[float, str]] = []
+            for cid in self.contents:
+                if cid == content_id:
+                    continue
+                scored.append((self._embedder.similarity(q, self._content_embedding(cid)), cid))
+            scored.sort(key=lambda pair: pair[0], reverse=True)
+            cached = [cid for _, cid in scored[:20]]  # cache a few extra for reuse
+            self._content_knn[content_id] = cached
+        return cached[:k]
 
     def semantic_fallback_contents(self, query: str, *, top_k: int,
                                    exclude_content_ids: Iterable[str] = ()) -> List[str]:
