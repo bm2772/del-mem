@@ -107,6 +107,7 @@ Retrieval (`IterRet/iterret/nodes.py`):
 Eval / run:
 | var | effect |
 |---|---|
+| `WORKMEM_JUDGE=1` | also score each row with the lenient LLM judge (paraphrase/format-insensitive) as a secondary metric; token-F1 stays primary. One extra graph-LLM call per answered question; writes `judge_correct` per row and prints LLM-JUDGE accuracy (overall + per category) at the end. Robust to judge failures (count False). |
 | `WORKMEM_MAX_SAMPLES=N` | process first N conversations. Via `run_pipeline.sh` this now writes a separate `workmem_iterret_n<N>.jsonl` checkpoint (e.g. =4 → the 584-Q set) |
 | `WORKMEM_OUTPUT_FILE` | eval output path (run_pipeline sets this itself) |
 | `VLLM_PORT` | override if 8000 is taken |
@@ -211,8 +212,10 @@ pkill -f 'vllm.entrypoints.openai.api_server'; sleep 3; lsof -ti:8000 | xargs -r
    durable signal: contiguity helps temporal specifically — but the temporal
    PROMPT lever (below) is ~14× larger. k-NN-alone not separately run; the
    both-run shows its contribution is small and net-negative.
-3. **LLM-judge secondary metric:** `deltamem/.../llm_judge.py` exists but the eval
-   scores token-F1 only. A judge would credit "twice"="2", "Yeah"="Yes",
-   "my daughter"="Melanie's daughter" — separating format artifacts from real
-   misses without any prompt-fitting. Cleanest honest way to show retrieval quality.
+3. **LLM-judge secondary metric — WIRED (`WORKMEM_JUDGE=1`).** Credits
+   "twice"="2", "Yeah"="Yes", "my daughter"="Melanie's daughter" etc., separating
+   format artifacts from real misses without any prompt-fitting. Run it on the
+   584 set (cheap) to quantify how much of the ~29% zero-F1 is format vs. genuine
+   miss. token-F1 remains the reported primary; judge accuracy is the honest
+   "is the retrieval actually finding the answer" number.
 4. **In-domain δ-mem test on Qasper/LongBench** (see §6).

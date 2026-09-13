@@ -17,6 +17,7 @@ from deltamem.workmem.osam_workmem import (
 )
 from deltamem.workmem.evidence_filter import filter_evidence_by_relevance
 from iterret.llm_client import OpenAICompatibleLLMClient
+from iterret.llm_judge import judge_answer
 from iterret.experience_bank import ExperienceBank, build_default_embedding_backend
 from iterret.memory_builder import DialogueTurn, build_ctc_graph_from_dialogue
 from iterret.ctc_graph import CueTagContentGraph
@@ -52,6 +53,13 @@ MAX_SAMPLES = int(os.environ["WORKMEM_MAX_SAMPLES"]) if os.environ.get("WORKMEM_
 # GRAPH_LLM_CHECK_AFTER answered questions are almost all fully fail-open, the
 # graph LLM is dead -- bail immediately instead of grinding through the whole set.
 GRAPH_LLM_CHECK_AFTER = int(os.environ.get("WORKMEM_GRAPH_LLM_CHECK_AFTER", "15"))
+
+# Optional LLM-judge secondary metric (default OFF; token-F1 stays primary). When
+# on, each row also gets a lenient correct/incorrect verdict from the graph LLM
+# (paraphrase/format-insensitive), so "right answer, wrong tokens" cases
+# (first-person, relative dates, "twice" vs "2") separate from real misses. One
+# extra LLM call per answered question; robust to judge failures (counts False).
+JUDGE_ENABLED = os.environ.get("WORKMEM_JUDGE", "0") == "1"
 
 
 
@@ -218,6 +226,7 @@ def main() -> None:
                         "question": question.get("question", ""), "gold_answer": gold_answer_of(question),
                         "category": question.get("category"), "n_evidence_retrieved": 0,
                         "prediction": "", "score": 0.0, "skipped": True, "reason": "graph_build_failed",
+                        **({"judge_correct": False} if JUDGE_ENABLED else {}),
                     }
                     cf.write(json.dumps(entry) + "\n")
                     results.append(entry)
@@ -288,6 +297,7 @@ def main() -> None:
                     "n_evidence_retrieved": 0, "prediction": "", "score": 0.0,
                     "skipped": True, "reason": "no_relevant_evidence",
                     "retrieval": retrieval_diag,
+                    **({"judge_correct": False} if JUDGE_ENABLED else {}),
                 }
                 with open(OUTPUT_FILE, "a") as cf:
                     cf.write(json.dumps(entry) + "\n")
@@ -336,6 +346,16 @@ def main() -> None:
                 "retrieval": retrieval_diag,
                 "osam_contribution": osam_contribution,
             }
+            # Optional LLM-judge secondary metric. Uses the graph vLLM; a judge
+            # failure must never abort the run (the handoff's earlier 500-abort
+            # lesson), so it degrades to False.
+            if JUDGE_ENABLED:
+                try:
+                    entry["judge_correct"] = bool(judge_answer(
+                        q_text, gold_answer_of(question), prediction, question_llm))
+                except Exception as exc:  # noqa: BLE001
+                    print(f"[sample {sample_idx}.{q_idx}] judge failed: {exc}", flush=True)
+                    entry["judge_correct"] = False
             with open(OUTPUT_FILE, "a") as cf:
                 cf.write(json.dumps(entry) + "\n")
             results.append(entry)
@@ -403,6 +423,23 @@ def main() -> None:
         if cat_id in cat_scores:
             sc = cat_scores[cat_id]
             print(f"  [{cat_name}] {sum(sc)/len(sc):.4f}  ({len(sc)} questions)", flush=True)
+
+    # LLM-judge secondary metric (only rows that carry a verdict; old
+    # checkpoint rows predating the judge are excluded from its denominator).
+    judged = [r for r in all_r if "judge_correct" in r]
+    if judged:
+        acc = sum(1 for r in judged if r.get("judge_correct")) / len(judged)
+        print(f"\nLLM-JUDGE accuracy (all {len(judged)} incl. skipped): {acc:.4f}", flush=True)
+        jcat: dict = {}
+        for r in judged:
+            try:
+                jcat.setdefault(int(r.get("category")), []).append(1 if r.get("judge_correct") else 0)
+            except (TypeError, ValueError):
+                continue
+        for cat_id, cat_name in sorted(SCORED_CATEGORY_DISPLAY_NAMES.items()):
+            if cat_id in jcat:
+                v = jcat[cat_id]
+                print(f"  [{cat_name}] {sum(v)/len(v):.4f}  ({len(v)} questions)", flush=True)
 
 
 if __name__ == "__main__":
