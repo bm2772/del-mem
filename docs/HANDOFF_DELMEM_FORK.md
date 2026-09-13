@@ -196,14 +196,21 @@ pkill -f 'vllm.entrypoints.openai.api_server'; sleep 3; lsof -ti:8000 | xargs -r
 1. **Prompt-engineering ablation:** `OSAM_PROMPT_ENGINEERING=1` full run — expect
    TEMPORAL ~0.22→~0.40 and overall likely > 0.4214. Report as labelled ablation,
    keep 0.4142 as the architecture number.
-2. **EM-LLM channels — first measurement (both on, 584 set) HURT: 0.4053 →
-   0.3267**, with 109 `no_relevant_evidence` skips. Root cause: contiguity was
-   UNCAPPED (86 nodes/q), flooding the pool and pushing the relevant cue-gated
-   node out of reflect's fail-open top-6. Fixed in the follow-up commit
-   (`CONTIGUITY_ADD` cap + `EXPAND_MAX_SEEDS` top-seed gating). **Re-measure with
-   the caps, and SEPARATELY** — contiguity-alone then k-NN-alone — not both at
-   once. Prior still stands: contiguity is the safer dialogue bet; k-NN risks
-   open-domain. Watch skips, `open_domain`, and the expand-total diagnostics.
+2. **EM-LLM channels — TESTED, negative. Left default-off; don't re-run.**
+   Measured on the 584 set (4 conv), all vs baseline 0.4053, 0 skips:
+   - contiguity alone: 0.3923 (−0.013). Only gain is TEMPORAL +0.013 (adjacent
+     turns complete temporal answers); MULTI/OPEN/SINGLE all down.
+   - both, capped: 0.3954 (−0.010).
+   - both, uncapped (pre-fix): 0.3267 with 109 `no_relevant_evidence` skips —
+     contiguity flooded at 86 nodes/q; fixed with `CONTIGUITY_ADD` +
+     `EXPAND_MAX_SEEDS`, but even capped it doesn't help.
+   Reason: the cue→tag→content graph + capped top-up already retrieves ~36
+   relevant items/q, so node→node expansion mostly re-surfaces known evidence
+   plus drift and dilutes a 4B/8k answerer. EM-LLM's channels help when they ARE
+   the retrieval over raw context, not as an add-on to a good retriever. The one
+   durable signal: contiguity helps temporal specifically — but the temporal
+   PROMPT lever (below) is ~14× larger. k-NN-alone not separately run; the
+   both-run shows its contribution is small and net-negative.
 3. **LLM-judge secondary metric:** `deltamem/.../llm_judge.py` exists but the eval
    scores token-F1 only. A judge would credit "twice"="2", "Yeah"="Yes",
    "my daughter"="Melanie's daughter" — separating format artifacts from real
