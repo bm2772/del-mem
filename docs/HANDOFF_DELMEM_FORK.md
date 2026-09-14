@@ -46,6 +46,16 @@ is a **prompt-format** gap (see §5), not a retrieval/memory gap. The parallel
 number almost certainly includes date-grounding prompt formatting; the fork's
 0.4142 is on the standard LoCoMo prompt (`OSAM_PROMPT_ENGINEERING=0`).
 
+**Prompt-engineered full run (`OSAM_PROMPT_ENGINEERING=1`): 0.4969** — +0.083 over
+the standard-prompt 0.4142, and past the parallel 0.4214. Per category vs no-PE:
+TEMPORAL 0.222→**0.433** (+0.211, date-grounding), SINGLE 0.507→**0.576** (+0.069,
+first-person suppression + conciseness; avg answer 25.4→11.9 words), MULTI/OPEN
+flat. The gain is **legitimate format alignment, not benchmark-fitting**: the
+anti-abstention rule barely fired (abstain-ish preds 54→39, ~15 questions), so the
+lift is date arithmetic + third-person + conciseness, not forced guessing.
+Report both: **0.4142 = architecture number** (standard prompt), **0.4969 =
+end-to-end system** (PE, disclosed ablation).
+
 Validity of that run was confirmed: rounds/q 4.98, routing majority `explicit`
 (not fail-open), δ_o live on all 1540, evidence 46/q.
 
@@ -194,9 +204,9 @@ pkill -f 'vllm.entrypoints.openai.api_server'; sleep 3; lsof -ti:8000 | xargs -r
 
 ## 8. Open / next steps
 
-1. **Prompt-engineering ablation:** `OSAM_PROMPT_ENGINEERING=1` full run — expect
-   TEMPORAL ~0.22→~0.40 and overall likely > 0.4214. Report as labelled ablation,
-   keep 0.4142 as the architecture number.
+1. **Prompt-engineering ablation — DONE: 0.4969** (see §2). +0.211 temporal,
+   +0.069 single, from legitimate format alignment (dates/first-person/conciseness),
+   not the anti-abstention hack. Report 0.4142 (architecture) + 0.4969 (system).
 2. **EM-LLM channels — TESTED, negative. Left default-off; don't re-run.**
    Measured on the 584 set (4 conv), all vs baseline 0.4053, 0 skips:
    - contiguity alone: 0.3923 (−0.013). Only gain is TEMPORAL +0.013 (adjacent
