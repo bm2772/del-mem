@@ -11,8 +11,8 @@
 #   VLLM_PORT=8002 bash scripts/run_longbench.sh
 #   LB_SEGMENTATION=surprise bash scripts/run_longbench.sh      # EM-LLM surprise events
 #                                                               # instead of ~180-word passages
-#   LB_EVIDENCE_LAYERS=episodic ARMS=combined bash ...           # passages only, no extracted facts
-#   LB_EVIDENCE_ORDER=document ARMS=combined bash ...            # evidence in paper order
+#   LB_EVIDENCE_LAYERS=all LB_EVIDENCE_ORDER=relevance ...       # original evidence format
+#                                                               # (default: passages only, paper order)
 #   VLLM_GPU=2 EVAL_GPU=3 VLLM_PORT=8003 bash ...                # second run in parallel on a 4-GPU box
 #
 # Arms: combined (S = prompt = IterRet evidence), hybrid (S = whole document,
@@ -30,9 +30,12 @@ export LB_SEGMENTATION="${LB_SEGMENTATION:-fixed}"
 # fixed keeps the original filenames; other segmentations get their own files
 # (and their own graph cache -- see eval_longbench_iterret.py).
 SEG_TAG="$([ "${LB_SEGMENTATION}" = "fixed" ] || echo "_${LB_SEGMENTATION}")"
-# Evidence presentation ablations; defaults keep the original filenames.
-export LB_EVIDENCE_LAYERS="${LB_EVIDENCE_LAYERS:-all}"
-export LB_EVIDENCE_ORDER="${LB_EVIDENCE_ORDER:-relevance}"
+# Evidence presentation. Default (since 2026-10-09): passages only, in document
+# order -- files get an _episodic_documentorder suffix. The original format
+# (facts included, relevance order) is LB_EVIDENCE_LAYERS=all LB_EVIDENCE_ORDER=relevance
+# and keeps the original, suffix-free filenames.
+export LB_EVIDENCE_LAYERS="${LB_EVIDENCE_LAYERS:-episodic}"
+export LB_EVIDENCE_ORDER="${LB_EVIDENCE_ORDER:-document}"
 [ "${LB_EVIDENCE_LAYERS}" = "all" ] || SEG_TAG="${SEG_TAG}_${LB_EVIDENCE_LAYERS}"
 [ "${LB_EVIDENCE_ORDER}" = "relevance" ] || SEG_TAG="${SEG_TAG}_${LB_EVIDENCE_ORDER}order"
 export LB_DATA="${LB_DATA:-${CAIMMS_OUTPUT_DIR}/longbench_data}"

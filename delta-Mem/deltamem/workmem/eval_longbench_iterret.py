@@ -48,8 +48,8 @@ from deltamem.workmem.longctx_data import (
     MAX_NEW_TOKENS, doc_key, format_query, load_longbench, qa_f1_score,
 )
 from deltamem.workmem.longctx_retrieval import (
-    cap_evidence_by_tokens, get_or_build_doc_graph, graph_cache_path, make_backend, retrieve_evidence,
-    select_evidence,
+    DEFAULT_EVIDENCE_LAYERS, DEFAULT_EVIDENCE_ORDER, evidence_items, get_or_build_doc_graph,
+    graph_cache_path, make_backend, present_evidence, retrieve_evidence,
 )
 from deltamem.workmem.osam_workmem import answer_with_modes
 from iterret.llm_client import OpenAICompatibleLLMClient
@@ -85,11 +85,12 @@ MAX_CONSECUTIVE_FAILURES = int(os.environ.get("WORKMEM_MAX_CONSECUTIVE_FAILURES"
 # Set it to the training write budget when comparing a retrained adapter, and
 # use the SAME cap for the released adapter so the comparison stays fair.
 MAX_EVIDENCE_TOKENS = int(os.environ.get("LB_MAX_EVIDENCE_TOKENS", "0"))
-# Evidence presentation ablations (see longctx_retrieval.select_evidence):
-#   LB_EVIDENCE_LAYERS = all (default) | episodic  -- drop LLM-extracted semantic facts
-#   LB_EVIDENCE_ORDER  = relevance (default) | document -- paper order instead of relevance
-EVIDENCE_LAYERS = os.environ.get("LB_EVIDENCE_LAYERS", "all")
-EVIDENCE_ORDER = os.environ.get("LB_EVIDENCE_ORDER", "relevance")
+# Evidence presentation (longctx_retrieval.present_evidence). Default since
+# 2026-10-09: passages only, in document order -- it matched the whole paper on
+# Qasper where relevance order + extracted facts lost 0.10. Old behaviour:
+# LB_EVIDENCE_LAYERS=all LB_EVIDENCE_ORDER=relevance.
+EVIDENCE_LAYERS = os.environ.get("LB_EVIDENCE_LAYERS", DEFAULT_EVIDENCE_LAYERS)
+EVIDENCE_ORDER = os.environ.get("LB_EVIDENCE_ORDER", DEFAULT_EVIDENCE_ORDER)
 
 if OSAM_MODE not in ("combined", "hybrid", "vanilla"):
     raise SystemExit(f"[FATAL] unknown WORKMEM_OSAM_MODE={OSAM_MODE!r} (expected combined | hybrid | vanilla)")
@@ -248,10 +249,12 @@ def main() -> None:
         try:
             evidence = retrieve_evidence(question, graph, backend, llm, diag=diag)
             diag["n_evidence_uncapped"] = len(evidence)
-            evidence = cap_evidence_by_tokens(evidence, tokenizer, MAX_EVIDENCE_TOKENS)
-            evidence, diag["final_evidence_ids"] = select_evidence(
-                evidence, diag.get("final_evidence_ids", [])[:len(evidence)], graph,
-                layers=EVIDENCE_LAYERS, order=EVIDENCE_ORDER)
+            items = present_evidence(
+                evidence_items(evidence, diag.get("final_evidence_ids", []), graph),
+                layers=EVIDENCE_LAYERS, order=EVIDENCE_ORDER,
+                tokenizer=tokenizer, max_tokens=MAX_EVIDENCE_TOKENS)
+            evidence = [it[0] for it in items]
+            diag["final_evidence_ids"] = [it[1] for it in items]
         except Exception as exc:  # noqa: BLE001
             # e.g. vLLM down: NOT "no evidence" -- leave the row for the next run.
             print(f"[{idx}] IterRet FAILED: {exc}", flush=True)

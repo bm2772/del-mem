@@ -95,29 +95,51 @@ def retrieve_evidence(question: str, graph: CueTagContentGraph, backend: Embeddi
     return evidence
 
 
-def select_evidence(evidence: List[str], ids: List[str], graph: CueTagContentGraph, *,
-                    layers: str = "all", order: str = "relevance") -> Tuple[List[str], List[str]]:
-    """Post-retrieval presentation ablations (eval only; defaults = no-op).
+# Default evidence presentation. On LongBench Qasper (50 docs) passages-only in
+# paper order matched the whole paper (0.4623 vs vanilla 0.4581, 36/50 answers
+# identical) while relevance order + LLM-extracted facts lost 0.10 (0.3554).
+DEFAULT_EVIDENCE_LAYERS = "episodic"
+DEFAULT_EVIDENCE_ORDER = "document"
 
-    layers: "all" | "episodic" -- "episodic" drops the semantic-fact nodes
-            (LLM-extracted sentences) and keeps only the document's own passages.
-    order:  "relevance" (as retrieved) | "document" -- reorder by position in the
-            graph: passages in document order, then semantic facts in extraction
-            order (extraction runs passage by passage, so also roughly document
-            order). Apply AFTER any token cap, so the cap still keeps the most
-            relevant items and only their presentation order changes.
+
+def evidence_items(evidence: List[str], ids: List[str], graph: CueTagContentGraph) -> List[tuple]:
+    """(text, content_id, layer, position-in-graph) per item, relevance order kept.
+    Position = insertion order: passages in document order, then semantic facts
+    in extraction order (extraction runs passage by passage)."""
+    position = {cid: n for n, cid in enumerate(graph.contents)}
+    out = []
+    for text, cid in zip(evidence, ids):
+        node = graph.contents.get(cid)
+        out.append((text, cid, node.layer if node is not None else "?", position.get(cid, len(position))))
+    return out
+
+
+def present_evidence(items: List[tuple], *, layers: str = DEFAULT_EVIDENCE_LAYERS,
+                     order: str = DEFAULT_EVIDENCE_ORDER, tokenizer=None,
+                     max_tokens: int = 0) -> List[tuple]:
+    """How retrieved evidence is shown to the model -- shared by the eval and by
+    the SFT-episode builder so training and evaluation see the same format.
+
+    items: relevance-sorted (text, id, layer, position) tuples (evidence_items).
+    Steps, in this order:
+      1. layers="episodic" drops semantic-fact nodes (LLM-extracted sentences);
+         "all" keeps them.
+      2. optional token cap (max_tokens > 0) keeps the MOST RELEVANT items.
+      3. order="document" re-sorts the survivors by position in the document;
+         "relevance" keeps retrieval order.
     """
-    pairs = list(zip(evidence, ids))
     if layers == "episodic":
-        pairs = [(t, i) for t, i in pairs if i in graph.contents and graph.contents[i].layer == "episodic"]
+        items = [it for it in items if it[2] == "episodic"]
     elif layers != "all":
         raise ValueError(f"unknown evidence layers {layers!r}")
+    if max_tokens > 0 and tokenizer is not None:
+        # cap_evidence_by_tokens keeps a prefix (most relevant first)
+        items = items[:len(cap_evidence_by_tokens([it[0] for it in items], tokenizer, max_tokens))]
     if order == "document":
-        position = {cid: n for n, cid in enumerate(graph.contents)}
-        pairs.sort(key=lambda p: position.get(p[1], len(position)))
+        items = sorted(items, key=lambda it: it[3])
     elif order != "relevance":
         raise ValueError(f"unknown evidence order {order!r}")
-    return [t for t, _ in pairs], [i for _, i in pairs]
+    return items
 
 
 def cap_evidence_by_tokens(evidence: List[str], tokenizer, max_tokens: int) -> List[str]:

@@ -16,10 +16,11 @@ Each output line (delta_sft_experimental --train-file):
 Train with --episode-recent-messages 1 so the evidence messages are the write
 history and the query is the read turn (see scripts/train_iterret_osam.sh).
 
-Second step, `prepare`, turns those rows into the trainer's input file: drops
-skipped rows, keeps only "messages", and caps the evidence to a token budget
-from the MOST relevant end (the trainer truncates write history from the front,
-which would otherwise drop the best evidence):
+Second step, `prepare`, turns those rows into the trainer's input file with the
+SAME evidence presentation the eval uses (longctx_retrieval.present_evidence;
+default: passages only, capped to the token budget from the most relevant end,
+then put back in document order). The trainer truncates write history from the
+front, so the cap has to happen here:
   python -m deltamem.workmem.build_iterret_sft_data prepare \
       --in sft_iterret_qasper.jsonl --out sft_train.jsonl \
       --tokenizer <model dir> --max-write-tokens 1536
@@ -45,7 +46,8 @@ from deltamem.workmem.longctx_data import (
     format_query, load_longbench, load_qasper_raw, longbench_overlap, normalize_answer,
 )
 from deltamem.workmem.longctx_retrieval import (
-    cap_evidence_by_tokens, get_or_build_doc_graph, make_backend, retrieve_evidence,
+    DEFAULT_EVIDENCE_LAYERS, DEFAULT_EVIDENCE_ORDER, evidence_items, get_or_build_doc_graph,
+    make_backend, present_evidence, retrieve_evidence,
 )
 from iterret.llm_client import OpenAICompatibleLLMClient
 
@@ -82,8 +84,9 @@ def _process_paper(paper: dict, done: set, backend, stats: dict) -> None:
         return
     graph, _, _ = get_or_build_doc_graph(paper["context"], f"qasper_{paper['paper_id']}", GRAPH_CACHE, llm)
     for qa in pending:
+        diag: dict = {}
         try:
-            evidence = retrieve_evidence(qa["question"], graph, backend, llm)
+            evidence = retrieve_evidence(qa["question"], graph, backend, llm, diag=diag)
         except Exception as exc:  # noqa: BLE001
             print(f"[{paper['paper_id']}] IterRet failed on {qa['question_id']}: {exc}", flush=True)
             continue
@@ -95,6 +98,11 @@ def _process_paper(paper: dict, done: set, backend, stats: dict) -> None:
             # None for unanswerable / yes-no targets: they never occur verbatim.
             row["answer_in_evidence"] = (None if answer in ("unanswerable", "yes", "no")
                                          else normalize_answer(answer) in joined)
+            # Relevance-sorted and UNFILTERED here; `prepare` applies the eval's
+            # presentation (present_evidence) using this per-item metadata, so the
+            # format can change without re-running retrieval.
+            row["evidence_meta"] = [[cid, layer, pos] for _, cid, layer, pos
+                                    in evidence_items(evidence, diag.get("final_evidence_ids", []), graph)]
             row["messages"] = ([{"role": "user", "content": e} for e in evidence]
                                + [{"role": "user", "content": format_query("qasper", qa["question"])},
                                   {"role": "assistant", "content": answer}])
@@ -148,7 +156,8 @@ def main() -> None:
 
 
 def prepare(in_path: str, out_path: str, tokenizer_path: str, max_write_tokens: int,
-            drop_unanswerable: bool = False) -> None:
+            drop_unanswerable: bool = False, layers: str = DEFAULT_EVIDENCE_LAYERS,
+            order: str = DEFAULT_EVIDENCE_ORDER) -> None:
     from transformers import AutoTokenizer
 
     tok = AutoTokenizer.from_pretrained(tokenizer_path, local_files_only=True)
@@ -164,15 +173,24 @@ def prepare(in_path: str, out_path: str, tokenizer_path: str, max_write_tokens: 
                 if drop_unanswerable:
                     continue
             evidence = [m["content"] for m in row["messages"][:-2]]
-            capped = cap_evidence_by_tokens(evidence, tok, max_write_tokens)
+            meta = row.get("evidence_meta")
+            if meta is None or len(meta) != len(evidence):
+                raise SystemExit("[prepare] rows lack evidence_meta (built before 2026-10-09) -- "
+                                 "rebuild them with build_sft_data.sh")
+            items = [(t, m[0], m[1], m[2]) for t, m in zip(evidence, meta)]
+            # Same function, same order of steps as eval_longbench_iterret.
+            kept = present_evidence(items, layers=layers, order=order,
+                                    tokenizer=tok, max_tokens=max_write_tokens)
             n_items_before += len(evidence)
-            n_items_after += len(capped)
-            messages = [{"role": "user", "content": e} for e in capped] + row["messages"][-2:]
+            n_items_after += len(kept)
+            if not kept:
+                continue  # e.g. only semantic facts were retrieved
+            messages = [{"role": "user", "content": it[0]} for it in kept] + row["messages"][-2:]
             fout.write(json.dumps({"messages": messages}) + "\n")
             n_out += 1
     print(f"[prepare] {n_out}/{n_in} episodes -> {out_path} | evidence items "
           f"{n_items_before / max(1, n_out):.1f} -> {n_items_after / max(1, n_out):.1f} per episode "
-          f"(budget {max_write_tokens} tokens) | unanswerable targets {n_unans}"
+          f"(budget {max_write_tokens} tokens, {layers}/{order}) | unanswerable targets {n_unans}"
           f"{' (dropped)' if drop_unanswerable else ''}")
 
 
@@ -189,7 +207,10 @@ if __name__ == "__main__":
         ap.add_argument("--tokenizer", required=True)
         ap.add_argument("--max-write-tokens", type=int, default=1536)
         ap.add_argument("--drop-unanswerable", action="store_true")
+        ap.add_argument("--evidence-layers", default=DEFAULT_EVIDENCE_LAYERS, choices=["episodic", "all"])
+        ap.add_argument("--evidence-order", default=DEFAULT_EVIDENCE_ORDER, choices=["document", "relevance"])
         a = ap.parse_args()
-        prepare(a.in_path, a.out, a.tokenizer, a.max_write_tokens, a.drop_unanswerable)
+        prepare(a.in_path, a.out, a.tokenizer, a.max_write_tokens, a.drop_unanswerable,
+                a.evidence_layers, a.evidence_order)
     else:
         main()
