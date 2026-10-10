@@ -9,7 +9,7 @@ import math
 import os
 import shutil
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 
 import torch
@@ -2779,8 +2779,10 @@ def main() -> None:
         memory_write_proposals_per_message=args.memory_write_proposals_per_message,
     )
     if args.init_adapter_dir is not None:
-        delta_config = HFDeltaMemConfig.from_pretrained(args.init_adapter_dir)
-        delta_config.memory_write_granularity = args.memory_write_granularity
+        # HFDeltaMemConfig is frozen; replace() rebuilds it (and re-runs its
+        # __post_init__ normalisation) with only the granularity changed.
+        delta_config = replace(HFDeltaMemConfig.from_pretrained(args.init_adapter_dir),
+                               memory_write_granularity=args.memory_write_granularity)
     replaced = attach_delta_mem(model, delta_config)
     if args.init_adapter_dir is not None:
         load_delta_mem_adapter(model, args.init_adapter_dir)
