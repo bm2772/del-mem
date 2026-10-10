@@ -2881,6 +2881,9 @@ def main() -> None:
         context_ablation_state_only_prob=args.context_ablation_state_only_prob,
     )
     trainer.log_delta_debug_stats = args.log_delta_debug_stats
+    if local_rank in (-1, 0):
+        print(f"memory_loss_mode={args.memory_loss_mode} context_ablation_mode={args.context_ablation_mode} "
+              f"(no_state={args.context_ablation_no_state_prob}, state_only={args.context_ablation_state_only_prob})")
     trainer.train()
     trainer.accelerator.wait_for_everyone()
 
@@ -2898,7 +2901,8 @@ def main() -> None:
             "assistant_loss_mode": args.assistant_loss_mode,
             "episode_recent_messages": args.episode_recent_messages,
             "max_write_length": args.max_write_length,
-            "memory_loss_mode": "context_dropout_ce",
+            "memory_loss_mode": args.memory_loss_mode,
+            "init_adapter_dir": None if args.init_adapter_dir is None else str(args.init_adapter_dir),
             "memory_write_source": args.memory_write_source,
             "memory_write_granularity": args.memory_write_granularity,
             "delta_o_rmsnorm": args.delta_o_rmsnorm,
