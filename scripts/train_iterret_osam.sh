@@ -16,6 +16,8 @@
 #   bash scripts/train_iterret_osam.sh
 #   GPU=0 EPOCHS=3 LR=5e-5 bash scripts/train_iterret_osam.sh
 #   MAX_WRITE_TOKENS=6144 bash scripts/train_iterret_osam.sh   # A100-80GB: near-full evidence
+#
+# Memory on a 24 GB 4090: 1536 write tokens OOM'd (22.5 GB); use 1024.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -51,6 +53,8 @@ nvidia-smi --query-gpu=index,memory.used,memory.total --format=csv,noheader | se
 
 mkdir -p "${OUT_DIR}"
 cd "${CAIMMS_ROOT}/delta-Mem"
+# Less fragmentation: a 1536-token run OOM'd at 22.5 GB with ~570 MB reserved-but-unused.
+export PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}"
 CUDA_VISIBLE_DEVICES="${GPU}" python3 -u -m deltamem.train.delta_sft_experimental \
     --model-path "${CAIMMS_MODEL_PATH}" \
     --train-file "${TRAIN_FILE}" \
