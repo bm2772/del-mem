@@ -1,0 +1,294 @@
+================ qasper arm=combined segmentation=fixed adapter=/home/Julian/BN5212/caimms/models/delta-mem-iterret-w1024 -> /home/Julian/BN5212/caimms/outputs/lb_qasper_combined_iterret_w1024_cap1024_episodic_documentorder_n50.jsonl
+==============================================
+  C-AIMMS eval_longbench_iterret -> lb_qasper_combined_iterret_w1024_cap1024_episodic_documentorder_n50.jsonl
+  run  : 20261011_042706_784182 on megalab at Sun 11 Oct 2026 04:27:07 AM +08
+  out  : /home/Julian/BN5212/caimms/outputs/lb_qasper_combined_iterret_w1024_cap1024_episodic_documentorder_n50.jsonl
+  logs : /home/Julian/BN5212/caimms/outputs/run_20261011_042706_784182.log
+==============================================
+GPU 0: 23791 MiB free -- OK
+GPU 1: 23064 MiB free -- OK
+GPUs (vLLM on 0, eval on 1):
+  0, NVIDIA GeForce RTX 4090, 420 MiB, 24564 MiB
+  1, NVIDIA GeForce RTX 4090, 1144 MiB, 24564 MiB
+  NOTE: 2 compute process(es) already on these GPUs:
+    721507, /home/kartik/.local/gromacs-2024.4-cuda/bin/gmx, 402 MiB
+    721625, /home/kartik/.local/gromacs-2024.4-cuda/bin/gmx, 402 MiB
+  Continuing in 10s -- ctrl-c to abort.
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8002 is free...
+      port 8002 free.
+[1/3] Starting vLLM on GPU 0 (port 8002)...
+      pid 784406, log /home/Julian/BN5212/caimms/outputs/server_20261011_042706_784182.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 784406, model verified).
+[3/3] Starting eval on GPU 1...
+[init] task=qasper mode=combined max_samples=50 out=/home/Julian/BN5212/caimms/outputs/lb_qasper_combined_iterret_w1024_cap1024_episodic_documentorder_n50.jsonl
+[init] adapter=/home/Julian/BN5212/caimms/models/delta-mem-iterret-w1024 graph_cache=/home/Julian/BN5212/caimms/outputs/lb_graph_cache/qasper max_evidence_tokens=1024 evidence=episodic/document
+[init] 50 rows, 0 already done, 50 to run
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.11it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.19it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.75it/s]
+[0] F1=0.364 n_ev=4/14 osam=0.0414 pred='The ground truth for fake news is established through manual annotatio' gold='Ground truth is not established in the p'
+[1] F1=0.375 n_ev=3/12 osam=0.0405 pred='GhostVLAD is an extension of NetVLAD that adds ghost clusters to absor' gold='extension of the NetVLAD, adds Ghost clu'
+[2] F1=0.000 n_ev=2/14 osam=0.0397 pred='0.028' gold='the attention model, MDREA, also outperf'
+[3] F1=0.571 n_ev=3/11 osam=0.0419 pred='context tweets' gold='using tweets that one has replied or quo'
+[4] F1=1.000 n_ev=3/18 osam=0.0408 pred='FoxNews, CNN, ESPN, New York Times, Time magazine, Huffington Post Wei' gold='FoxNews, CNN, ESPN, New York Times, Time'
+[5] F1=0.000 n_ev=3/18 osam=0.0397 pred='unanswerable' gold='Yes'
+[6] F1=0.125 n_ev=3/20 osam=0.041 pred='extrinsic evaluation' gold='Answer with content missing: (Evaluation'
+[7] F1=0.333 n_ev=2/20 osam=0.04 pred='CNN/DailyMail, NYT, and XSum' gold='CNN/DailyMail news highlights, New York '
+[8] F1=0.069 n_ev=2/11 osam=0.04 pred='It captures textual entailment and asymmetry, unlike previous approach' gold='GM$\\_$KL achieves better correlation tha'
+[9] F1=0.400 n_ev=4/20 osam=0.0409 pred='A greedy ensemble formed by averaging predictions from selected models' gold='simply averaging the predictions from th'
+[10] F1=0.923 n_ev=3/16 osam=0.0413 pred='The Friends TV sitcom and Facebook messenger chats.' gold='Friends TV sitcom, Facebook messenger ch'
+[11] F1=1.000 n_ev=2/9 osam=0.0406 pred='English' gold='English'
+[12] F1=1.000 n_ev=4/12 osam=0.042 pred='IMDb dataset of movie reviews' gold='IMDb dataset of movie reviews'
+[13] F1=0.000 n_ev=2/25 osam=0.0408 pred='unanswerable' gold='F1 scores of 85.99 on the DL-PS data,  7'
+[14] F1=0.000 n_ev=3/16 osam=0.0414 pred='yes' gold='No'
+[15] F1=0.167 n_ev=3/63 osam=0.0416 pred='datasets of intents and trees of intents' gold='Custom dataset with user questions; set '
+[16] F1=0.000 n_ev=4/49 osam=0.0415 pred='unanswerable' gold='Energy with accuracy of 0.538'
+[17] F1=0.667 n_ev=3/17 osam=0.0415 pred='RNN-based NMT, Transformer-NMT, and SMT' gold='RNN-based NMT model, Transformer-NMT'
+[18] F1=0.913 n_ev=3/17 osam=0.042 pred='(1) a regularization term associated with neutral features; (2) the ma' gold='a regularization term associated with ne'
+[19] F1=0.200 n_ev=3/23 osam=0.0412 pred='SVM, CNN, RCNN, ILP, CRF, PSL' gold='SVM with unigram, bigram, and trigram fe'
+[20] F1=0.000 n_ev=3/13 osam=0.0411 pred='improved state-of-the-art performance' gold='They decrease MAE in 0.34'
+[21] F1=0.150 n_ev=2/23 osam=0.0392 pred='Their model improves interpretability by allowing heads to be more con' gold='the attention heads in the proposed adap'
+[22] F1=0.000 n_ev=3/18 osam=0.0409 pred='The baseline was the context-agnostic translation.' gold=' MT system on the data released by BIBRE'
+[23] F1=0.500 n_ev=2/16 osam=0.0407 pred='XNLI test accuracy, LAS (Lexicalized Attachment Score)' gold='translation probabilities, Labeled Attac'
+[24] F1=0.400 n_ev=3/22 osam=0.0416 pred='the attention module is pretrained on the MT dataset' gold='the model is pre-trained on CTC-based AS'
+[25] F1=1.000 n_ev=3/17 osam=0.041 pred='unanswerable' gold='Unanswerable'
+[26] F1=0.333 n_ev=3/11 osam=0.0414 pred='The encoder has a single LSTM layer.' gold='LSTM'
+[27] F1=1.000 n_ev=2/28 osam=0.0393 pred='yes' gold='Unanswerable'
+[28] F1=1.000 n_ev=2/8 osam=0.0411 pred='unanswerable' gold='Unanswerable'
+[29] F1=0.333 n_ev=3/19 osam=0.0416 pred='over 20K American users' gold='22,880 users'
+[30] F1=0.432 n_ev=3/12 osam=0.0423 pred='BLEU-1, BLEU-4, user matching accuracy (UMA), mean reciprocal rank (MR' gold='Byte-Pair Encoding perplexity  (BPE PPL)'
+[31] F1=0.000 n_ev=3/16 osam=0.0411 pred='unanswerable' gold='(1) the time the patient has been experi'
+[32] F1=0.000 n_ev=4/20 osam=0.0407 pred='unanswerable' gold='57,505 sentences'
+[33] F1=0.250 n_ev=3/23 osam=0.0422 pred='WMT 2014 English → German' gold='four machine translation tasks: German -'
+[34] F1=0.000 n_ev=3/17 osam=0.0394 pred='unanswerable' gold='5 percent points.'
+[35] F1=1.000 n_ev=3/37 osam=0.0415 pred='unanswerable' gold='Unanswerable'
+[36] F1=0.000 n_ev=3/11 osam=0.0397 pred='yes' gold='No'
+[37] F1=0.786 n_ev=3/10 osam=0.0404 pred='The Nguni languages (zul, xho, nbl, ssw) and the Sotho languages (nso,' gold='Nguni languages (zul, xho, nbl, ssw), So'
+[38] F1=0.000 n_ev=4/20 osam=0.0409 pred='6-layers, 9-layers, 2-layers, 8-layers sMBR models, CE models' gold='Unidirectional LSTM networks with 2, 6, '
+[39] F1=0.364 n_ev=2/19 osam=0.0404 pred='29,794 articles' gold='a sample of  29,794 wikipedia articles a'
+[40] F1=0.216 n_ev=3/25 osam=0.0402 pred='A group of 50 native people who were well-versed in both English and T' gold='50 human annotators ranked a random samp'
+[41] F1=0.000 n_ev=3/21 osam=0.0391 pred='no' gold='Yes'
+[42] F1=0.448 n_ev=3/9 osam=0.0417 pred='by measuring the retention rate of tokens and the fraction of sentence' gold='by training an autocomplete system on 50'
+[43] F1=0.333 n_ev=2/14 osam=0.0402 pred='overall accuracy' gold='Precision, Recall, F-measure, accuracy'
+[44] F1=0.211 n_ev=3/23 osam=0.0419 pred='The source domain is a domain with sufficient labeled data, and the ta' gold='Book, electronics, beauty, music, IMDB, '
+[45] F1=0.300 n_ev=3/16 osam=0.0407 pred='LSTM, QRNN, NAS' gold='Variational LSTM, CharCNN, Pointer Senti'
+[46] F1=0.211 n_ev=3/8 osam=0.0409 pred='Embedding Layer, Word/character embedding, extra handcrafted feature e' gold='Embedding Layer, Neural Network Layers, '
+[47] F1=0.118 n_ev=3/15 osam=0.0408 pred='Wiktionary data' gold='the Carnegie Mellon Pronouncing Dictiona'
+[48] F1=0.056 n_ev=3/10 osam=0.0422 pred='BERT, RoBERTa, XLNet' gold='varied from Maximum Entropy Classifiers '
+[49] F1=0.375 n_ev=3/18 osam=0.04 pred='English, Spanish, Finnish, and 14 other languages (total of 15 languag' gold='English\nFrench\nSpanish\nGerman\nGreek\nBulg'
+============================================================
+qasper | mode=combined | segmentation=fixed | evidence=episodic/document | adapter=/home/Julian/BN5212/caimms/models/delta-mem-iterret-w1024
+F1 (all 50):            0.3584
+F1 (answered 50):        0.3584
+  gold unanswerable (4): 1.0000
+  gold answerable   (46): 0.3027
+skipped (no evidence): 0
+============================================================
+==============================================
+  Done at Sun 11 Oct 2026 04:56:19 AM +08 | exit 0
+  Rows written: 50
+  Results: /home/Julian/BN5212/caimms/outputs/lb_qasper_combined_iterret_w1024_cap1024_episodic_documentorder_n50.jsonl
+==============================================
+Stopping vLLM (pid 784406)...
+
+================ summary (qasper, iterret_w1024_cap1024, fixed)
+ combined: n=50  F1=0.3584  skipped=0  evidence/q=2.9  units/doc=18.5
+================ qasper arm=combined segmentation=fixed adapter=/home/Julian/BN5212/caimms/models/delta-mem-adapter -> /home/Julian/BN5212/caimms/outputs/lb_qasper_combined_released_cap1024_episodic_documentorder_n50.jsonl
+==============================================
+  C-AIMMS eval_longbench_iterret -> lb_qasper_combined_released_cap1024_episodic_documentorder_n50.jsonl
+  run  : 20261011_045621_787230 on megalab at Sun 11 Oct 2026 04:56:21 AM +08
+  out  : /home/Julian/BN5212/caimms/outputs/lb_qasper_combined_released_cap1024_episodic_documentorder_n50.jsonl
+  logs : /home/Julian/BN5212/caimms/outputs/run_20261011_045621_787230.log
+==============================================
+GPU 0: 23791 MiB free -- OK
+GPU 1: 23065 MiB free -- OK
+GPUs (vLLM on 0, eval on 1):
+  0, NVIDIA GeForce RTX 4090, 420 MiB, 24564 MiB
+  1, NVIDIA GeForce RTX 4090, 1144 MiB, 24564 MiB
+  NOTE: 2 compute process(es) already on these GPUs:
+    721507, /home/kartik/.local/gromacs-2024.4-cuda/bin/gmx, 402 MiB
+    721625, /home/kartik/.local/gromacs-2024.4-cuda/bin/gmx, 402 MiB
+  Continuing in 10s -- ctrl-c to abort.
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8002 is free...
+      port 8002 free.
+[1/3] Starting vLLM on GPU 0 (port 8002)...
+      pid 787436, log /home/Julian/BN5212/caimms/outputs/server_20261011_045621_787230.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 787436, model verified).
+[3/3] Starting eval on GPU 1...
+[init] task=qasper mode=combined max_samples=50 out=/home/Julian/BN5212/caimms/outputs/lb_qasper_combined_released_cap1024_episodic_documentorder_n50.jsonl
+[init] adapter=/home/Julian/BN5212/caimms/models/delta-mem-adapter graph_cache=/home/Julian/BN5212/caimms/outputs/lb_graph_cache/qasper max_evidence_tokens=1024 evidence=episodic/document
+[init] 50 rows, 0 already done, 50 to run
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.11it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.18it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.74it/s]
+[0] F1=0.400 n_ev=4/14 osam=0.0323 pred='The ground truth for fake news is established through manual annotatio' gold='Ground truth is not established in the p'
+[1] F1=0.296 n_ev=3/12 osam=0.0316 pred='GhostVLAD adds ghost clusters to NetVLAD to absorb noisy or irrelevant' gold='extension of the NetVLAD, adds Ghost clu'
+[2] F1=0.000 n_ev=2/14 osam=0.031 pred='0.028' gold='the attention model, MDREA, also outperf'
+[3] F1=0.364 n_ev=3/11 osam=0.033 pred='Context tweets and self-matching attention mechanism' gold='using tweets that one has replied or quo'
+[4] F1=1.000 n_ev=3/18 osam=0.0319 pred='FoxNews, CNN, ESPN, New York Times, Time magazine, Huffington Post Wei' gold='FoxNews, CNN, ESPN, New York Times, Time'
+[5] F1=0.000 n_ev=3/18 osam=0.031 pred='unanswerable' gold='Yes'
+[6] F1=0.125 n_ev=3/20 osam=0.0322 pred='Extrinsic evaluation' gold='Answer with content missing: (Evaluation'
+[7] F1=0.333 n_ev=2/20 osam=0.0312 pred='CNN/DailyMail, NYT, and XSum' gold='CNN/DailyMail news highlights, New York '
+[8] F1=0.261 n_ev=2/11 osam=0.0312 pred='It captures textual entailment and asymmetry better than previous appr' gold='GM$\\_$KL achieves better correlation tha'
+[9] F1=0.533 n_ev=4/20 osam=0.0319 pred='Averaging predictions from selected models using a greedy algorithm.' gold='simply averaging the predictions from th'
+[10] F1=0.632 n_ev=3/16 osam=0.0323 pred='The sources of the datasets are the scripts of the Friends TV sitcom a' gold='Friends TV sitcom, Facebook messenger ch'
+[11] F1=1.000 n_ev=2/9 osam=0.0317 pred='English' gold='English'
+[12] F1=0.667 n_ev=4/12 osam=0.0329 pred='IMDb dataset' gold='IMDb dataset of movie reviews'
+[13] F1=0.000 n_ev=2/25 osam=0.0318 pred='unanswerable' gold='F1 scores of 85.99 on the DL-PS data,  7'
+[14] F1=0.000 n_ev=3/16 osam=0.0325 pred='Yes' gold='No'
+[15] F1=0.167 n_ev=3/63 osam=0.0326 pred='datasets of intents and trees of intents' gold='Custom dataset with user questions; set '
+[16] F1=0.000 n_ev=4/49 osam=0.0325 pred='unanswerable' gold='Energy with accuracy of 0.538'
+[17] F1=0.750 n_ev=3/17 osam=0.0325 pred='RNN-based NMT and Transformer-NMT' gold='RNN-based NMT model, Transformer-NMT'
+[18] F1=0.882 n_ev=3/17 osam=0.0327 pred='neutral features, maximum entropy of class distribution, KL divergence' gold='a regularization term associated with ne'
+[19] F1=0.200 n_ev=3/23 osam=0.0322 pred='SVM, CNN, RCNN, ILP, CRF, PSL' gold='SVM with unigram, bigram, and trigram fe'
+[20] F1=0.000 n_ev=3/13 osam=0.032 pred='improved state-of-the-art performance' gold='They decrease MAE in 0.34'
+[21] F1=0.261 n_ev=2/23 osam=0.0304 pred='Sparsity allows for more confident and focused attention assignments.' gold='the attention heads in the proposed adap'
+[22] F1=0.000 n_ev=3/18 osam=0.032 pred='The baseline was the context-agnostic translation.' gold=' MT system on the data released by BIBRE'
+[23] F1=0.250 n_ev=2/16 osam=0.0317 pred='XLNI and LAS' gold='translation probabilities, Labeled Attac'
+[24] F1=0.400 n_ev=3/22 osam=0.0326 pred='The attention module is pretrained on the MT dataset.' gold='the model is pre-trained on CTC-based AS'
+[25] F1=0.000 n_ev=3/17 osam=0.0324 pred='gaze based features' gold='Unanswerable'
+[26] F1=0.400 n_ev=3/11 osam=0.0324 pred='The encoder has a forward LSTM.' gold='LSTM'
+[27] F1=1.000 n_ev=2/28 osam=0.0309 pred='Yes' gold='Unanswerable'
+[28] F1=0.000 n_ev=2/8 osam=0.0321 pred='Jasper DR 10x5' gold='Unanswerable'
+[29] F1=0.333 n_ev=3/19 osam=0.0326 pred='over 20K American users' gold='22,880 users'
+[30] F1=0.140 n_ev=3/12 osam=0.0331 pred='BLEU-1, BLEU-4, UMA, MRR, human evaluation, coherence measures' gold='Byte-Pair Encoding perplexity  (BPE PPL)'
+[31] F1=0.000 n_ev=3/16 osam=0.0322 pred='unanswerable' gold='(1) the time the patient has been experi'
+[32] F1=0.000 n_ev=4/20 osam=0.0317 pred='unanswerable' gold='57,505 sentences'
+[33] F1=0.250 n_ev=3/23 osam=0.033 pred='WMT 2014 English → German' gold='four machine translation tasks: German -'
+[34] F1=0.000 n_ev=3/17 osam=0.0306 pred='unanswerable' gold='5 percent points.'
+[35] F1=0.000 n_ev=3/37 osam=0.0327 pred='Scholars in the humanities and social sciences.' gold='Unanswerable'
+[36] F1=0.000 n_ev=3/11 osam=0.0312 pred='yes' gold='No'
+[37] F1=0.783 n_ev=3/10 osam=0.0317 pred='The Nguni languages and the Sotho languages are similar to each other.' gold='Nguni languages (zul, xho, nbl, ssw), So'
+[38] F1=0.125 n_ev=4/20 osam=0.0321 pred='6-layers and 9-layers sMBR models' gold='Unidirectional LSTM networks with 2, 6, '
+[39] F1=0.364 n_ev=2/19 osam=0.0316 pred='29,794 articles' gold='a sample of  29,794 wikipedia articles a'
+[40] F1=0.250 n_ev=3/25 osam=0.0315 pred='A group of 50 native speakers of both English and Tamil languages acte' gold='50 human annotators ranked a random samp'
+[41] F1=1.000 n_ev=3/21 osam=0.0307 pred='Yes' gold='Yes'
+[42] F1=0.196 n_ev=3/9 osam=0.0326 pred='By measuring token retention rate and sentence matching accuracy.' gold='by training an autocomplete system on 50'
+[43] F1=0.333 n_ev=2/14 osam=0.0316 pred='Overall accuracy' gold='Precision, Recall, F-measure, accuracy'
+[44] F1=0.261 n_ev=3/23 osam=0.0328 pred='Source domain: restaurants and movies; Target domain: restaurants and ' gold='Book, electronics, beauty, music, IMDB, '
+[45] F1=0.300 n_ev=3/16 osam=0.0318 pred='LSTM, QRNN, NAS' gold='Variational LSTM, CharCNN, Pointer Senti'
+[46] F1=0.211 n_ev=3/8 osam=0.0323 pred='Embedding Layer, Word/character embedding, extra handcrafted feature e' gold='Embedding Layer, Neural Network Layers, '
+[47] F1=0.118 n_ev=3/15 osam=0.0318 pred='Wiktionary data' gold='the Carnegie Mellon Pronouncing Dictiona'
+[48] F1=0.108 n_ev=3/10 osam=0.033 pred='BERT, RoBERTa, and XLNet' gold='varied from Maximum Entropy Classifiers '
+[49] F1=0.600 n_ev=3/18 osam=0.0313 pred='English, Spanish, Finnish, and 15 other languages.' gold='English\nFrench\nSpanish\nGerman\nGreek\nBulg'
+============================================================
+qasper | mode=combined | segmentation=fixed | evidence=episodic/document | adapter=/home/Julian/BN5212/caimms/models/delta-mem-adapter
+F1 (all 50):            0.3058
+F1 (answered 50):        0.3058
+  gold unanswerable (4): 0.2500
+  gold answerable   (46): 0.3107
+skipped (no evidence): 0
+============================================================
+==============================================
+  Done at Sun 11 Oct 2026 05:28:10 AM +08 | exit 0
+  Rows written: 50
+  Results: /home/Julian/BN5212/caimms/outputs/lb_qasper_combined_released_cap1024_episodic_documentorder_n50.jsonl
+==============================================
+Stopping vLLM (pid 787436)...
+
+================ summary (qasper, released_cap1024, fixed)
+ combined: n=50  F1=0.3058  skipped=0  evidence/q=2.9  units/doc=18.5
+================ qasper arm=combined segmentation=fixed adapter=/home/Julian/BN5212/caimms/models/delta-mem-iterret-w1024 -> /home/Julian/BN5212/caimms/outputs/lb_qasper_combined_iterret_w1024_episodic_documentorder_n50.jsonl
+==============================================
+  C-AIMMS eval_longbench_iterret -> lb_qasper_combined_iterret_w1024_episodic_documentorder_n50.jsonl
+  run  : 20261011_052812_790388 on megalab at Sun 11 Oct 2026 05:28:12 AM +08
+  out  : /home/Julian/BN5212/caimms/outputs/lb_qasper_combined_iterret_w1024_episodic_documentorder_n50.jsonl
+  logs : /home/Julian/BN5212/caimms/outputs/run_20261011_052812_790388.log
+==============================================
+GPU 0: 23791 MiB free -- OK
+GPU 1: 23066 MiB free -- OK
+GPUs (vLLM on 0, eval on 1):
+  0, NVIDIA GeForce RTX 4090, 420 MiB, 24564 MiB
+  1, NVIDIA GeForce RTX 4090, 1143 MiB, 24564 MiB
+  NOTE: 2 compute process(es) already on these GPUs:
+    721507, /home/kartik/.local/gromacs-2024.4-cuda/bin/gmx, 402 MiB
+    721625, /home/kartik/.local/gromacs-2024.4-cuda/bin/gmx, 402 MiB
+  Continuing in 10s -- ctrl-c to abort.
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8002 is free...
+      port 8002 free.
+[1/3] Starting vLLM on GPU 0 (port 8002)...
+      pid 790607, log /home/Julian/BN5212/caimms/outputs/server_20261011_052812_790388.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 790607, model verified).
+[3/3] Starting eval on GPU 1...
+[init] task=qasper mode=combined max_samples=50 out=/home/Julian/BN5212/caimms/outputs/lb_qasper_combined_iterret_w1024_episodic_documentorder_n50.jsonl
+[init] adapter=/home/Julian/BN5212/caimms/models/delta-mem-iterret-w1024 graph_cache=/home/Julian/BN5212/caimms/outputs/lb_graph_cache/qasper max_evidence_tokens=off evidence=episodic/document
+[init] 50 rows, 0 already done, 50 to run
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.11it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.19it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.75it/s]
+[0] F1=0.348 n_ev=14/14 osam=0.0423 pred='The ground truth for fake news is established by an expert manual insp' gold='Ground truth is not established in the p'
+[1] F1=0.258 n_ev=11/12 osam=0.0412 pred='GhostVLAD is a pooling method that adds ghost clusters to NetVLAD to a' gold='extension of the NetVLAD, adds Ghost clu'
+[2] F1=0.125 n_ev=6/14 osam=0.0398 pred='68.8% to 71.8%' gold='the attention model, MDREA, also outperf'
+[3] F1=0.571 n_ev=8/11 osam=0.0418 pred='context tweets' gold='using tweets that one has replied or quo'
+[4] F1=1.000 n_ev=15/18 osam=0.0415 pred='FoxNews, CNN, ESPN, New York Times, Time magazine, Huffington Post Wei' gold='FoxNews, CNN, ESPN, New York Times, Time'
+[5] F1=1.000 n_ev=13/18 osam=0.0396 pred='yes' gold='Yes'
+[6] F1=0.000 n_ev=17/20 osam=0.0422 pred='concept-map-based MDS' gold='Answer with content missing: (Evaluation'
+[7] F1=0.333 n_ev=14/20 osam=0.0415 pred='CNN/DailyMail, NYT, and XSum' gold='CNN/DailyMail news highlights, New York '
+[8] F1=0.138 n_ev=10/11 osam=0.0406 pred='The proposed approach outperforms other WSD approaches employing word ' gold='GM$\\_$KL achieves better correlation tha'
+[9] F1=0.429 n_ev=19/20 osam=0.0405 pred='The ensemble method works by averaging the predictions from the consti' gold='simply averaging the predictions from th'
+[10] F1=0.522 n_ev=10/16 osam=0.0414 pred='The Friends dataset comes from the scripts of the Friends TV sitcom, a' gold='Friends TV sitcom, Facebook messenger ch'
+[11] F1=1.000 n_ev=9/9 osam=0.0421 pred='English' gold='English'
+[12] F1=1.000 n_ev=9/12 osam=0.0422 pred='IMDb dataset of movie reviews' gold='IMDb dataset of movie reviews'
+[13] F1=0.000 n_ev=14/25 osam=0.0423 pred='unanswerable' gold='F1 scores of 85.99 on the DL-PS data,  7'
+[14] F1=0.000 n_ev=12/16 osam=0.0424 pred='yes' gold='No'
+[15] F1=0.625 n_ev=19/63 osam=0.0411 pred='246,945 documents, corresponding to 184,001 Twitter posts and 62,949 n' gold='Custom dataset with user questions; set '
+[16] F1=0.000 n_ev=12/49 osam=0.0415 pred='unanswerable' gold='Energy with accuracy of 0.538'
+[17] F1=0.600 n_ev=10/17 osam=0.0413 pred='RNN-based NMT, Transformer-NMT, and SMT models' gold='RNN-based NMT model, Transformer-NMT'
+[18] F1=0.480 n_ev=17/17 osam=0.0422 pred='neutral features, maximum entropy, KL divergence' gold='a regularization term associated with ne'
+[19] F1=0.761 n_ev=15/23 osam=0.0422 pred='SVM with unigram, bigram, and trigram features, SVM with average word ' gold='SVM with unigram, bigram, and trigram fe'
+[20] F1=0.000 n_ev=11/13 osam=0.0429 pred='improved the state-of-the-art performance' gold='They decrease MAE in 0.34'
+[21] F1=0.323 n_ev=17/23 osam=0.0403 pred='by allowing different attention heads to learn different sparsity beha' gold='the attention heads in the proposed adap'
+[22] F1=0.600 n_ev=16/18 osam=0.0416 pred='The baseline was the two-pass CADec model.' gold=' MT system on the data released by BIBRE'
+[23] F1=0.769 n_ev=15/16 osam=0.0423 pred='XNLI test accuracy and Labeled Attachment Scores (LAS)' gold='translation probabilities, Labeled Attac'
+[24] F1=0.400 n_ev=13/22 osam=0.0421 pred='The attention module is pretrained on the MT dataset.' gold='the model is pre-trained on CTC-based AS'
+[25] F1=1.000 n_ev=15/17 osam=0.0418 pred='unanswerable' gold='Unanswerable'
+[26] F1=0.667 n_ev=10/11 osam=0.0418 pred='an LSTM encoder' gold='LSTM'
+[27] F1=1.000 n_ev=18/28 osam=0.0399 pred='yes' gold='Unanswerable'
+[28] F1=1.000 n_ev=8/8 osam=0.0423 pred='unanswerable' gold='Unanswerable'
+[29] F1=1.000 n_ev=11/19 osam=0.0417 pred='22,880 users' gold='22,880 users'
+[30] F1=0.410 n_ev=6/12 osam=0.0425 pred='perplexity, user-ranking, BLEU-1, BLEU-4, recipe-level coherence, step' gold='Byte-Pair Encoding perplexity  (BPE PPL)'
+[31] F1=0.105 n_ev=13/16 osam=0.0416 pred='labels for each symptom and attribute' gold='(1) the time the patient has been experi'
+[32] F1=0.000 n_ev=17/20 osam=0.0414 pred='unanswerable' gold='57,505 sentences'
+[33] F1=0.267 n_ev=14/23 osam=0.0419 pred='Neural machine translation' gold='four machine translation tasks: German -'
+[34] F1=0.000 n_ev=11/17 osam=0.04 pred='unanswerable' gold='5 percent points.'
+[35] F1=0.000 n_ev=10/37 osam=0.042 pred='Scholars from very different disciplines' gold='Unanswerable'
+[36] F1=0.000 n_ev=10/11 osam=0.0396 pred='yes' gold='No'
+[37] F1=0.783 n_ev=10/10 osam=0.0415 pred='The Nguni languages and the Sotho languages are similar to each other.' gold='Nguni languages (zul, xho, nbl, ssw), So'
+[38] F1=0.080 n_ev=16/20 osam=0.0413 pred='2-layers regular-trained LSTM, 2-layers distilled LSTM, 6-layers LSTM,' gold='Unidirectional LSTM networks with 2, 6, '
+[39] F1=0.364 n_ev=13/19 osam=0.042 pred='29,794 articles' gold='a sample of  29,794 wikipedia articles a'
+[40] F1=0.216 n_ev=15/25 osam=0.0415 pred='A group of 50 native people who were well-versed in both English and T' gold='50 human annotators ranked a random samp'
+[41] F1=1.000 n_ev=15/21 osam=0.0401 pred='yes' gold='Yes'
+[42] F1=0.725 n_ev=9/9 osam=0.0417 pred='by measuring the efficiency of a communication scheme (retention rate ' gold='by training an autocomplete system on 50'
+[43] F1=1.000 n_ev=12/14 osam=0.0417 pred='accuracy, precision, recall, F-measure' gold='Precision, Recall, F-measure, accuracy'
+[44] F1=0.235 n_ev=14/23 osam=0.0419 pred='The source domain is the domain with labeled data, and the target doma' gold='Book, electronics, beauty, music, IMDB, '
+[45] F1=0.000 n_ev=14/16 osam=0.0409 pred='LSTMs' gold='Variational LSTM, CharCNN, Pointer Senti'
+[46] F1=1.000 n_ev=8/8 osam=0.0406 pred='Embedding Layer, Neural Network Layers, Loss Function, Metrics' gold='Embedding Layer, Neural Network Layers, '
+[47] F1=0.118 n_ev=9/15 osam=0.0422 pred='Wiktionary data' gold='the Carnegie Mellon Pronouncing Dictiona'
+[48] F1=0.108 n_ev=10/10 osam=0.0427 pred='BERT, XLNet, and RoBERTa' gold='varied from Maximum Entropy Classifiers '
+[49] F1=0.857 n_ev=17/18 osam=0.0412 pred='English, Spanish, and Finnish' gold='English\nFrench\nSpanish\nGerman\nGreek\nBulg'
+============================================================
+qasper | mode=combined | segmentation=fixed | evidence=episodic/document | adapter=/home/Julian/BN5212/caimms/models/delta-mem-iterret-w1024
+F1 (all 50):            0.4643
+F1 (answered 50):        0.4643
+  gold unanswerable (4): 0.7500
+  gold answerable   (46): 0.4395
+skipped (no evidence): 0
+============================================================
+==============================================
+  Done at Sun 11 Oct 2026 06:00:46 AM +08 | exit 0
+  Rows written: 50
+  Results: /home/Julian/BN5212/caimms/outputs/lb_qasper_combined_iterret_w1024_episodic_documentorder_n50.jsonl
+==============================================
+Stopping vLLM (pid 790607)...
+
+================ summary (qasper, iterret_w1024, fixed)
+ combined: n=50  F1=0.4643  skipped=0  evidence/q=12.6  units/doc=18.5
