@@ -14,6 +14,8 @@
 #   LB_EVIDENCE_LAYERS=all LB_EVIDENCE_ORDER=relevance ...       # original evidence format
 #                                                               # (default: passages only, paper order)
 #   VLLM_GPU=2 EVAL_GPU=3 VLLM_PORT=8003 bash ...                # second run in parallel on a 4-GPU box
+#   LB_S_SOURCE=other ARMS=combined bash ...                     # another paper's passages in S
+#   LB_S_SOURCE=self_nowrite ARMS=combined bash ...              # its matched control
 #
 # Arms: combined (S = prompt = IterRet evidence), hybrid (S = whole document,
 # prompt = evidence), vanilla (S = prompt = whole document).
@@ -38,6 +40,9 @@ export LB_EVIDENCE_LAYERS="${LB_EVIDENCE_LAYERS:-episodic}"
 export LB_EVIDENCE_ORDER="${LB_EVIDENCE_ORDER:-document}"
 [ "${LB_EVIDENCE_LAYERS}" = "all" ] || SEG_TAG="${SEG_TAG}_${LB_EVIDENCE_LAYERS}"
 [ "${LB_EVIDENCE_ORDER}" = "relevance" ] || SEG_TAG="${SEG_TAG}_${LB_EVIDENCE_ORDER}order"
+# Memory-vs-style probe (combined only): self | self_nowrite | other -- see eval_longbench_iterret.py.
+export LB_S_SOURCE="${LB_S_SOURCE:-self}"
+[ "${LB_S_SOURCE}" = "self" ] || SEG_TAG="${SEG_TAG}_S${LB_S_SOURCE}"
 export LB_DATA="${LB_DATA:-${CAIMMS_OUTPUT_DIR}/longbench_data}"
 
 if [ ! -s "${LB_DATA}/${LB_TASK}.jsonl" ]; then

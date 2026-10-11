@@ -48,8 +48,8 @@ from deltamem.workmem.longctx_data import (
     MAX_NEW_TOKENS, doc_key, format_query, load_longbench, qa_f1_score,
 )
 from deltamem.workmem.longctx_retrieval import (
-    DEFAULT_EVIDENCE_LAYERS, DEFAULT_EVIDENCE_ORDER, evidence_items, get_or_build_doc_graph,
-    graph_cache_path, make_backend, present_evidence, retrieve_evidence,
+    DEFAULT_EVIDENCE_LAYERS, DEFAULT_EVIDENCE_ORDER, cap_evidence_by_tokens, evidence_items,
+    get_or_build_doc_graph, graph_cache_path, make_backend, present_evidence, retrieve_evidence,
 )
 from deltamem.workmem.osam_workmem import answer_with_modes
 from iterret.llm_client import OpenAICompatibleLLMClient
@@ -89,11 +89,26 @@ MAX_EVIDENCE_TOKENS = int(os.environ.get("LB_MAX_EVIDENCE_TOKENS", "0"))
 # 2026-10-09: passages only, in document order -- it matched the whole paper on
 # Qasper where relevance order + extracted facts lost 0.10. Old behaviour:
 # LB_EVIDENCE_LAYERS=all LB_EVIDENCE_ORDER=relevance.
+# What gets written into S in `combined` (memory-vs-style probe):
+#   self        : the question's own evidence; prompt reuses the Phase-1 context (default)
+#   self_nowrite: own evidence in S, but via the decoupled path -- KV dropped, the
+#                 prompt re-encoded against the finished S with prompt writes OFF.
+#                 The matched control for:
+#   other       : ANOTHER paper's passages in S (token-matched to this question's
+#                 evidence), the correct evidence still in the prompt, prompt writes
+#                 OFF so the correct evidence never reaches S.
+# If a retrained adapter's gain survives `other`, it is an answering bias that any
+# S content triggers, not memory of this paper.
+S_SOURCE = os.environ.get("LB_S_SOURCE", "self")
 EVIDENCE_LAYERS = os.environ.get("LB_EVIDENCE_LAYERS", DEFAULT_EVIDENCE_LAYERS)
 EVIDENCE_ORDER = os.environ.get("LB_EVIDENCE_ORDER", DEFAULT_EVIDENCE_ORDER)
 
 if OSAM_MODE not in ("combined", "hybrid", "vanilla"):
     raise SystemExit(f"[FATAL] unknown WORKMEM_OSAM_MODE={OSAM_MODE!r} (expected combined | hybrid | vanilla)")
+if S_SOURCE not in ("self", "self_nowrite", "other"):
+    raise SystemExit(f"[FATAL] unknown LB_S_SOURCE={S_SOURCE!r} (expected self | self_nowrite | other)")
+if S_SOURCE != "self" and OSAM_MODE != "combined":
+    raise SystemExit("[FATAL] LB_S_SOURCE only applies to WORKMEM_OSAM_MODE=combined")
 if SEGMENTATION not in ("fixed", "surprise"):
     raise SystemExit(f"[FATAL] unknown LB_SEGMENTATION={SEGMENTATION!r} (expected fixed | surprise)")
 if EVIDENCE_LAYERS not in ("all", "episodic") or EVIDENCE_ORDER not in ("relevance", "document"):
@@ -134,7 +149,7 @@ def _summary(rows: list) -> None:
     ans = [r for r in rows if r not in unans]
     print("=" * 60, flush=True)
     print(f"{TASK} | mode={OSAM_MODE} | segmentation={SEGMENTATION} | evidence={EVIDENCE_LAYERS}/{EVIDENCE_ORDER} "
-          f"| adapter={ADAPTER_DIR}", flush=True)
+          f"| s_source={S_SOURCE} | adapter={ADAPTER_DIR}", flush=True)
     print(f"F1 (all {len(rows)}):            {sum(f1) / len(f1):.4f}", flush=True)
     if answered:
         print(f"F1 (answered {len(answered)}):        {sum(r['score'] for r in answered) / len(answered):.4f}", flush=True)
@@ -209,13 +224,22 @@ def _build_missing_graphs(rows: list, llm) -> None:
 def main() -> None:
     print(f"[init] task={TASK} mode={OSAM_MODE} max_samples={MAX_SAMPLES} out={OUTPUT_FILE}", flush=True)
     print(f"[init] adapter={ADAPTER_DIR} graph_cache={GRAPH_CACHE_DIR} "
-          f"max_evidence_tokens={MAX_EVIDENCE_TOKENS or 'off'} evidence={EVIDENCE_LAYERS}/{EVIDENCE_ORDER}",
+          f"max_evidence_tokens={MAX_EVIDENCE_TOKENS or 'off'} evidence={EVIDENCE_LAYERS}/{EVIDENCE_ORDER} "
+          f"s_source={S_SOURCE}",
           flush=True)
     rows = load_longbench(TASK, LB_DATA)
     if MAX_SAMPLES > 0:
         rows = rows[:MAX_SAMPLES]
     done = _load_done(OUTPUT_FILE)
     todo = [r for r in rows if r["idx"] not in done]
+    # S-swap partner: the next row (cyclically) whose document differs.
+    other_of = {}
+    for i, r in enumerate(rows):
+        for step in range(1, len(rows)):
+            cand = rows[(i + step) % len(rows)]
+            if doc_key(cand["context"]) != doc_key(r["context"]):
+                other_of[r["idx"]] = cand
+                break
     print(f"[init] {len(rows)} rows, {len(done)} already done, {len(todo)} to run", flush=True)
     Path(OUTPUT_FILE).parent.mkdir(parents=True, exist_ok=True)
 
@@ -266,7 +290,7 @@ def main() -> None:
 
         base = {"idx": idx, "id": row["id"], "task": TASK, "question": question,
                 "answers": row["answers"], "osam_mode": OSAM_MODE, "adapter_dir": ADAPTER_DIR,
-                "segmentation": SEGMENTATION,
+                "segmentation": SEGMENTATION, "s_source": S_SOURCE,
                 "evidence_layers": EVIDENCE_LAYERS, "evidence_order": EVIDENCE_ORDER,
                 "max_evidence_tokens": MAX_EVIDENCE_TOKENS,
                 "n_passages": len(passages), "n_evidence": len(evidence), "graph_cached": cached,
@@ -277,7 +301,25 @@ def main() -> None:
             print(f"[{idx}] no evidence, skipped", flush=True)
             continue
 
-        if OSAM_MODE == "combined":
+        gen_extra: dict = {}
+        if OSAM_MODE == "combined" and S_SOURCE == "other":
+            other = other_of.get(idx)
+            other_graph_path = graph_cache_path(GRAPH_CACHE_DIR, doc_key(other["context"])) if other else None
+            if other is None or not other_graph_path.exists():
+                print(f"[{idx}] no other-paper graph for the S swap -- skipped, retried next run", flush=True)
+                continue
+            _, other_passages, _ = get_or_build_doc_graph(other["context"], doc_key(other["context"]),
+                                                          GRAPH_CACHE_DIR, llm, segmentation=SEGMENTATION)
+            own_tokens = sum(len(tokenizer(e, add_special_tokens=False)["input_ids"]) + 6 for e in evidence)
+            s_content = cap_evidence_by_tokens(other_passages, tokenizer, own_tokens)
+            prompt_content = evidence
+            gen_extra = {"reuse_context": False, "prompt_write_enabled": False}
+            base["s_other_idx"] = other["idx"]
+            base["s_n_items"] = len(s_content)
+        elif OSAM_MODE == "combined" and S_SOURCE == "self_nowrite":
+            s_content, prompt_content = evidence, evidence
+            gen_extra = {"reuse_context": False, "prompt_write_enabled": False}
+        elif OSAM_MODE == "combined":
             s_content, prompt_content = evidence, evidence
         elif OSAM_MODE == "hybrid":
             s_content, prompt_content = passages, evidence
@@ -289,7 +331,7 @@ def main() -> None:
         try:
             out = answer_with_modes(session, question, s_content=s_content, prompt_content=prompt_content,
                                     formatted_query=format_query(TASK, question),
-                                    max_new_tokens=MAX_NEW_TOKENS[TASK])
+                                    max_new_tokens=MAX_NEW_TOKENS[TASK], **gen_extra)
             prediction = str(out.get("response") or out.get("assistant") or out.get("text") or "").strip() \
                 if isinstance(out, dict) else ""
             if not prediction:

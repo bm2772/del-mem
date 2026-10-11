@@ -655,6 +655,7 @@ def build_answer_prompt(query, system_instruction=None, *,
 def answer_with_modes(session, query, *, s_content, prompt_content,
                       system_instruction=None, allow_abstention: bool = False,
                       formatted_query: str | None = None,
+                      reuse_context: bool | None = None,
                       **gen_kwargs):
     """Answer with S-content and prompt-content DECOUPLED -- the primitive for the
     vanilla / hybrid experiments.
@@ -673,7 +674,12 @@ def answer_with_modes(session, query, *, s_content, prompt_content,
     # Phase 1: write s_content into S (reset=True clears S first, then writes).
     # Chunked, since s_content is the whole conversation in vanilla/hybrid.
     populate_osam_from_evidence(session, s_content, chunk_tokens=INGEST_CHUNK_TOKENS)
-    if list(prompt_content) == list(s_content):
+    # reuse_context: None = reuse the Phase-1 KV whenever prompt == S content;
+    # False forces the decoupled path (drop KV, re-encode the prompt against the
+    # finished S) -- the matched control for an S-content swap experiment.
+    if reuse_context is None:
+        reuse_context = list(prompt_content) == list(s_content)
+    if reuse_context:
         # Prompt == S content (vanilla): keep the Phase-1 KV context and let
         # Phase 2 ingest only the question suffix -- the same structure as
         # answer_with_osam. Re-prefilling the whole conversation in one pass
