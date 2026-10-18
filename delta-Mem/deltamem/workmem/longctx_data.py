@@ -202,6 +202,83 @@ def qa_f1_score(prediction: str, answers: Sequence[str]) -> float:
     return max((_f1(prediction, a) for a in answers if a), default=0.0)
 
 
+# ── MemoryAgentBench (ai-hyz/MemoryAgentBench) ───────────────────────────────
+# Accurate_Retrieval split; one row = one long history + many questions about it.
+# "longmemeval_s*" = LongMemEval (chat-assistant memory) packed into 5 histories.
+MAB_REPO = "ai-hyz/MemoryAgentBench"
+MAB_SPLIT_FILE = {"Accurate_Retrieval": "data/Accurate_Retrieval-00000-of-00001.parquet"}
+
+# The benchmark's own long-context-agent query template for LongMemEval
+# (deltamem/eval/official_memory_agent_bench_templates.py).
+MAB_QUERY_TEMPLATES: Dict[str, str] = {
+    "longmemeval": ("The history chats are between you and a user. Based on the relevant chat history, "
+                    "answer the question as concisely as you can, using a single phrase if possible.\n\n "
+                    "{question} \n\n Answer:"),
+}
+MAB_MAX_NEW_TOKENS = {"longmemeval": 50}
+
+
+def mab_family(source: str) -> str:
+    return "longmemeval" if source.startswith("longmemeval") else source
+
+
+def load_mab(source: str = "longmemeval_s*", split: str = "Accurate_Retrieval",
+             cache_dir: Optional[str] = None) -> List[dict]:
+    """Rows of one MemoryAgentBench source, as
+    {ctx_idx, context, questions: [{q_idx, question, answers, question_type, question_date}]}.
+    Cached as JSONL in ``cache_dir`` after the first download."""
+    safe = source.replace("*", "star")
+    cache = os.path.join(cache_dir, f"{split}_{safe}.jsonl") if cache_dir else None
+    if cache and os.path.isfile(cache):
+        with open(cache, encoding="utf-8") as fh:
+            return [json.loads(line) for line in fh if line.strip()]
+
+    from huggingface_hub import hf_hub_download
+    import pyarrow.parquet as pq
+
+    path = hf_hub_download(repo_id=MAB_REPO, repo_type="dataset", filename=MAB_SPLIT_FILE[split])
+    table = pq.read_table(path).to_pylist()
+    rows = []
+    for raw in table:
+        meta = dict(raw.get("metadata") or {})
+        if meta.get("source", "") != source:
+            continue
+        def _meta(key, i):
+            v = meta.get(key)
+            return v[i] if isinstance(v, list) and i < len(v) else None
+        qs = []
+        for i, q in enumerate(raw.get("questions") or []):
+            ans = (raw.get("answers") or [])[i] if i < len(raw.get("answers") or []) else ""
+            answers = [str(a) for a in ans] if isinstance(ans, (list, tuple)) else [str(ans)]
+            qs.append({"q_idx": i, "question": str(q), "answers": answers,
+                       "question_type": _meta("question_types", i), "question_date": _meta("question_dates", i)})
+        rows.append({"ctx_idx": len(rows), "source": source, "context": str(raw.get("context", "")),
+                     "questions": qs})
+    if not rows:
+        raise SystemExit(f"[FATAL] no MemoryAgentBench rows with metadata.source == {source!r}")
+    if cache:
+        os.makedirs(cache_dir, exist_ok=True)
+        with open(cache, "w", encoding="utf-8") as fh:
+            for r in rows:
+                fh.write(json.dumps(r) + "\n")
+    return rows
+
+
+def mab_scores(prediction: str, answers: Sequence[str]) -> Dict[str, float]:
+    """Exact match, substring exact match (normalised gold inside normalised
+    prediction -- MemoryAgentBench's accuracy for Accurate Retrieval) and token F1;
+    each the max over gold answers."""
+    p = normalize_answer(prediction)
+    golds = [normalize_answer(a) for a in answers if str(a).strip()]
+    if not golds:
+        return {"exact_match": 0.0, "substring_exact_match": 0.0, "f1": 0.0}
+    return {
+        "exact_match": float(any(p == g for g in golds)),
+        "substring_exact_match": float(any(g in p for g in golds)),
+        "f1": max(_f1(prediction, a) for a in answers if str(a).strip()),
+    }
+
+
 if __name__ == "__main__":
     import argparse
 

@@ -7,8 +7,11 @@ import os
 import re
 
 from deltamem.core.delta_impl import (
-    set_delta_mem_write_granularity,
+    get_delta_mem_online_state,
+    load_delta_mem_online_state,
     reset_delta_mem_states,
+    set_delta_mem_write_enabled,
+    set_delta_mem_write_granularity,
 )
 from deltamem.runtime.session import DeltaMemChatSession
 from deltamem.eval.locomo_protocol import OFFICIAL_QA_PROMPT, OFFICIAL_MAX_NEW_TOKENS
@@ -705,6 +708,72 @@ def answer_with_modes(session, query, *, s_content, prompt_content,
             query, system_instruction, allow_abstention=allow_abstention,
             evidence_carries_dates=_evidence_carries_dates(session),
         )
+    gen_kwargs.setdefault("prompt_write_enabled", PHASE2_PROMPT_WRITE)
+    return session.generate_reply(formatted_query, **gen_kwargs)
+
+
+# ── Long histories (MemoryAgentBench): stream into S, snapshot, restore ──────
+# A history longer than the GPU can attend over cannot be ingested as one
+# context. stream_into_state writes it into S chunk by chunk, DROPPING the
+# attention cache between chunks (each chunk attends only within itself; S
+# carries everything forward), and returns a snapshot of S. S is tiny (an r x r
+# matrix per layer), so the snapshot is computed once per history and restored
+# for every question about it.
+STREAM_CHUNK_TOKENS = int(os.environ.get("OSAM_STREAM_CHUNK_TOKENS", "4096"))
+
+
+def stream_into_state(session, units, *, chunk_tokens: int = STREAM_CHUNK_TOKENS):
+    """Write ``units`` (list[str], in order) into a fresh S; return a CPU snapshot."""
+    session.reset()  # also resets S
+    set_delta_mem_write_granularity(session.model, PHASE1_WRITE_GRANULARITY)
+    set_delta_mem_write_enabled(session.model, True)
+    tok = session.tokenizer
+    group, group_tokens = [], 0
+    for i, unit in enumerate(units):
+        group.append(unit)
+        group_tokens += len(tok(unit, add_special_tokens=False)["input_ids"]) + 8
+        if group_tokens >= chunk_tokens or i == len(units) - 1:
+            # Fresh context per chunk. processed_input_ids=None means the ingest
+            # sees no history to diverge from, so it does NOT reset S.
+            session.past_key_values = None
+            session.processed_input_ids = None
+            session.messages = [{"role": "user", "content": u} for u in group]
+            session._ingest_full_ids(session._tokenize_messages(session.messages, add_generation_prompt=False))
+            group, group_tokens = [], 0
+    snapshot = get_delta_mem_online_state(session.model)
+    session.past_key_values = None
+    session.processed_input_ids = None
+    session.messages = []
+    return snapshot
+
+
+def answer_from_state(session, *, snapshot, prompt_content, formatted_query,
+                      write_prompt_content: bool, chunk_tokens: int = INGEST_CHUNK_TOKENS,
+                      **gen_kwargs):
+    """Answer with S restored from ``snapshot`` (None = empty S) and
+    ``prompt_content`` (list[str]) as the attended context.
+
+    write_prompt_content: whether reading the prompt content also writes it into
+    S (True when S should hold exactly what is in the prompt; False when S was
+    already given the content via the snapshot). The question block follows
+    OSAM_PHASE2_PROMPT_WRITE as everywhere else.
+    """
+    session.reset()
+    if snapshot is not None:
+        load_delta_mem_online_state(session.model, snapshot)
+    if prompt_content:
+        set_delta_mem_write_granularity(session.model, PHASE1_WRITE_GRANULARITY)
+        set_delta_mem_write_enabled(session.model, write_prompt_content)
+        try:
+            session.messages = [{"role": "user", "content": u} for u in prompt_content]
+            full_ids = session._tokenize_messages(session.messages, add_generation_prompt=False)
+            if chunk_tokens and full_ids.size(1) > chunk_tokens:
+                _ingest_messages_chunked(session, chunk_tokens)
+            else:
+                session._ingest_full_ids(full_ids)
+        finally:
+            set_delta_mem_write_enabled(session.model, True)
+    set_delta_mem_write_granularity(session.model, "token")
     gen_kwargs.setdefault("prompt_write_enabled", PHASE2_PROMPT_WRITE)
     return session.generate_reply(formatted_query, **gen_kwargs)
 
