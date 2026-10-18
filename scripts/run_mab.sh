@@ -8,6 +8,7 @@
 #   ARMS="truncated truncated_fullS" bash scripts/run_mab.sh
 #   MAB_PROMPT_TOKENS=16384 ...       # smaller recent window if 32k runs out of memory
 #   CAIMMS_ADAPTER_DIR=... TAG=iterret_w1024 ...                       # another adapter
+#   MAB_SPLIT=fixed ...               # generic chunks instead of dated LongMemEval sessions
 #
 # Modes: truncated (recent window only) | truncated_fullS (recent window + whole
 # history in S) | combined (IterRet evidence in S and prompt) | hybrid (whole
@@ -21,7 +22,8 @@ export MAB_SOURCE="${MAB_SOURCE:-longmemeval_s*}"
 ARMS="${ARMS:-truncated truncated_fullS combined hybrid}"
 TAG="${TAG:-released}"
 SRC_TAG="${MAB_SOURCE//\*/star}"
-SUFFIX=""
+export MAB_SPLIT="${MAB_SPLIT:-sessions}"
+SUFFIX="_${MAB_SPLIT}"
 [ -n "${MAB_MAX_CONTEXTS:-}" ] && [ "${MAB_MAX_CONTEXTS}" != "0" ] && SUFFIX="${SUFFIX}_c${MAB_MAX_CONTEXTS}"
 [ -n "${MAB_MAX_QUESTIONS:-}" ] && [ "${MAB_MAX_QUESTIONS}" != "0" ] && SUFFIX="${SUFFIX}_q${MAB_MAX_QUESTIONS}"
 [ "${MAB_PROMPT_TOKENS:-32768}" = "32768" ] || SUFFIX="${SUFFIX}_w${MAB_PROMPT_TOKENS}"

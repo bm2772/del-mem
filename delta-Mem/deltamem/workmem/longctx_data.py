@@ -264,6 +264,63 @@ def load_mab(source: str = "longmemeval_s*", split: str = "Accurate_Retrieval",
     return rows
 
 
+def longmemeval_passages(context: str, *, target_words: int = 180, max_words: int = 300) -> Optional[List[str]]:
+    """Session-aware passages for a LongMemEval history.
+
+    The history is the Python repr of a list alternating 'Chat Time: <date>'
+    strings and lists of {'role', 'content'} turns. Turns are grouped into
+    ~target_words passages WITHIN a session, and every passage is prefixed with
+    its session's date -- otherwise only the first passage of a session would
+    know when it happened, and temporal questions ("how many weeks ago...")
+    become unanswerable from any later passage. Returns None if the history is
+    not in that format (callers then fall back to plain chunking).
+    """
+    import ast
+
+    try:
+        data = ast.literal_eval(context)
+    except (ValueError, SyntaxError, MemoryError, RecursionError):
+        return None
+    if not isinstance(data, list):
+        return None
+    passages: List[str] = []
+    when = ""
+    for item in data:
+        if isinstance(item, str):
+            when = item.split(":", 1)[1].strip() if item.lower().startswith("chat time") else when
+            continue
+        if not isinstance(item, list):
+            continue
+        prefix = f"[{when}] " if when else ""
+        buf: List[str] = []
+        n = 0
+        for turn in item:
+            if not isinstance(turn, dict):
+                continue
+            words = f"{turn.get('role', '?')}: {turn.get('content', '')}".split()
+            for start in range(0, len(words), max_words):  # very long turns split
+                piece = " ".join(words[start:start + max_words])
+                k = len(piece.split())
+                if buf and n + k > max_words:
+                    passages.append(prefix + "\n".join(buf))
+                    buf, n = [], 0
+                buf.append(piece)
+                n += k
+                if n >= target_words:
+                    passages.append(prefix + "\n".join(buf))
+                    buf, n = [], 0
+        if buf:
+            passages.append(prefix + "\n".join(buf))
+    return passages or None
+
+
+def mab_question_core(question: str) -> str:
+    """The question without LongMemEval's 'Current Date: ... Now Answer the
+    Question:' header -- used as the RETRIEVAL query (the prompt keeps the date)."""
+    marker = "Now Answer the Question:"
+    return question.split(marker, 1)[1].strip() if marker in question else question
+
+
 def mab_scores(prediction: str, answers: Sequence[str]) -> Dict[str, float]:
     """Exact match, substring exact match (normalised gold inside normalised
     prediction -- MemoryAgentBench's accuracy for Accurate Retrieval) and token F1;

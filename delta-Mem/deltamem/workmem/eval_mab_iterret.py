@@ -24,6 +24,7 @@ Environment:
   MAB_MAX_QUESTIONS   first N questions per history (0 = all)
   MAB_JUDGE           1 = also score with the LLM judge on the graph vLLM (default 1)
   MAB_MAX_EVIDENCE_TOKENS  optional cap on IterRet evidence (default 0 = none)
+  MAB_SPLIT           sessions (LongMemEval-aware, dated passages; default) | fixed
   WORKMEM_OUTPUT_FILE results JSONL (resumable)
   CAIMMS_ADAPTER_DIR  delta-mem adapter
 """
@@ -44,7 +45,8 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from deltamem.eval.common import attach_delta_adapter_in_place
 from deltamem.runtime.session import DeltaMemChatSession
 from deltamem.workmem.longctx_data import (
-    MAB_MAX_NEW_TOKENS, MAB_QUERY_TEMPLATES, doc_key, load_mab, mab_family, mab_scores,
+    MAB_MAX_NEW_TOKENS, MAB_QUERY_TEMPLATES, doc_key, load_mab, longmemeval_passages, mab_family,
+    mab_question_core, mab_scores,
 )
 from deltamem.workmem.longctx_retrieval import (
     DEFAULT_EVIDENCE_LAYERS, DEFAULT_EVIDENCE_ORDER, evidence_items, get_or_build_doc_graph,
@@ -71,8 +73,13 @@ MAX_EVIDENCE_TOKENS = int(os.environ.get("MAB_MAX_EVIDENCE_TOKENS", "0"))
 OUTPUT_FILE = os.environ.get("WORKMEM_OUTPUT_FILE", f"{_WS}/outputs/mab_{SOURCE.replace('*', 'star')}_{MODE}.jsonl")
 OUT_DIR = Path(OUTPUT_FILE).parent
 DATA_DIR = os.environ.get("MAB_DATA_DIR", str(OUT_DIR / "mab_data"))
+# How a history is cut into passages (graph nodes, recent window, streamed S):
+#   sessions -- LongMemEval-aware: turns grouped within a chat session, every
+#               passage prefixed with its session's date (default)
+#   fixed    -- generic ~180-word chunks (iterret.doc_memory_builder.chunk_document)
+SPLIT = os.environ.get("MAB_SPLIT", "sessions")
 GRAPH_CACHE_DIR = Path(os.environ.get("MAB_GRAPH_CACHE_DIR",
-                                      str(OUT_DIR / "mab_graph_cache" / SOURCE.replace("*", "star"))))
+                                      str(OUT_DIR / "mab_graph_cache" / f"{SOURCE.replace('*', 'star')}_{SPLIT}")))
 MAX_CONSECUTIVE_FAILURES = int(os.environ.get("WORKMEM_MAX_CONSECUTIVE_FAILURES", "5"))
 
 MODES = ("combined", "truncated", "truncated_fullS", "hybrid")
@@ -81,7 +88,18 @@ if MODE not in MODES:
 FAMILY = mab_family(SOURCE)
 if FAMILY not in MAB_QUERY_TEMPLATES:
     raise SystemExit(f"[FATAL] no query template for MAB source {SOURCE!r}")
+if SPLIT not in ("sessions", "fixed"):
+    raise SystemExit(f"[FATAL] unknown MAB_SPLIT={SPLIT!r} (expected sessions | fixed)")
 NEEDS_RETRIEVAL = MODE in ("combined", "hybrid")
+
+
+def split_history(context: str) -> list:
+    if SPLIT == "sessions" and FAMILY == "longmemeval":
+        passages = longmemeval_passages(context)
+        if passages:
+            return passages
+        print("[split] WARNING: history is not in LongMemEval session format -- using fixed chunks", flush=True)
+    return chunk_document(context)
 NEEDS_FULL_STATE = MODE in ("truncated_fullS", "hybrid")
 
 
@@ -142,7 +160,7 @@ def _summary(rows: list) -> None:
 
 
 def main() -> None:
-    print(f"[init] source={SOURCE} mode={MODE} prompt_tokens={PROMPT_TOKENS} out={OUTPUT_FILE}", flush=True)
+    print(f"[init] source={SOURCE} mode={MODE} split={SPLIT} prompt_tokens={PROMPT_TOKENS} out={OUTPUT_FILE}", flush=True)
     print(f"[init] adapter={ADAPTER_DIR} graph_cache={GRAPH_CACHE_DIR}", flush=True)
     rows = load_mab(SOURCE, cache_dir=DATA_DIR)
     if MAX_CONTEXTS > 0:
@@ -174,7 +192,8 @@ def main() -> None:
             if not graph_cache_path(GRAPH_CACHE_DIR, doc_key(r["context"])).exists():
                 t0 = time.time()
                 print(f"[graphs] building history {r['ctx_idx']} ...", flush=True)
-                g, passages, _ = get_or_build_doc_graph(r["context"], doc_key(r["context"]), GRAPH_CACHE_DIR, llm)
+                g, passages, _ = get_or_build_doc_graph(r["context"], doc_key(r["context"]), GRAPH_CACHE_DIR, llm,
+                                                        segment_fn=split_history, segmentation=SPLIT)
                 print(f"[graphs] history {r['ctx_idx']}: {len(passages)} passages, "
                       f"{g.meta.get('n_semantic', 0)} facts, {time.time() - t0:.0f}s", flush=True)
 
@@ -194,11 +213,12 @@ def main() -> None:
     consecutive_failures = 0
     for r in todo_ctx:
         ctx_idx = r["ctx_idx"]
-        passages = chunk_document(r["context"])  # identical to the graph's passages
+        passages = split_history(r["context"])  # identical to the graph's passages
         window = _recent_window(passages, tokenizer, PROMPT_TOKENS) if MODE.startswith("truncated") else []
         graph = None
         if NEEDS_RETRIEVAL:
-            graph, _, _ = get_or_build_doc_graph(r["context"], doc_key(r["context"]), GRAPH_CACHE_DIR, llm)
+            graph, _, _ = get_or_build_doc_graph(r["context"], doc_key(r["context"]), GRAPH_CACHE_DIR, llm,
+                                                 segment_fn=split_history, segmentation=SPLIT)
         snapshot = None
         if NEEDS_FULL_STATE:
             t0 = time.time()
@@ -219,13 +239,14 @@ def main() -> None:
             formatted_query = template.format(question=question)
             base = {"ctx_idx": ctx_idx, "q_idx": q_idx, "source": SOURCE, "question": question,
                     "answers": q["answers"], "question_type": q.get("question_type"),
-                    "mode": MODE, "adapter_dir": ADAPTER_DIR, "prompt_tokens": PROMPT_TOKENS,
+                    "mode": MODE, "split": SPLIT, "adapter_dir": ADAPTER_DIR, "prompt_tokens": PROMPT_TOKENS,
                     "n_passages": len(passages), "n_window": len(window)}
 
             evidence, diag = [], {}
             if NEEDS_RETRIEVAL:
                 try:
-                    evidence = retrieve_evidence(question, graph, backend, llm, diag=diag)
+                    # search on the question itself, not its "Current Date: ..." header
+                    evidence = retrieve_evidence(mab_question_core(question), graph, backend, llm, diag=diag)
                     items = present_evidence(
                         evidence_items(evidence, diag.get("final_evidence_ids", []), graph),
                         layers=DEFAULT_EVIDENCE_LAYERS, order=DEFAULT_EVIDENCE_ORDER,
