@@ -1,0 +1,27 @@
+[init] source=longmemeval_s* mode=truncated_fullS prompt_tokens=32768 out=/home/banajmahajan/caimms/outputs/mab_longmemeval_sstar_truncated_fullS_released_c1_q10.jsonl
+[init] adapter=/home/banajmahajan/caimms/models/delta-mem-adapter graph_cache=/home/banajmahajan/caimms/outputs/mab_graph_cache/longmemeval_sstar
+[init] 1 histories, 10 questions, 0 done, 1 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 10 questions {'multi-session': 2, 'knowledge-update': 2, 'temporal-reasoning': 4, 'single-session-assistant': 1, 'single-session-preference': 1}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.37it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.52it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.22it/s]
+[state] history 0: streamed 806 passages into S in 39s
+[window] history 0: prompt keeps the last 73/806 passages
+[0.0] subEM=0 F1=0.00 judge=0 pred='The provided chat history does not contain information about' gold='50'
+[0.1] subEM=0 F1=0.00 judge=0 pred="I don't have the information about the number of fish in you" gold='17'
+[0.2] subEM=0 F1=0.00 judge=0 pred="1 free night's stay" gold='Two'
+[0.3] subEM=0 F1=0.00 judge=0 pred='The marigolds were started first.' gold='Tomatoes'
+[0.4] subEM=0 F1=0.13 judge=0 pred='The date of the first BBQ event in June is not mentioned in ' gold='June 3rd'
+[0.5] subEM=0 F1=0.30 judge=0 pred='Borges said the center and circumference are indistinguishab' gold="According to Borges, 'The Library is a s"
+[0.6] subEM=0 F1=0.08 judge=1 pred='Schedule regular virtual meetings or coffee breaks.' gold='The user would prefer responses that ack'
+[0.7] subEM=0 F1=0.17 judge=0 pred='180 days' gold='7 days. 8 days (including the last day) '
+[0.8] subEM=0 F1=0.67 judge=0 pred='11 weeks ago' gold='3 weeks ago'
+[0.9] subEM=1 F1=0.67 judge=1 pred='Five sessions' gold='five'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=truncated_fullS | prompt_tokens=32768 | adapter=/home/banajmahajan/caimms/models/delta-mem-adapter
+ALL                          n=  10  substringEM=0.1000  EM=0.0000  F1=0.2012  judge=0.2000  skipped=0
+  knowledge-update           n=   2  substringEM=0.5000  EM=0.0000  F1=0.3333  judge=0.5000  skipped=0
+  multi-session              n=   2  substringEM=0.0000  EM=0.0000  F1=0.0000  judge=0.0000  skipped=0
+  single-session-assistant   n=   1  substringEM=0.0000  EM=0.0000  F1=0.2963  judge=0.0000  skipped=0
+  single-session-preference  n=   1  substringEM=0.0000  EM=0.0000  F1=0.0822  judge=1.0000  skipped=0
+  temporal-reasoning         n=   4  substringEM=0.0000  EM=0.0000  F1=0.2417  judge=0.0000  skipped=0
+==============================================================================
