@@ -1,0 +1,37 @@
+[init] source=longmemeval_s* mode=truncated split=sessions write=token prompt_tokens=32768 out=/home/banajmahajan/caimms/outputs/mab_longmemeval_sstar_truncated_released_sessions_c1_q20_tokenwrite.jsonl
+[init] adapter=/home/banajmahajan/caimms/models/delta-mem-adapter graph_cache=/home/banajmahajan/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 1 histories, 20 questions, 0 done, 1 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 20 questions {'multi-session': 3, 'knowledge-update': 3, 'temporal-reasoning': 5, 'single-session-assistant': 4, 'single-session-preference': 3, 'single-session-user': 2}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.36it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.53it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.23it/s]
+[window] history 0: prompt keeps the last 109/1261 passages
+[0.0] subEM=0 F1=0.00 judge=0 pred='10 hours' gold='50'
+[0.1] subEM=0 F1=0.00 judge=0 pred='12' gold='17'
+[0.2] subEM=0 F1=0.00 judge=0 pred="1 free night's stay" gold='Two'
+[0.3] subEM=0 F1=0.00 judge=0 pred='The marigolds were started first.' gold='Tomatoes'
+[0.4] subEM=0 F1=0.00 judge=0 pred='2023/06/01 (Thu)' gold='June 3rd'
+[0.5] subEM=0 F1=0.30 judge=0 pred='Borges said the center and circumference are indistinguishab' gold="According to Borges, 'The Library is a s"
+[0.6] subEM=0 F1=0.06 judge=1 pred='Schedule regular virtual meetings' gold='The user would prefer responses that ack'
+[0.7] subEM=0 F1=0.00 judge=0 pred='12' gold='7 days. 8 days (including the last day) '
+[0.8] subEM=0 F1=0.67 judge=0 pred='11 weeks ago' gold='3 weeks ago'
+[0.9] subEM=1 F1=0.67 judge=1 pred='Five sessions' gold='five'
+[0.10] subEM=0 F1=0.03 judge=0 pred='Chocolate mocha cake' gold='The user would prefer baking suggestions'
+[0.11] subEM=0 F1=0.22 judge=1 pred='Pilsner' gold='I recommended using a Pilsner or Lager f'
+[0.12] subEM=0 F1=0.00 judge=0 pred='I cannot provide that information.' gold='Nu, pogodi!'
+[0.13] subEM=0 F1=0.10 judge=0 pred='Try a new recipe for a healthy and delicious meal.' gold='The user would prefer responses that sug'
+[0.14] subEM=0 F1=0.00 judge=0 pred="I don't have information about your camera collection histor" gold='three months'
+[0.15] subEM=0 F1=0.00 judge=0 pred="I don't have information about your purchase." gold='$800'
+[0.16] subEM=0 F1=0.00 judge=0 pred='1' gold='4'
+[0.17] subEM=0 F1=0.18 judge=0 pred='The narrator losing their phone charger happened first.' gold='Receiving the new phone case'
+[0.18] subEM=1 F1=1.00 judge=1 pred='9 months' gold='9 months'
+[0.19] subEM=0 F1=0.18 judge=0 pred='The trail is called the "Caminos del Moncayo" or "Moncayo Tr' gold='The GR-90 trail.'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=truncated | prompt_tokens=32768 | adapter=/home/banajmahajan/caimms/models/delta-mem-adapter
+ALL                          n=  20  substringEM=0.1000  EM=0.0500  F1=0.1702  judge=0.2000  skipped=0
+  knowledge-update           n=   3  substringEM=0.6667  EM=0.3333  F1=0.5556  judge=0.6667  skipped=0
+  multi-session              n=   3  substringEM=0.0000  EM=0.0000  F1=0.0000  judge=0.0000  skipped=0
+  single-session-assistant   n=   4  substringEM=0.0000  EM=0.0000  F1=0.1751  judge=0.2500  skipped=0
+  single-session-preference  n=   3  substringEM=0.0000  EM=0.0000  F1=0.0631  judge=0.3333  skipped=0
+  single-session-user        n=   2  substringEM=0.0000  EM=0.0000  F1=0.0000  judge=0.0000  skipped=0
+  temporal-reasoning         n=   5  substringEM=0.0000  EM=0.0000  F1=0.1697  judge=0.0000  skipped=0
+==============================================================================
