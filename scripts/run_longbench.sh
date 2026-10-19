@@ -43,6 +43,7 @@ export LB_EVIDENCE_ORDER="${LB_EVIDENCE_ORDER:-document}"
 # Memory-vs-style probe (combined only): self | self_nowrite | other -- see eval_longbench_iterret.py.
 export LB_S_SOURCE="${LB_S_SOURCE:-self}"
 [ "${LB_S_SOURCE}" = "self" ] || SEG_TAG="${SEG_TAG}_S${LB_S_SOURCE}"
+[ "${OSAM_PHASE1_GRANULARITY:-message_mean}" = "message_mean" ] || SEG_TAG="${SEG_TAG}_${OSAM_PHASE1_GRANULARITY}write"
 export LB_DATA="${LB_DATA:-${CAIMMS_OUTPUT_DIR}/longbench_data}"
 
 if [ ! -s "${LB_DATA}/${LB_TASK}.jsonl" ]; then

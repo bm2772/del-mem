@@ -25,6 +25,8 @@ Environment:
   MAB_JUDGE           1 = also score with the LLM judge on the graph vLLM (default 1)
   MAB_MAX_EVIDENCE_TOKENS  optional cap on IterRet evidence (default 0 = none)
   MAB_SPLIT           sessions (LongMemEval-aware, dated passages; default) | fixed
+  MAB_STATE_DIAG      1 = measure S's memory span after streaming (default 1)
+  OSAM_PHASE1_GRANULARITY  message_mean (one write per passage; default) | token
   WORKMEM_OUTPUT_FILE results JSONL (resumable)
   CAIMMS_ADAPTER_DIR  delta-mem adapter
 """
@@ -52,7 +54,9 @@ from deltamem.workmem.longctx_retrieval import (
     DEFAULT_EVIDENCE_LAYERS, DEFAULT_EVIDENCE_ORDER, evidence_items, get_or_build_doc_graph,
     graph_cache_path, make_backend, present_evidence, retrieve_evidence,
 )
-from deltamem.workmem.osam_workmem import answer_from_state, answer_with_modes, stream_into_state
+from deltamem.workmem.osam_workmem import (
+    PHASE1_WRITE_GRANULARITY, answer_from_state, answer_with_modes, stream_into_state,
+)
 from iterret.doc_memory_builder import chunk_document
 from iterret.llm_client import OpenAICompatibleLLMClient
 
@@ -81,6 +85,12 @@ SPLIT = os.environ.get("MAB_SPLIT", "sessions")
 GRAPH_CACHE_DIR = Path(os.environ.get("MAB_GRAPH_CACHE_DIR",
                                       str(OUT_DIR / "mab_graph_cache" / f"{SOURCE.replace('*', 'star')}_{SPLIT}")))
 MAX_CONSECUTIVE_FAILURES = int(os.environ.get("WORKMEM_MAX_CONSECUTIVE_FAILURES", "5"))
+
+# Memory-span check (on by default; a few seconds per history): rebuild S from
+# only the last k passages and compare it with the whole-history S. Near-identical
+# means S has forgotten everything older -- the write gate keeps ~82% of S per
+# write (sigmoid(beta_bias_init=-1.5)), i.e. a span of ~5-20 writes.
+STATE_DIAG = os.environ.get("MAB_STATE_DIAG", "1") == "1"
 
 MODES = ("combined", "truncated", "truncated_fullS", "hybrid")
 if MODE not in MODES:
@@ -135,6 +145,16 @@ def _recent_window(passages: list, tokenizer, budget: int) -> list:
     return list(reversed(kept))
 
 
+def _state_similarity(a: dict, b: dict) -> tuple:
+    """(cosine of all layers' S concatenated, mean relative difference per layer)."""
+    keys = sorted(set(a) & set(b))
+    va = torch.cat([a[k].float().flatten() for k in keys])
+    vb = torch.cat([b[k].float().flatten() for k in keys])
+    cos = float(torch.nn.functional.cosine_similarity(va, vb, dim=0))
+    rel = [float((a[k].float() - b[k].float()).norm() / (a[k].float().norm() + 1e-12)) for k in keys]
+    return cos, sum(rel) / max(1, len(rel))
+
+
 def _summary(rows: list) -> None:
     if not rows:
         print("No results.", flush=True)
@@ -160,7 +180,8 @@ def _summary(rows: list) -> None:
 
 
 def main() -> None:
-    print(f"[init] source={SOURCE} mode={MODE} split={SPLIT} prompt_tokens={PROMPT_TOKENS} out={OUTPUT_FILE}", flush=True)
+    print(f"[init] source={SOURCE} mode={MODE} split={SPLIT} write={PHASE1_WRITE_GRANULARITY} "
+          f"prompt_tokens={PROMPT_TOKENS} out={OUTPUT_FILE}", flush=True)
     print(f"[init] adapter={ADAPTER_DIR} graph_cache={GRAPH_CACHE_DIR}", flush=True)
     rows = load_mab(SOURCE, cache_dir=DATA_DIR)
     if MAX_CONTEXTS > 0:
@@ -227,7 +248,17 @@ def main() -> None:
             del session
             torch.cuda.empty_cache()
             print(f"[state] history {ctx_idx}: streamed {len(passages)} passages into S in "
-                  f"{time.time() - t0:.0f}s", flush=True)
+                  f"{time.time() - t0:.0f}s (write granularity {PHASE1_WRITE_GRANULARITY})", flush=True)
+            if STATE_DIAG:
+                n_win = len(_recent_window(passages, tokenizer, PROMPT_TOKENS))
+                for k in sorted({1, 5, 20, n_win}):
+                    session = DeltaMemChatSession(model=model, tokenizer=tokenizer, device="cuda:0")
+                    tail_state = stream_into_state(session, passages[-k:])
+                    del session
+                    cos, rel = _state_similarity(snapshot, tail_state)
+                    print(f"[state-span] history {ctx_idx}: S(last {k:>4} passages) vs S(all {len(passages)}): "
+                          f"cosine {cos:.4f}, mean relative difference {rel:.4f}", flush=True)
+                torch.cuda.empty_cache()
         if window:
             print(f"[window] history {ctx_idx}: prompt keeps the last {len(window)}/{len(passages)} passages", flush=True)
 
@@ -240,6 +271,7 @@ def main() -> None:
             base = {"ctx_idx": ctx_idx, "q_idx": q_idx, "source": SOURCE, "question": question,
                     "answers": q["answers"], "question_type": q.get("question_type"),
                     "mode": MODE, "split": SPLIT, "adapter_dir": ADAPTER_DIR, "prompt_tokens": PROMPT_TOKENS,
+                    "write_granularity": PHASE1_WRITE_GRANULARITY,
                     "n_passages": len(passages), "n_window": len(window)}
 
             evidence, diag = [], {}

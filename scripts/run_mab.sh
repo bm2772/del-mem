@@ -9,6 +9,8 @@
 #   MAB_PROMPT_TOKENS=16384 ...       # smaller recent window if 32k runs out of memory
 #   CAIMMS_ADAPTER_DIR=... TAG=iterret_w1024 ...                       # another adapter
 #   MAB_SPLIT=fixed ...               # generic chunks instead of dated LongMemEval sessions
+#   OSAM_PHASE1_GRANULARITY=token ... # write every token into S (how the adapter was trained)
+#   OSAM_DELTA_GAIN=0 ARMS=truncated ...   # base model: delta-mem's corrections zeroed
 #
 # Modes: truncated (recent window only) | truncated_fullS (recent window + whole
 # history in S) | combined (IterRet evidence in S and prompt) | hybrid (whole
@@ -27,6 +29,9 @@ SUFFIX="_${MAB_SPLIT}"
 [ -n "${MAB_MAX_CONTEXTS:-}" ] && [ "${MAB_MAX_CONTEXTS}" != "0" ] && SUFFIX="${SUFFIX}_c${MAB_MAX_CONTEXTS}"
 [ -n "${MAB_MAX_QUESTIONS:-}" ] && [ "${MAB_MAX_QUESTIONS}" != "0" ] && SUFFIX="${SUFFIX}_q${MAB_MAX_QUESTIONS}"
 [ "${MAB_PROMPT_TOKENS:-32768}" = "32768" ] || SUFFIX="${SUFFIX}_w${MAB_PROMPT_TOKENS}"
+# Write granularity of evidence/history into S: message_mean (default) | token.
+[ "${OSAM_PHASE1_GRANULARITY:-message_mean}" = "message_mean" ] || SUFFIX="${SUFFIX}_${OSAM_PHASE1_GRANULARITY}write"
+[ "${OSAM_DELTA_GAIN:-1}" = "1" ] || SUFFIX="${SUFFIX}_gain${OSAM_DELTA_GAIN}"
 
 for ARM in ${ARMS}; do
     case "${ARM}" in combined|truncated|truncated_fullS|hybrid) ;; *) echo "unknown mode '${ARM}'"; exit 1 ;; esac
