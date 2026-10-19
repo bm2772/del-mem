@@ -80,9 +80,26 @@ done
 
 # Which physical GPUs to use (nvidia-smi indices). On a box with more cards
 # than you own, point these at the free ones: VLLM_GPU=2 EVAL_GPU=3 bash $0
+# One card only: VLLM_GPU=0 EVAL_GPU=0 (see single-GPU mode below).
 VLLM_GPU="${VLLM_GPU:-0}"
 EVAL_GPU="${EVAL_GPU:-1}"
-[ "${VLLM_GPU}" != "${EVAL_GPU}" ] || { echo "ERROR: VLLM_GPU and EVAL_GPU must differ."; exit 1; }
+# Single-GPU mode: VLLM_GPU == EVAL_GPU puts the vLLM server and the delta-mem
+# eval on one card. vLLM is then capped at VLLM_MEM_UTIL (default 0.45, ~11 GB of
+# a 24 GB card: ~8 GB weights + KV room for ~2 x 8k-token requests), leaving ~13 GB
+# for the eval (~8 GB weights + working space). Fine for LongBench and for the
+# retrieval setups of MemoryAgentBench; the truncated setups need a smaller
+# window there (MAB_PROMPT_TOKENS=8192).
+if [ "${VLLM_GPU}" = "${EVAL_GPU}" ]; then
+    SINGLE_GPU=1
+    GPU_IDS="${VLLM_GPU}"
+    VLLM_MEM_UTIL="${VLLM_MEM_UTIL:-0.45}"
+    NEED_MIB_DEFAULT=22000
+else
+    SINGLE_GPU=0
+    GPU_IDS="${VLLM_GPU},${EVAL_GPU}"
+    VLLM_MEM_UTIL="${VLLM_MEM_UTIL:-0.85}"
+    NEED_MIB_DEFAULT=12000
+fi
 NGPU="$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)"
 for g in "${VLLM_GPU}" "${EVAL_GPU}"; do
     [ "${g}" -lt "${NGPU}" ] || { echo "ERROR: GPU ${g} does not exist (found ${NGPU})."; exit 1; }
@@ -92,7 +109,7 @@ done
 # occupy both cards, and without this check vLLM starts, spends ~30s loading,
 # then dies with a CUDA OOM buried ~90 lines deep in its log behind a useless
 # "Engine core initialization failed. See root cause above."
-NEED_MIB="${CAIMMS_MIN_FREE_MIB:-12000}"
+NEED_MIB="${CAIMMS_MIN_FREE_MIB:-${NEED_MIB_DEFAULT}}"
 BUSY=0
 while read -r idx free; do
     if [ "${free}" -lt "${NEED_MIB}" ]; then
@@ -101,12 +118,12 @@ while read -r idx free; do
     else
         echo "GPU ${idx}: ${free} MiB free -- OK"
     fi
-done < <(nvidia-smi --id="${VLLM_GPU},${EVAL_GPU}" --query-gpu=index,memory.free --format=csv,noheader,nounits | tr -d ',')
+done < <(nvidia-smi --id="${GPU_IDS}" --query-gpu=index,memory.free --format=csv,noheader,nounits | tr -d ',')
 
 if [ "${BUSY}" = "1" ]; then
     echo
     echo "ERROR: not enough free GPU memory. Who is using the cards:"
-    nvidia-smi --id="${VLLM_GPU},${EVAL_GPU}" --query-compute-apps=pid,process_name,used_memory --format=csv | sed 's/^/    /'
+    nvidia-smi --id="${GPU_IDS}" --query-compute-apps=pid,process_name,used_memory --format=csv | sed 's/^/    /'
     echo
     echo "  Pick free cards with VLLM_GPU=<i> EVAL_GPU=<j>. These may belong to another user on this shared machine -- check before"
     echo "  killing anything. Wait for them to finish, or run on Mahamathi instead."
@@ -114,15 +131,15 @@ if [ "${BUSY}" = "1" ]; then
     echo "      CAIMMS_MIN_FREE_MIB=4000 bash $0 $*"
     exit 1
 fi
-echo "GPUs (vLLM on ${VLLM_GPU}, eval on ${EVAL_GPU}):"
-nvidia-smi --id="${VLLM_GPU},${EVAL_GPU}" --query-gpu=index,name,memory.used,memory.total --format=csv,noheader | sed 's/^/  /'
+echo "GPUs (vLLM on ${VLLM_GPU}, eval on ${EVAL_GPU}$([ "${SINGLE_GPU}" = "1" ] && echo ", SINGLE-GPU mode, vLLM capped at ${VLLM_MEM_UTIL}")):"
+nvidia-smi --id="${GPU_IDS}" --query-gpu=index,name,memory.used,memory.total --format=csv,noheader | sed 's/^/  /'
 
 # No scheduler on this box means nobody is holding the GPUs for you. If someone
 # else's process is resident, say so rather than OOMing 90 seconds from now.
-OTHER="$(nvidia-smi --id="${VLLM_GPU},${EVAL_GPU}" --query-compute-apps=pid,used_memory --format=csv,noheader | wc -l)"
+OTHER="$(nvidia-smi --id="${GPU_IDS}" --query-compute-apps=pid,used_memory --format=csv,noheader | wc -l)"
 if [ "${OTHER}" -gt 0 ]; then
     echo "  NOTE: ${OTHER} compute process(es) already on these GPUs:"
-    nvidia-smi --id="${VLLM_GPU},${EVAL_GPU}" --query-compute-apps=pid,process_name,used_memory --format=csv,noheader | sed 's/^/    /'
+    nvidia-smi --id="${GPU_IDS}" --query-compute-apps=pid,process_name,used_memory --format=csv,noheader | sed 's/^/    /'
     echo "  Continuing in 10s -- ctrl-c to abort."
     sleep 10
 fi
@@ -192,7 +209,7 @@ CUDA_VISIBLE_DEVICES="${VLLM_GPU}" python3 -m vllm.entrypoints.openai.api_server
     --port "${VLLM_PORT}" \
     --dtype bfloat16 \
     --max-model-len 8192 \
-    --gpu-memory-utilization 0.85 \
+    --gpu-memory-utilization "${VLLM_MEM_UTIL}" \
     --enforce-eager \
     --disable-log-requests \
     > "${SERVER_LOG}" 2>&1 &
