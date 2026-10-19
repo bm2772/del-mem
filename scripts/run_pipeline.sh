@@ -84,15 +84,17 @@ done
 VLLM_GPU="${VLLM_GPU:-0}"
 EVAL_GPU="${EVAL_GPU:-1}"
 # Single-GPU mode: VLLM_GPU == EVAL_GPU puts the vLLM server and the delta-mem
-# eval on one card. vLLM is then capped at VLLM_MEM_UTIL (default 0.45, ~11 GB of
-# a 24 GB card: ~8 GB weights + KV room for ~2 x 8k-token requests), leaving ~13 GB
-# for the eval (~8 GB weights + working space). Fine for LongBench and for the
+# eval on one card. vLLM is then capped at VLLM_MEM_UTIL (default 0.52, ~12.7 GB of
+# a 24 GB card: ~8 GB weights + start-up overhead + ~2.5 GB KV cache). 0.45 left
+# only 1.06 GB of KV cache, below the 1.12 GB one 8192-token request needs, and
+# vLLM refused to start. That leaves ~11.8 GB for the eval (~8 GB weights +
+# working space). Fine for LongBench and for the
 # retrieval setups of MemoryAgentBench; the truncated setups need a smaller
 # window there (MAB_PROMPT_TOKENS=8192).
 if [ "${VLLM_GPU}" = "${EVAL_GPU}" ]; then
     SINGLE_GPU=1
     GPU_IDS="${VLLM_GPU}"
-    VLLM_MEM_UTIL="${VLLM_MEM_UTIL:-0.45}"
+    VLLM_MEM_UTIL="${VLLM_MEM_UTIL:-0.52}"
     NEED_MIB_DEFAULT=22000
 else
     SINGLE_GPU=0
