@@ -17,9 +17,9 @@ Status legend: ✅ done · ⏳ queued/running · 🔧 code ready, needs a run ·
 
 | # | Test | Why | Status | How |
 |---|---|---|---|---|
-| 0.1 | EventQA 65k (500 q): base vs δ-mem, authors' harness | δ-mem claim where the answer IS in the 64k window | ⏳ resiliente `q_delta`/`q_base` | `MAB_SOURCE=eventqa_65536 bash scripts/run_mab_official.sh` |
-| 0.2 | Fact consolidation 32k (sh, mh): base vs δ-mem | second category of the paper (selective forgetting), fits fully | ⏳ after 0.1 | `MAB_SOURCE=factconsolidation_sh_32k …` |
-| 0.3 | δ-mem with the original token-mask logic, LME 1 history | confirm our mask fix is inert in the authors' setup (FlashAttention passes no mask) | ⏳ after 0.2 | `DELTAMEM_LEGACY_TOKEN_MASK=1 MAB_MAX_TEST_SAMPLES=1 ARMS=deltamem bash scripts/run_mab_official.sh` |
+| 0.1 | EventQA 65k (500 q): base vs δ-mem, authors' harness | δ-mem claim where the answer IS in the 64k window | ✅ δ-mem 82.6 vs base 80.4 (+2.2, CI −0.2..+4.6; F1 +2.0, CI +0.5..+3.7) | `MAB_SOURCE=eventqa_65536 bash scripts/run_mab_official.sh` |
+| 0.2 | Fact consolidation 32k (sh, mh): base vs δ-mem | second category of the paper (selective forgetting), fits fully | ✅ sh 51 vs 49 (+2, n.s.); mh 4 vs 4 | `MAB_SOURCE=factconsolidation_sh_32k …` |
+| 0.3 | δ-mem with the original token-mask logic, LME 1 history | confirm our mask fix is inert in the authors' setup (FlashAttention passes no mask) | ✅ mask never reached (attention_mask=None in all 2,592 calls); legacy == fixed re-run, 60/60 identical | `DELTAMEM_LEGACY_TOKEN_MASK=1 MAB_MAX_TEST_SAMPLES=1 ARMS=deltamem bash scripts/run_mab_official.sh` |
 | 0.4 | Official LLM-judge re-scoring of LME base vs δ-mem (300 q) | LME's official metric is an LLM judge, not substring match | ⛔ disk space for the judge model | `DOWNLOAD_JUDGE=1 bash scripts/judge_mab_longmemeval.sh` |
 
 ## Stage A — settle IterRet's final configuration (before any ablation)
@@ -73,6 +73,15 @@ File names get a suffix automatically in `run_mab.sh`; for LoCoMo name
 2. A1, A2 → B1–B3 → C1, C2, C4, C5 (+ C3 once built) → D1, D2 → E1, E2.
 
 Total ≈ 150 GPU-hours. Minimum set answering both reviews: A1, B1, B2, C1, C2, C3, C4, D1.
+
+## δ-mem reproducibility note (found 2026-10-20)
+
+The authors' harness never resets δ-mem's state between questions
+(`reset_delta_state=False`). A run restarted mid-way agreed with an
+uninterrupted run on only 6/50 answers (same accuracy), while two uninterrupted
+runs agreed 60/60: δ-mem's answers depend on which questions were processed
+before. Pending (not run, by request): base-model re-run and a reset-per-question
+δ-mem run to confirm.
 
 ## Results so far that feed the revision
 

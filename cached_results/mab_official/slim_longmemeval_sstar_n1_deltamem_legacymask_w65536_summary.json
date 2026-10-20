@@ -1,0 +1,30 @@
+{
+ "averaged_metrics": {
+  "input_len": 61601.4333,
+  "output_len": 12.7167,
+  "memory_construction_time": 0.0,
+  "query_time_len": 12.6459,
+  "exact_match": 5.0,
+  "f1": 12.6422,
+  "substring_exact_match": 13.3333,
+  "rougeL_f1": 14.6535,
+  "rougeL_recall": 21.7688,
+  "rougeLsum_f1": 14.6535,
+  "rougeLsum_recall": 21.7688
+ },
+ "dataset_config": {
+  "dataset": "Accurate_Retrieval",
+  "sub_dataset": "longmemeval_s*",
+  "chunk_size": 4096,
+  "debug": false,
+  "seed": 42,
+  "context_max_length": 400000,
+  "generation_max_length": 50,
+  "test_files": "",
+  "demo_files": "",
+  "use_chat_template": true,
+  "max_test_samples": 1,
+  "shots": 0,
+  "tag": null
+ }
+}

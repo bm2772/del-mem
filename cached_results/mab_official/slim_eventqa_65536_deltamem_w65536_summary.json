@@ -1,0 +1,31 @@
+{
+ "averaged_metrics": {
+  "input_len": 61786.272,
+  "output_len": 15.942,
+  "memory_construction_time": 0.0,
+  "query_time_len": 14.0994,
+  "exact_match": 82.4,
+  "f1": 89.313,
+  "substring_exact_match": 82.6,
+  "rougeL_f1": 89.8913,
+  "rougeL_recall": 90.4577,
+  "rougeLsum_f1": 89.8913,
+  "rougeLsum_recall": 90.4577,
+  "eventqa_recall": 82.6
+ },
+ "dataset_config": {
+  "dataset": "Accurate_Retrieval",
+  "sub_dataset": "eventqa_65536",
+  "chunk_size": 4096,
+  "debug": false,
+  "seed": 42,
+  "context_max_length": 65536,
+  "generation_max_length": 40,
+  "test_files": "",
+  "demo_files": "",
+  "use_chat_template": true,
+  "max_test_samples": 5,
+  "shots": 0,
+  "tag": null
+ }
+}

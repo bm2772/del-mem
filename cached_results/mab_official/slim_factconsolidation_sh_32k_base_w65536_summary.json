@@ -1,0 +1,30 @@
+{
+ "averaged_metrics": {
+  "input_len": 40454.7,
+  "output_len": 3.94,
+  "memory_construction_time": 0.0,
+  "query_time_len": 5.8166,
+  "exact_match": 47.0,
+  "f1": 50.1857,
+  "substring_exact_match": 49.0,
+  "rougeL_f1": 50.1857,
+  "rougeL_recall": 51.5,
+  "rougeLsum_f1": 50.1857,
+  "rougeLsum_recall": 51.5
+ },
+ "dataset_config": {
+  "dataset": "Conflict_Resolution",
+  "sub_dataset": "factconsolidation_sh_32k",
+  "chunk_size": 4096,
+  "debug": false,
+  "seed": 42,
+  "context_max_length": 32768,
+  "generation_max_length": 10,
+  "test_files": "",
+  "demo_files": "",
+  "use_chat_template": true,
+  "max_test_samples": 1,
+  "shots": 0,
+  "tag": null
+ }
+}
