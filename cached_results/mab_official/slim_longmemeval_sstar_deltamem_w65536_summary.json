@@ -1,0 +1,38 @@
+{
+  "averaged_metrics": {
+    "input_len": 61601.8,
+    "output_len": 12.8067,
+    "memory_construction_time": 0.0,
+    "query_time_len": 13.4732,
+    "exact_match": 4.6667,
+    "f1": 13.4453,
+    "substring_exact_match": 9.6667,
+    "rougeL_f1": 14.769,
+    "rougeL_recall": 18.7808,
+    "rougeLsum_f1": 14.769,
+    "rougeLsum_recall": 18.7808
+  },
+  "agent_config": {
+    "agent_name": "Long_context_agent_deltamem",
+    "input_length_limit": 65536,
+    "buffer_length": 4000,
+    "temperature": 0.0,
+    "resolved_variant": "delta",
+    "resolved_input_length_limit": 65536
+  },
+  "dataset_config": {
+    "dataset": "Accurate_Retrieval",
+    "sub_dataset": "longmemeval_s*",
+    "chunk_size": 4096,
+    "debug": false,
+    "seed": 42,
+    "context_max_length": 400000,
+    "generation_max_length": 50,
+    "test_files": "",
+    "demo_files": "",
+    "use_chat_template": true,
+    "max_test_samples": 5,
+    "shots": 0,
+    "tag": null
+  }
+}
