@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -54,6 +55,11 @@ class OpenAICompatibleLLMClient(LLMClient):
         self.model = resolve_llm_model(model)
         self.api_key = api_key
         self.max_tokens = max_tokens
+        # Running totals for cost reporting (calls, prompt/completion tokens as
+        # reported by the server). Thread-safe: graph building calls chat()
+        # from a thread pool. Read with usage(); diff two snapshots per question.
+        self._usage_lock = threading.Lock()
+        self._usage = {"llm_calls": 0, "prompt_tokens": 0, "completion_tokens": 0}
         self._client = None
         try:
             import openai  # noqa: F401
@@ -80,7 +86,25 @@ class OpenAICompatibleLLMClient(LLMClient):
                 {"role": "user", "content": user_prompt},
             ],
         )
+        usage = getattr(response, "usage", None)
+        with self._usage_lock:
+            self._usage["llm_calls"] += 1
+            if usage is not None:
+                self._usage["prompt_tokens"] += int(getattr(usage, "prompt_tokens", 0) or 0)
+                self._usage["completion_tokens"] += int(getattr(usage, "completion_tokens", 0) or 0)
         return response.choices[0].message.content or ""
+
+    def usage(self) -> dict:
+        """Snapshot of the running call/token totals."""
+        with self._usage_lock:
+            return dict(self._usage)
+
+
+def usage_delta(before: dict, after: dict) -> dict:
+    """Per-step cost from two usage() snapshots ({} if either is missing)."""
+    if not before or not after:
+        return {}
+    return {k: after.get(k, 0) - before.get(k, 0) for k in after}
 
 
 class MockLLMClient(LLMClient):

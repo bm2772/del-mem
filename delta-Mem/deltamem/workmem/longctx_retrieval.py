@@ -5,18 +5,31 @@ EVALUATED on.
 """
 from __future__ import annotations
 
+import os
 import threading
+import time
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from iterret.ctc_graph import CueTagContentGraph
 from iterret.doc_memory_builder import build_ctc_graph_from_document, chunk_document
 from iterret.experience_bank import EmbeddingBackend, ExperienceBank, build_default_embedding_backend
+from iterret.llm_client import usage_delta
 
 from deltamem.workmem.evidence_filter import filter_evidence_by_relevance
 from deltamem.workmem.iterret_bridge import get_iterret_evidence
 
-ITERRET_MAX_ITERATIONS = 5
+# ── Ablation switches (defaults = the system as published) ──────────────────
+# ITERRET_MAX_ITERATIONS: retrieve/reflect/route rounds (paper default 5; 1 =
+#   single-shot retrieval -- ablation C1, "does iterating help?").
+# RETRIEVER: "iterret" (default) | "flat" -- plain embedding top-k over the
+#   document's own passages with the SAME encoder, no graph, no LLM routing
+#   (ablation C2, "does the graph beat vector search?"). FLAT_TOP_K passages.
+ITERRET_MAX_ITERATIONS = int(os.environ.get("ITERRET_MAX_ITERATIONS", "5"))
+RETRIEVER = os.environ.get("RETRIEVER", "iterret")
+FLAT_TOP_K = int(os.environ.get("FLAT_TOP_K", "12"))
+if RETRIEVER not in ("iterret", "flat"):
+    raise SystemExit(f"[FATAL] unknown RETRIEVER={RETRIEVER!r} (expected iterret | flat)")
 
 
 class LockedBackend(EmbeddingBackend):
@@ -67,8 +80,12 @@ def get_or_build_doc_graph(context: str, key: str, cache_dir: Path, llm, *,
         cached = True
     else:
         spans = segment_fn(context) if segment_fn is not None else chunk_document(context)
+        before, t0 = getattr(llm, "usage", dict)(), time.time()
         graph = build_ctc_graph_from_document(spans, llm)
         graph.meta["segmentation"] = segmentation
+        # one-off memory-construction cost, kept with the cached graph
+        graph.meta["build_cost"] = {**usage_delta(before, getattr(llm, "usage", dict)()),
+                                    "seconds": round(time.time() - t0, 1), "n_spans": len(spans)}
         cache_path.parent.mkdir(parents=True, exist_ok=True)
         tmp = cache_path.with_suffix(".tmp")
         graph.save(str(tmp))
@@ -78,15 +95,36 @@ def get_or_build_doc_graph(context: str, key: str, cache_dir: Path, llm, *,
     return graph, passages, cached
 
 
+def flat_retrieve(question: str, graph: CueTagContentGraph, top_k: int) -> Tuple[List[str], List[str]]:
+    """Ablation C2 baseline: the top_k episodic passages by embedding similarity
+    to the question (same encoder IterRet uses), no cue/facet graph, no LLM."""
+    ids = [cid for cid, node in graph.contents.items() if node.layer == "episodic"]
+    ranked = graph.semantic_rank_contents(ids, question)[:top_k]
+    return [graph.contents[cid].display_text() for cid in ranked], ranked
+
+
 def retrieve_evidence(question: str, graph: CueTagContentGraph, backend: EmbeddingBackend, llm,
-                      diag: dict | None = None) -> List[str]:
-    """IterRet retrieve/reflect/route (no answer node) + relevance sort -- the
-    same two steps the LoCoMo eval applies before the OSAM write."""
+                      diag: dict | None = None, *, bank: Optional[ExperienceBank] = None,
+                      max_iterations: Optional[int] = None) -> List[str]:
+    """Retrieval (IterRet retrieve/reflect/route without its answer node, or the
+    flat baseline) + relevance sort -- the same steps the LoCoMo eval applies
+    before the OSAM write. ``bank`` defaults to an empty experience bank (as in
+    every published run); pass a bootstrapped one for ablation C3."""
     graph.attach_embedder(backend)
-    bank = ExperienceBank(backend)  # empty bank, as in the LoCoMo runs
+    bank = bank if bank is not None else ExperienceBank(backend)
     diag = diag if diag is not None else {}
-    evidence = get_iterret_evidence(question, graph, bank, llm,
-                                    max_iterations=ITERRET_MAX_ITERATIONS, diag=diag)
+    diag["retriever"] = RETRIEVER
+    before = getattr(llm, "usage", dict)()
+    t0 = time.time()
+    if RETRIEVER == "flat":
+        evidence, ids = flat_retrieve(question, graph, FLAT_TOP_K)
+        diag.update({"evidence_ids": ids, "rounds": 0, "stop_reason": "flat_top_k"})
+    else:
+        rounds = ITERRET_MAX_ITERATIONS if max_iterations is None else max_iterations
+        diag["max_iterations"] = rounds
+        evidence = get_iterret_evidence(question, graph, bank, llm, max_iterations=rounds, diag=diag)
+    diag["retrieval_s"] = round(time.time() - t0, 2)
+    diag["cost"] = usage_delta(before, getattr(llm, "usage", dict)())
     text_to_id = dict(zip(evidence, diag.get("evidence_ids", [])))
     if evidence:
         evidence = filter_evidence_by_relevance(question, evidence, backend.encode, threshold=0.30)

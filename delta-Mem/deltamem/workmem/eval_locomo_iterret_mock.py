@@ -11,13 +11,12 @@ from deltamem.eval.locomo_protocol import (
     score_locomo_prediction,
 )
 from deltamem.runtime.session import DeltaMemChatSession
-from deltamem.workmem.iterret_bridge import get_iterret_evidence
+from deltamem.workmem.longctx_retrieval import evidence_items, present_evidence, retrieve_evidence
 from deltamem.workmem.osam_workmem import (
     answer_with_osam, answer_with_modes, populate_osam_from_evidence, maybe_narrow_evidence,
     EVIDENCE_IN_PROMPT,
 )
-from deltamem.workmem.evidence_filter import filter_evidence_by_relevance
-from iterret.llm_client import OpenAICompatibleLLMClient
+from iterret.llm_client import OpenAICompatibleLLMClient, usage_delta
 from iterret.llm_judge import judge_answer
 from iterret.experience_bank import ExperienceBank, build_default_embedding_backend
 from iterret.memory_builder import DialogueTurn, build_ctc_graph_from_dialogue
@@ -33,7 +32,20 @@ DATA_FILE    = os.environ.get("CAIMMS_DATA_FILE",   f"{_ROOT}/workmem-vertical/d
 # Overridable because port 8000 is not guaranteed free on a shared workstation.
 VLLM_BASE_URL   = os.environ.get("CAIMMS_VLLM_BASE_URL", "http://localhost:8000/v1")
 VLLM_MODEL_NAME = "Qwen/Qwen3-4B-Instruct-2507"
-ITERRET_MAX_ITERATIONS = 5
+# Retrieval rounds / retriever / experience bank are set in
+# deltamem.workmem.longctx_retrieval (ITERRET_MAX_ITERATIONS, RETRIEVER, FLAT_TOP_K)
+# so every benchmark ablates them identically.
+#
+# Evidence presentation (test-plan A1). Defaults keep LoCoMo's historical format
+# (LLM-extracted facts included, relevance order) so earlier runs stay comparable.
+# On Qasper, episodic + document order closed a 0.10 gap to the whole paper.
+#   WORKMEM_EVIDENCE_LAYERS = all | episodic   (episodic: conversation turns only)
+#   WORKMEM_EVIDENCE_ORDER  = relevance | document   (document = chronological)
+EVIDENCE_LAYERS = os.environ.get("WORKMEM_EVIDENCE_LAYERS", "all")
+EVIDENCE_ORDER = os.environ.get("WORKMEM_EVIDENCE_ORDER", "relevance")
+if EVIDENCE_LAYERS not in ("all", "episodic") or EVIDENCE_ORDER not in ("relevance", "document"):
+    raise SystemExit(f"[FATAL] WORKMEM_EVIDENCE_LAYERS={EVIDENCE_LAYERS!r} / WORKMEM_EVIDENCE_ORDER="
+                     f"{EVIDENCE_ORDER!r} (expected all|episodic and relevance|document)")
 
 # Both of these are overridable from the environment so a smoke test can be run
 # WITHOUT editing this file and without touching the real run's checkpoint:
@@ -223,7 +235,12 @@ def main() -> None:
                 graph = CueTagContentGraph.load(str(cache_path))
             else:
                 print(f"[sample {sample_idx}] Building CTC graph ({len(turns)} turns, {len(questions)} questions)...", flush=True)
+                _before, _t0 = graph_llm.usage(), __import__("time").time()
                 graph = build_ctc_graph_from_dialogue(turns, graph_llm)
+                # one-off memory-construction cost, kept with the cached graph
+                graph.meta["build_cost"] = {**usage_delta(_before, graph_llm.usage()),
+                                            "seconds": round(__import__("time").time() - _t0, 1),
+                                            "n_turns": len(turns)}
                 graph.save(str(cache_path))
             n_nodes = len(graph.nodes) if hasattr(graph, "nodes") else "?"
             print(f"[sample {sample_idx}] Graph ready: {n_nodes} nodes.", flush=True)
@@ -289,25 +306,20 @@ def main() -> None:
             # handoff's loss attribution stayed unfalsifiable.
             retrieval_diag: dict = {}
             try:
-                evidence = get_iterret_evidence(
-                    q_text, graph, bank, question_llm,
-                    max_iterations=ITERRET_MAX_ITERATIONS,
-                    diag=retrieval_diag,
-                )
+                # IterRet (or the flat baseline) + relevance sort; records
+                # evidence ids, rounds, retrieval seconds and LLM cost in the diag.
+                evidence = retrieve_evidence(q_text, graph, bank.backend, question_llm,
+                                             diag=retrieval_diag, bank=bank)
             except Exception as exc:
                 print(f"[sample {sample_idx}.{q_idx}] IterRet FAILED: {exc}", flush=True)
 
-            # Snapshot before filtering: retrieval_diag["evidence_ids"] is
-            # index-aligned with THIS list. The filter below both drops items
-            # and re-sorts by relevance, so after it runs the ids can no
-            # longer be matched positionally -- only by text lookup.
+            # ids are aligned with the relevance-sorted list; later steps can
+            # drop/reorder items, so carry them by text.
+            _text_to_id = dict(zip(evidence, retrieval_diag.get("final_evidence_ids", [])))
             pre_filter_evidence = list(evidence)
 
-            # --- evidence filter before OSAM write ---
+            # --- evidence shaping before OSAM write ---
             if evidence:
-                evidence = filter_evidence_by_relevance(
-                    q_text, evidence, bank.backend.encode, threshold=0.30
-                )
                 # Temporal narrowing, now OFF by default -- see
                 # TEMPORAL_NARROWING_ENABLED in osam_workmem.py for why. This
                 # is a no-op unless WORKMEM_TEMPORAL_NARROWING=1.
@@ -315,13 +327,18 @@ def main() -> None:
                 if len(narrowed) != len(evidence):
                     print(f'[sample {sample_idx}.{q_idx}] adaptive narrowing: {len(evidence)} -> {len(narrowed)}', flush=True)
                 evidence = narrowed
+                # presentation (A1): layer filter, then order
+                items = present_evidence(
+                    evidence_items(evidence, [_text_to_id.get(t, "?") for t in evidence], graph),
+                    layers=EVIDENCE_LAYERS, order=EVIDENCE_ORDER)
+                evidence = [it[0] for it in items]
                 print(f'[sample {sample_idx}.{q_idx}] evidence after filter: {len(evidence)} strings', flush=True)
-            # --- end filter ---
+            # --- end shaping ---
             n_ev = len(evidence)
 
-            _text_to_id = dict(zip(pre_filter_evidence, retrieval_diag.get("evidence_ids", [])))
             retrieval_diag["final_evidence_ids"] = [_text_to_id.get(t, "?") for t in evidence]
             retrieval_diag["n_dropped_by_filter"] = len(pre_filter_evidence) - n_ev
+            retrieval_diag["evidence_layers"], retrieval_diag["evidence_order"] = EVIDENCE_LAYERS, EVIDENCE_ORDER
 
             # In vanilla/hybrid the answer's S carries the FULL conversation, so an
             # empty IterRet result is not a reason to skip -- only skip when the

@@ -192,10 +192,15 @@ done
 echo "      port ${VLLM_PORT} free."
 
 SERVER_PID=""
+# vLLM runs in its OWN process group (setsid below), so stopping the group also
+# stops its "VLLM::EngineCore" worker -- killing only the API-server pid used to
+# leave that worker orphaned, still holding the GPU.
 cleanup() {
     if [ -n "${SERVER_PID}" ] && kill -0 "${SERVER_PID}" 2>/dev/null; then
-        echo "Stopping vLLM (pid ${SERVER_PID})..."
-        kill "${SERVER_PID}" 2>/dev/null || true
+        echo "Stopping vLLM (process group ${SERVER_PID})..."
+        kill -TERM -- -"${SERVER_PID}" 2>/dev/null || kill "${SERVER_PID}" 2>/dev/null || true
+        for _ in $(seq 1 20); do kill -0 -- -"${SERVER_PID}" 2>/dev/null || break; sleep 1; done
+        kill -KILL -- -"${SERVER_PID}" 2>/dev/null || true
         wait "${SERVER_PID}" 2>/dev/null || true
     fi
 }
@@ -205,7 +210,7 @@ cd "${CAIMMS_ROOT}/delta-Mem"
 
 # ── 1. vLLM on GPU 0 ──────────────────────────────────────────────────────────
 echo "[1/3] Starting vLLM on GPU ${VLLM_GPU} (port ${VLLM_PORT})..."
-CUDA_VISIBLE_DEVICES="${VLLM_GPU}" python3 -m vllm.entrypoints.openai.api_server \
+CUDA_VISIBLE_DEVICES="${VLLM_GPU}" setsid python3 -m vllm.entrypoints.openai.api_server \
     --model "${CAIMMS_MODEL_PATH}" \
     --served-model-name Qwen/Qwen3-4B-Instruct-2507 \
     --port "${VLLM_PORT}" \

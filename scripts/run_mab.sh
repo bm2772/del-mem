@@ -11,6 +11,11 @@
 #   MAB_SPLIT=fixed ...               # generic chunks instead of dated LongMemEval sessions
 #   OSAM_PHASE1_GRANULARITY=token ... # write every token into S (how the adapter was trained)
 #   OSAM_DELTA_GAIN=0 ARMS=truncated ...   # base model: delta-mem's corrections zeroed
+#   ARMS=combined_recent MAB_RECENT_TOKENS=8192 ...   # IterRet evidence + recent window (A2)
+#   ITERRET_MAX_ITERATIONS=1 ...           # single-round retrieval (ablation C1)
+#   RETRIEVER=flat FLAT_TOP_K=13 ...       # embedding top-k, no graph (ablation C2)
+#   ITERRET_RESOLVE_DATES=0 ...            # no date resolution (C4)
+#   DISABLE_TAG_EMBEDDER_FUSION=1 ...      # keyword-only facet ranking (C5)
 #
 # Modes: truncated (recent window only) | truncated_fullS (recent window + whole
 # history in S) | combined (IterRet evidence in S and prompt) | hybrid (whole
@@ -32,9 +37,15 @@ SUFFIX="_${MAB_SPLIT}"
 # Write granularity of evidence/history into S: message_mean (default) | token.
 [ "${OSAM_PHASE1_GRANULARITY:-message_mean}" = "message_mean" ] || SUFFIX="${SUFFIX}_${OSAM_PHASE1_GRANULARITY}write"
 [ "${OSAM_DELTA_GAIN:-1}" = "1" ] || SUFFIX="${SUFFIX}_gain${OSAM_DELTA_GAIN}"
+# Test-plan ablations (defaults keep the original file names)
+[ "${MAB_RECENT_TOKENS:-8192}" = "8192" ] || SUFFIX="${SUFFIX}_recent${MAB_RECENT_TOKENS}"
+[ "${ITERRET_MAX_ITERATIONS:-5}" = "5" ] || SUFFIX="${SUFFIX}_rounds${ITERRET_MAX_ITERATIONS}"
+[ "${RETRIEVER:-iterret}" = "iterret" ] || SUFFIX="${SUFFIX}_${RETRIEVER}k${FLAT_TOP_K:-12}"
+[ "${ITERRET_RESOLVE_DATES:-1}" = "1" ] || SUFFIX="${SUFFIX}_nodates"
+[ -z "${DISABLE_TAG_EMBEDDER_FUSION:-}" ] || SUFFIX="${SUFFIX}_nofusion"
 
 for ARM in ${ARMS}; do
-    case "${ARM}" in combined|truncated|truncated_fullS|hybrid) ;; *) echo "unknown mode '${ARM}'"; exit 1 ;; esac
+    case "${ARM}" in combined|truncated|truncated_fullS|hybrid|combined_recent) ;; *) echo "unknown mode '${ARM}'"; exit 1 ;; esac
     OUT="${CAIMMS_OUTPUT_DIR}/mab_${SRC_TAG}_${ARM}_${TAG}${SUFFIX}.jsonl"
     echo "================ MemoryAgentBench ${MAB_SOURCE} mode=${ARM} adapter=${CAIMMS_ADAPTER_DIR} -> ${OUT}"
     EVAL_MODULE=deltamem.workmem.eval_mab_iterret MAB_MODE="${ARM}" WORKMEM_OUTPUT_FILE="${OUT}" \

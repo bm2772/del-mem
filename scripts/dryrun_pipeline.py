@@ -21,8 +21,9 @@ from deltamem.eval.locomo_protocol import (
     OFFICIAL_QA_PROMPT,
 )
 from deltamem.workmem.eval_locomo_iterret_mock import (
-    extract_session_nums, gold_answer_of, load_checkpoint, ITERRET_MAX_ITERATIONS,
+    extract_session_nums, gold_answer_of, load_checkpoint,
 )
+from deltamem.workmem.longctx_retrieval import ITERRET_MAX_ITERATIONS
 
 FAIL = []
 def check(cond, label, detail=""):

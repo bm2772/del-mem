@@ -12,6 +12,8 @@ Modes (MAB_MODE):
   truncated_fullS  S = WHOLE history,       prompt = same recent window -- delta-mem's
                                             own claim: S supplies what fell out of the window
   hybrid           S = WHOLE history,       prompt = IterRet evidence
+  combined_recent  S = prompt = IterRet evidence from earlier in the history + the
+                                            most recent MAB_RECENT_TOKENS (default 8192)
 
 "WHOLE history in S" is written once per history by streaming it through the
 model chunk by chunk (osam_workmem.stream_into_state) and restored per question.
@@ -92,7 +94,12 @@ MAX_CONSECUTIVE_FAILURES = int(os.environ.get("WORKMEM_MAX_CONSECUTIVE_FAILURES"
 # write (sigmoid(beta_bias_init=-1.5)), i.e. a span of ~5-20 writes.
 STATE_DIAG = os.environ.get("MAB_STATE_DIAG", "1") == "1"
 
-MODES = ("combined", "truncated", "truncated_fullS", "hybrid")
+MODES = ("combined", "truncated", "truncated_fullS", "hybrid", "combined_recent")
+# combined_recent (test-plan A2): IterRet evidence from EARLIER in the history +
+# the most recent MAB_RECENT_TOKENS of it, in history order, in S and prompt.
+# Retrieval alone lost knowledge-update / preference questions, which need the
+# latest state, to the recent-window baseline; this keeps both.
+RECENT_TOKENS = int(os.environ.get("MAB_RECENT_TOKENS", "8192"))
 if MODE not in MODES:
     raise SystemExit(f"[FATAL] unknown MAB_MODE={MODE!r} (expected {' | '.join(MODES)})")
 FAMILY = mab_family(SOURCE)
@@ -100,7 +107,7 @@ if FAMILY not in MAB_QUERY_TEMPLATES:
     raise SystemExit(f"[FATAL] no query template for MAB source {SOURCE!r}")
 if SPLIT not in ("sessions", "fixed"):
     raise SystemExit(f"[FATAL] unknown MAB_SPLIT={SPLIT!r} (expected sessions | fixed)")
-NEEDS_RETRIEVAL = MODE in ("combined", "hybrid")
+NEEDS_RETRIEVAL = MODE in ("combined", "hybrid", "combined_recent")
 
 
 def split_history(context: str) -> list:
@@ -235,7 +242,13 @@ def main() -> None:
     for r in todo_ctx:
         ctx_idx = r["ctx_idx"]
         passages = split_history(r["context"])  # identical to the graph's passages
-        window = _recent_window(passages, tokenizer, PROMPT_TOKENS) if MODE.startswith("truncated") else []
+        if MODE.startswith("truncated"):
+            window = _recent_window(passages, tokenizer, PROMPT_TOKENS)
+        elif MODE == "combined_recent":
+            window = _recent_window(passages, tokenizer, RECENT_TOKENS)
+        else:
+            window = []
+        window_set = set(window)
         graph = None
         if NEEDS_RETRIEVAL:
             graph, _, _ = get_or_build_doc_graph(r["context"], doc_key(r["context"]), GRAPH_CACHE_DIR, llm,
@@ -301,7 +314,14 @@ def main() -> None:
             session = DeltaMemChatSession(model=model, tokenizer=tokenizer, device="cuda:0")
             session.reset()
             try:
-                if MODE == "combined":
+                if MODE == "combined_recent":
+                    # retrieved passages not already in the window (all older than
+                    # it, already in history order), then the window
+                    content = [e for e in evidence if e not in window_set] + window
+                    base["n_evidence_added"] = len(content) - len(window)
+                    out = answer_with_modes(session, question, s_content=content, prompt_content=content,
+                                            formatted_query=formatted_query, max_new_tokens=max_new)
+                elif MODE == "combined":
                     out = answer_with_modes(session, question, s_content=evidence, prompt_content=evidence,
                                             formatted_query=formatted_query, max_new_tokens=max_new)
                 elif MODE == "truncated":
