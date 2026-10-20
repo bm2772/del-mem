@@ -217,7 +217,7 @@ def load_base_model_and_tokenizer(
         tokenizer.pad_token = tokenizer.eos_token
     model = AutoModelForCausalLM.from_pretrained(
         model_path,
-        torch_torch_dtype=get_dtype(dtype),
+        torch_dtype=get_dtype(dtype),
         device_map={"": device},
         attn_implementation=resolved_attn_implementation,
         local_files_only=True,
