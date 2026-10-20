@@ -175,8 +175,19 @@ sleep 3
 # So: actively wait for the port to be FREE before starting, and abort loudly if
 # something else won't let go of it.
 echo "Ensuring port ${VLLM_PORT} is free..."
+# Anything LISTENING on the port that is not an HTTP server also blocks us: a
+# vLLM engine process opens internal sockets on random free ports, and once took
+# 8003 while a second pipeline wanted it -- curl then connected and hung forever
+# (hence --max-time on every curl here). Fail fast with a clear message instead.
+if ss -ltn 2>/dev/null | awk '{print $4}' | grep -qE "[:.]${VLLM_PORT}\$" \
+   && ! curl -sf --max-time 5 "http://localhost:${VLLM_PORT}/v1/models" > /dev/null 2>&1; then
+    echo "ERROR: port ${VLLM_PORT} is held by a non-vLLM listener:"
+    ss -ltnp 2>/dev/null | grep -E "[:.]${VLLM_PORT} " | sed 's/^/    /'
+    echo "  Pick another port: VLLM_PORT=8xxx bash $0 $*"
+    exit 1
+fi
 FREE_WAIT=0
-while curl -sf "http://localhost:${VLLM_PORT}/v1/models" > /dev/null 2>&1; do
+while curl -sf --max-time 5 "http://localhost:${VLLM_PORT}/v1/models" > /dev/null 2>&1; do
     pkill -9 -u "$USER" -f "${OWN_VLLM_PATTERN}" 2>/dev/null || true   # our own stragglers on this port, harder
     sleep 3; FREE_WAIT=$((FREE_WAIT + 3))
     if [ ${FREE_WAIT} -ge 30 ]; then
@@ -184,7 +195,7 @@ while curl -sf "http://localhost:${VLLM_PORT}/v1/models" > /dev/null 2>&1; do
         echo "  server we cannot kill (likely another user's) is holding it. Point"
         echo "  this run at a different port and retry:  VLLM_PORT=8001 bash $0 $*"
         echo "  Current occupant /v1/models says:"
-        curl -s "http://localhost:${VLLM_PORT}/v1/models" | head -c 300; echo
+        curl -s --max-time 5 "http://localhost:${VLLM_PORT}/v1/models" | head -c 300; echo
         exit 1
     fi
     echo "      ...still occupied after ${FREE_WAIT}s, retrying kill"
@@ -226,7 +237,7 @@ echo "      pid ${SERVER_PID}, log ${SERVER_LOG}"
 # ── 2. wait ───────────────────────────────────────────────────────────────────
 MAX_WAIT=600; INTERVAL=10; ELAPSED=0
 echo "[2/3] Waiting for server (up to ${MAX_WAIT}s)..."
-until curl -sf "http://localhost:${VLLM_PORT}/v1/models" > /dev/null 2>&1; do
+until curl -sf --max-time 5 "http://localhost:${VLLM_PORT}/v1/models" > /dev/null 2>&1; do
     if ! kill -0 "${SERVER_PID}" 2>/dev/null; then
         echo "ERROR: vLLM died during startup. Tail of ${SERVER_LOG}:"
         grep -nE "OutOfMemory|CUDA|Error|Traceback|Address already in use" "${SERVER_LOG}" | tail -15; echo "--- last 25 lines ---"; tail -25 "${SERVER_LOG}"
@@ -251,7 +262,7 @@ if ! kill -0 "${SERVER_PID}" 2>/dev/null; then
     grep -nE "Address already in use|Error|Traceback" "${SERVER_LOG}" | tail -10
     exit 1
 fi
-MODELS_JSON="$(curl -sf "http://localhost:${VLLM_PORT}/v1/models" || true)"
+MODELS_JSON="$(curl -sf --max-time 5 "http://localhost:${VLLM_PORT}/v1/models" || true)"
 if ! printf '%s' "${MODELS_JSON}" | grep -q "Qwen/Qwen3-4B-Instruct-2507"; then
     echo "ERROR: server on ${VLLM_PORT} is not serving Qwen/Qwen3-4B-Instruct-2507:"
     printf '%s\n' "${MODELS_JSON}" | head -c 400; echo
