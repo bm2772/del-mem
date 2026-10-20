@@ -32,6 +32,9 @@ if HAS_SMOLLM3:
 
 
 VALID_DELTA_HEADS = ("q", "k", "v", "o")
+# DELTAMEM_LEGACY_TOKEN_MASK=1 restores the upstream 4-D-mask token validity
+# logic (pre causal-mask fix, see _token_validity_mask). Default: fixed logic.
+_LEGACY_TOKEN_MASK = os.environ.get("DELTAMEM_LEGACY_TOKEN_MASK", "0") == "1"
 # Test-time multiplier on the OSAM q/o correction (see forward()). Default 1.0
 # leaves trained behaviour unchanged; raise it to probe a larger effective gain
 # without retraining. Read once at import.
@@ -1040,6 +1043,20 @@ class DeltaMemAttention(nn.Module):
             # returning None means exactly that to every token_mask consumer.
             # batch_size>1 raises rather than silently reusing a heuristic
             # already shown wrong, so adding batching later fails loudly.
+            if _LEGACY_TOKEN_MASK:
+                # Original upstream logic, restorable for comparison runs
+                # (DELTAMEM_LEGACY_TOKEN_MASK=1). Note: with FlashAttention-2 and
+                # an unpadded batch transformers passes attention_mask=None, so
+                # this branch is never reached there and both versions agree.
+                if attention_mask.size(0) != batch_size:
+                    raise ValueError(
+                        "attention_mask batch dimension does not match hidden_states batch size"
+                    )
+                if attention_mask.size(-2) < seq_len or attention_mask.size(-1) < seq_len:
+                    raise ValueError("attention_mask is shorter than the current sequence length")
+                query_mask = attention_mask[:, 0, -seq_len:, -seq_len:]
+                diagonal = query_mask.diagonal(dim1=-2, dim2=-1)
+                return diagonal.eq(0)
             if batch_size == 1:
                 return None
             raise NotImplementedError(
