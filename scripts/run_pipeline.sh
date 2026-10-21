@@ -112,6 +112,14 @@ done
 # then dies with a CUDA OOM buried ~90 lines deep in its log behind a useless
 # "Engine core initialization failed. See root cause above."
 NEED_MIB="${CAIMMS_MIN_FREE_MIB:-${NEED_MIB_DEFAULT}}"
+# CAIMMS_GPU_HOLDER_PID: a scripts/gpu_hold.py placeholder already holds this
+# card's memory for us, so "free" reads ~0 by design -- skip the free-memory
+# check. It is shrunk right before vLLM starts and released before the eval loads.
+HOLDER_PID="${CAIMMS_GPU_HOLDER_PID:-}"
+if [ -n "${HOLDER_PID}" ] && ! kill -0 "${HOLDER_PID}" 2>/dev/null; then
+    echo "ERROR: CAIMMS_GPU_HOLDER_PID=${HOLDER_PID} is not running"; exit 1
+fi
+[ -n "${HOLDER_PID}" ] && NEED_MIB=0 && echo "GPU memory held for us by pid ${HOLDER_PID} (gpu_hold.py)"
 BUSY=0
 while read -r idx free; do
     if [ "${free}" -lt "${NEED_MIB}" ]; then
@@ -139,7 +147,7 @@ nvidia-smi --id="${GPU_IDS}" --query-gpu=index,name,memory.used,memory.total --f
 # No scheduler on this box means nobody is holding the GPUs for you. If someone
 # else's process is resident, say so rather than OOMing 90 seconds from now.
 OTHER="$(nvidia-smi --id="${GPU_IDS}" --query-compute-apps=pid,used_memory --format=csv,noheader | wc -l)"
-if [ "${OTHER}" -gt 0 ]; then
+if [ "${OTHER}" -gt 0 ] && [ -z "${HOLDER_PID}" ]; then
     echo "  NOTE: ${OTHER} compute process(es) already on these GPUs:"
     nvidia-smi --id="${GPU_IDS}" --query-compute-apps=pid,process_name,used_memory --format=csv,noheader | sed 's/^/    /'
     echo "  Continuing in 10s -- ctrl-c to abort."
@@ -215,12 +223,25 @@ cleanup() {
         wait "${SERVER_PID}" 2>/dev/null || true
     fi
 }
-trap cleanup EXIT INT TERM
+trap 'release_holder; cleanup' EXIT INT TERM
+
+# Hand the held memory over: shrink (room for vLLM) / release (room for the eval).
+shrink_holder() {
+    [ -n "${HOLDER_PID}" ] && kill -0 "${HOLDER_PID}" 2>/dev/null || return 0
+    kill -USR1 "${HOLDER_PID}"; sleep 5
+    nvidia-smi --id="${VLLM_GPU}" --query-gpu=memory.free --format=csv,noheader | sed 's/^/      free after shrinking the hold: /'
+}
+release_holder() {
+    [ -n "${HOLDER_PID}" ] && kill -0 "${HOLDER_PID}" 2>/dev/null || return 0
+    kill -TERM "${HOLDER_PID}"
+    for _ in $(seq 1 30); do kill -0 "${HOLDER_PID}" 2>/dev/null || break; sleep 1; done
+}
 
 cd "${CAIMMS_ROOT}/delta-Mem"
 
 # ── 1. vLLM on GPU 0 ──────────────────────────────────────────────────────────
 echo "[1/3] Starting vLLM on GPU ${VLLM_GPU} (port ${VLLM_PORT})..."
+shrink_holder
 CUDA_VISIBLE_DEVICES="${VLLM_GPU}" setsid python3 -m vllm.entrypoints.openai.api_server \
     --model "${CAIMMS_MODEL_PATH}" \
     --served-model-name Qwen/Qwen3-4B-Instruct-2507 \
@@ -272,6 +293,7 @@ echo "      server online (pid ${SERVER_PID}, model verified)."
 
 # ── 3. eval on GPU 1 ──────────────────────────────────────────────────────────
 echo "[3/3] Starting eval on GPU ${EVAL_GPU}..."
+release_holder
 set +e
 CUDA_VISIBLE_DEVICES="${EVAL_GPU}" python3 -u -m "${EVAL_MODULE}" 2>&1 | tee -a "${RUN_LOG}"
 EVAL_EXIT=${PIPESTATUS[0]}
