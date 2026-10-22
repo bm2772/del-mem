@@ -230,6 +230,15 @@ shrink_holder() {
     [ -n "${HOLDER_PID}" ] && kill -0 "${HOLDER_PID}" 2>/dev/null || return 0
     kill -USR1 "${HOLDER_PID}"; sleep 5
     nvidia-smi --id="${VLLM_GPU}" --query-gpu=memory.free --format=csv,noheader | sed 's/^/      free after shrinking the hold: /'
+    # vLLM 0.8.5 budgets KV cache as  util * total - (its torch peak + EVERY
+    # non-torch byte on the card), so memory still held for the eval counts
+    # against vLLM and start-up fails ("No available memory for the cache
+    # blocks"). Raise util by exactly what is in use now: vLLM still ends up
+    # with its usual footprint.
+    local used total
+    read -r used total < <(nvidia-smi --id="${VLLM_GPU}" --query-gpu=memory.used,memory.total --format=csv,noheader,nounits | tr -d ',')
+    VLLM_MEM_UTIL="$(python3 -c "print(f'{min(0.97, ${VLLM_MEM_UTIL} + ${used} / ${total}):.3f}')")"
+    echo "      vLLM util raised to ${VLLM_MEM_UTIL} (held ${used} MiB counts against it)"
 }
 release_holder() {
     [ -n "${HOLDER_PID}" ] && kill -0 "${HOLDER_PID}" 2>/dev/null || return 0
