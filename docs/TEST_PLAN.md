@@ -27,7 +27,7 @@ Status legend: ✅ done · ⏳ queued/running · 🔧 code ready, needs a run ·
 | # | Test | Why | Status | How |
 |---|---|---|---|---|
 | A1 | Passages-only + chronological evidence on LoCoMo | +0.107 on Qasper; LoCoMo still uses relevance order + LLM facts | ✅ neutral on LoCoMo-4 (584 q paired): F1 0.4711 → 0.4704 (−0.001, CI −0.020..+0.019), judge 0.711 → 0.731 (+0.021, CI −0.010..+0.053); multi-hop +0.044 F1 (n.s.). Same retrieval cost (19.9 LLM calls/q). `cached_results/stageA/` | `WORKMEM_EVIDENCE_LAYERS=episodic WORKMEM_EVIDENCE_ORDER=document WORKMEM_MAX_SAMPLES=4 WORKMEM_OUTPUT_FILE=… bash scripts/run_pipeline.sh` |
-| A2 | IterRet evidence + recent window (LME) | retrieval lost knowledge-update/preference q's (need the latest state) to the window | ⛔ both arms (combined_recent, combined) failed at vLLM start-up 2026-10-21: other users took GPU memory between the free-memory check and vLLM's allocation. Not re-run (on hold by request) | `ARMS=combined_recent MAB_RECENT_TOKENS=8192 bash scripts/run_mab.sh` |
+| A2 | IterRet evidence + recent window (LME) | retrieval lost knowledge-update/preference q's (need the latest state) to the window | ✅ no gain (1 history, 20 q, paired): judge 0.50 vs 0.50 (1 win each: +1 preference, −1 temporal), substring 0.25 vs 0.30; knowledge-update unchanged 1/3. Keep evidence-only. `cached_results/stageA/` |
 
 ## Stage B — headline numbers (final configuration)
 
