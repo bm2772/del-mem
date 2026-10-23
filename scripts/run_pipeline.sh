@@ -156,9 +156,11 @@ fi
 
 # IterRet swallows any MiniLM load failure and silently downgrades to keyword
 # overlap, which changes retrieval without changing the exit code. Fail loudly.
-python - <<'PY'
+# On the CPU: this only proves the encoder loads, and the card may be fully
+# reserved by gpu_hold.py at this point (it OOMed there, A2 2026-10-23).
+CUDA_VISIBLE_DEVICES="" python - <<'PY'
 from sentence_transformers import SentenceTransformer
-SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2").encode("warmup")
+SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", device="cpu").encode("warmup")
 print("preflight: MiniLM retrieval encoder OK")
 PY
 
