@@ -6,7 +6,7 @@
 #
 # Earlier attempts died when other users grabbed memory between our free-memory
 # check and vLLM's allocation, so the card is RESERVED by scripts/gpu_hold.py the
-# moment it is free (>= 22 GB, no processes) and handed over to vLLM and then the
+# moment it has >= 22 GB free and handed over to vLLM and then the
 # eval by run_pipeline.sh. Each arm is retried (resume keeps finished questions)
 # until it has all 20 answers, at most 6 tries.
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,12 +15,12 @@ source env.sh
 caimms_activate
 O="${CAIMMS_OUTPUT_DIR}"
 
-free_gpu() {   # first GPU with >= 22 GB free and no processes
+free_gpu() {   # first GPU with >= 22 GB free (idle notebooks of < ~2 GB are tolerated:
+               # run_pipeline counts every byte in use against vLLM's share)
     while true; do
         for g in 0 1; do
             f="$(nvidia-smi --id=$g --query-gpu=memory.free --format=csv,noheader,nounits | tr -d ' ')"
-            n="$(nvidia-smi --id=$g --query-compute-apps=pid --format=csv,noheader | wc -l)"
-            [ "$f" -ge 22000 ] && [ "$n" -eq 0 ] && { echo $g; return; }
+            [ "$f" -ge 22000 ] && { echo $g; return; }
         done
         sleep 30
     done
