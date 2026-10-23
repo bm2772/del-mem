@@ -27,7 +27,7 @@ Status legend: ✅ done · ⏳ queued/running · 🔧 code ready, needs a run ·
 | # | Test | Why | Status | How |
 |---|---|---|---|---|
 | A1 | Passages-only + chronological evidence on LoCoMo | +0.107 on Qasper; LoCoMo still uses relevance order + LLM facts | ✅ neutral on LoCoMo-4 (584 q paired): F1 0.4711 → 0.4704 (−0.001, CI −0.020..+0.019), judge 0.711 → 0.731 (+0.021, CI −0.010..+0.053); multi-hop +0.044 F1 (n.s.). Same retrieval cost (19.9 LLM calls/q). `cached_results/stageA/` | `WORKMEM_EVIDENCE_LAYERS=episodic WORKMEM_EVIDENCE_ORDER=document WORKMEM_MAX_SAMPLES=4 WORKMEM_OUTPUT_FILE=… bash scripts/run_pipeline.sh` |
-| A2 | IterRet evidence + recent window (LME) | retrieval lost knowledge-update/preference q's (need the latest state) to the window | ✅ no gain (1 history, 20 q, paired): judge 0.50 vs 0.50 (1 win each: +1 preference, −1 temporal), substring 0.25 vs 0.30; knowledge-update unchanged 1/3. Keep evidence-only. `cached_results/stageA/` |
+| A2 | IterRet evidence + recent window (LME) | retrieval lost knowledge-update/preference q's (need the latest state) to the window | ✅ no gain at any size (1 history, 20 q, paired, judge): evidence only 0.50; +512 tok 0.50 (identical verdicts); +1024 0.45; +2048 0.50; +8192 0.50. Knowledge-update 1/3 throughout. Likely cause: questions are dated 2023/03–11 inside a multi-year history, so the history's last tokens are not the state at question time. Keep evidence-only. `cached_results/stageA/` |
 
 ## Stage B — headline numbers (final configuration)
 
