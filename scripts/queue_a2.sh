@@ -30,8 +30,15 @@ answered() {
     python3 -c "import json,sys; print(sum(1 for l in open(sys.argv[1]) if l.strip() and json.loads(l).get('prediction','').strip()))" "$1"
 }
 
-for ARM in combined_recent combined; do
-    OUT="${O}/mab_longmemeval_sstar_${ARM}_released_A2_sessions_c1_q20.jsonl"
+# A2_RECENT_SIZES: recent-window sizes (tokens) for combined_recent, e.g.
+# "512 1024 2048"; run_mab.sh names non-8192 files with a _recent<N> suffix.
+JOBS=""
+for N in ${A2_RECENT_SIZES:-8192}; do JOBS="${JOBS} combined_recent:${N}"; done
+JOBS="${JOBS} combined:8192"
+for JOB in ${JOBS}; do
+    ARM="${JOB%%:*}"; N="${JOB##*:}"
+    SFX="$([ "${N}" = "8192" ] || echo "_recent${N}")"
+    OUT="${O}/mab_longmemeval_sstar_${ARM}_released_A2_sessions_c1_q20${SFX}.jsonl"
     for try in 1 2 3 4 5 6; do
         [ "$(answered "${OUT}")" -ge 20 ] && break
         G=$(free_gpu)
@@ -40,11 +47,11 @@ for ARM in combined_recent combined; do
         HP=$!
         while kill -0 "$HP" 2>/dev/null && [ ! -f "${READY}" ]; do sleep 1; done
         if [ ! -f "${READY}" ]; then echo "[queue] could not reserve GPU $G -- retrying"; sleep 60; continue; fi
-        echo "[queue] A2 ${ARM} try ${try} on GPU ${G}, reserved by pid ${HP} ($(date))"
+        echo "[queue] A2 ${ARM}${SFX} try ${try} on GPU ${G}, reserved by pid ${HP} ($(date))"
         CAIMMS_GPU_HOLDER_PID=$HP VLLM_GPU=$G EVAL_GPU=$G VLLM_PORT=8002 MAB_MAX_CONTEXTS=1 MAB_MAX_QUESTIONS=20 \
-            TAG=released_A2 ARMS=$ARM bash scripts/run_mab.sh
+            MAB_RECENT_TOKENS=$N TAG=released_A2 ARMS=$ARM bash scripts/run_mab.sh
         kill "$HP" 2>/dev/null; wait "$HP" 2>/dev/null
     done
-    echo "[queue] A2 ${ARM}: $(answered "${OUT}")/20 answered"
+    echo "[queue] A2 ${ARM}${SFX}: $(answered "${OUT}")/20 answered"
 done
 echo "QUEUE A2 DONE $(date)"
