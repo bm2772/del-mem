@@ -1,0 +1,268 @@
+================ MemoryAgentBench longmemeval_s* mode=combined adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_A2brev_sessions_c1_q20.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_released_A2brev_sessions_c1_q20.jsonl
+  run  : 20261028_162036_18196 on brev-40xxhycqy at Wed Oct 28 16:20:36 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_A2brev_sessions_c1_q20.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261028_162036_18196.log
+==============================================
+GPU 0: 81154 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100 80GB PCIe, 0 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 18362, log /home/shadeform/caimms/outputs/server_20261028_162036_18196.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 18362, model verified).
+[3/3] Starting eval on GPU 0...
+[init] source=longmemeval_s* mode=combined split=sessions write=message_mean prompt_tokens=32768 out=/home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_A2brev_sessions_c1_q20.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 1 histories, 20 questions, 0 done, 1 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 20 questions {'multi-session': 3, 'knowledge-update': 3, 'temporal-reasoning': 5, 'single-session-assistant': 4, 'single-session-preference': 3, 'single-session-user': 2}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.13it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.27it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.85it/s]
+[0.0] subEM=0 F1=0.00 judge=0 pred='45 hours' gold='50'
+[0.1] subEM=0 F1=0.00 judge=1 pred='10 neon tetras, 5 golden honey gouramis, 1 pleco catfish, 1 ' gold='17'
+[0.2] subEM=0 F1=0.00 judge=0 pred="One free night's stay" gold='Two'
+[0.3] subEM=1 F1=0.40 judge=1 pred='Tomatoes were started first.' gold='Tomatoes'
+[0.4] subEM=1 F1=1.00 judge=1 pred='June 3rd' gold='June 3rd'
+[0.5] subEM=0 F1=0.71 judge=1 pred='The center is any one of its hexagons, and the circumference' gold="According to Borges, 'The Library is a s"
+[0.6] subEM=0 F1=0.03 judge=0 pred='Virtual coffee breaks' gold='The user would prefer responses that ack'
+[0.7] subEM=0 F1=0.17 judge=0 pred='10 days' gold='7 days. 8 days (including the last day) '
+[0.8] subEM=1 F1=1.00 judge=1 pred='3 weeks ago' gold='3 weeks ago'
+[0.9] subEM=0 F1=0.00 judge=0 pred='Three sessions' gold='five'
+[0.10] subEM=0 F1=0.06 judge=0 pred='Lemon Lavender Pound Cake' gold='The user would prefer baking suggestions'
+[0.11] subEM=0 F1=0.55 judge=1 pred='Pilsner or lager' gold='I recommended using a Pilsner or Lager f'
+[0.12] subEM=1 F1=1.00 judge=1 pred='"Nu, pogodi!"' gold='Nu, pogodi!'
+[0.13] subEM=0 F1=0.00 judge=0 pred='Korean-style BBQ marinade for beef short ribs' gold='The user would prefer responses that sug'
+[0.14] subEM=1 F1=1.00 judge=1 pred='Three months' gold='three months'
+[0.15] subEM=0 F1=0.00 judge=0 pred='$1,200' gold='$800'
+[0.16] subEM=0 F1=0.00 judge=0 pred='2' gold='4'
+[0.17] subEM=0 F1=0.60 judge=1 pred='The narrator received their new phone case.' gold='Receiving the new phone case'
+[0.18] subEM=1 F1=1.00 judge=1 pred='9 months' gold='9 months'
+[0.19] subEM=0 F1=0.67 judge=1 pred='GR-90' gold='The GR-90 trail.'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=combined | prompt_tokens=32768 | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+ALL                          n=  20  substringEM=0.3000  EM=0.2500  F1=0.4089  judge=0.5500  skipped=0
+  knowledge-update           n=   3  substringEM=0.3333  EM=0.3333  F1=0.3333  judge=0.3333  skipped=0
+  multi-session              n=   3  substringEM=0.0000  EM=0.0000  F1=0.0000  judge=0.3333  skipped=0
+  single-session-assistant   n=   4  substringEM=0.2500  EM=0.2500  F1=0.7304  judge=1.0000  skipped=0
+  single-session-preference  n=   3  substringEM=0.0000  EM=0.0000  F1=0.0299  judge=0.0000  skipped=0
+  single-session-user        n=   2  substringEM=0.5000  EM=0.5000  F1=0.5000  judge=0.5000  skipped=0
+  temporal-reasoning         n=   5  substringEM=0.6000  EM=0.4000  F1=0.6333  judge=0.8000  skipped=0
+==============================================================================
+==============================================
+  Done at Wed Oct 28 16:44:49 UTC 2026 | exit 0
+  Rows written: 20
+  Results: /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_A2brev_sessions_c1_q20.jsonl
+==============================================
+Stopping vLLM (process group 18362)...
+
+================ summary (longmemeval_s*, released_A2brev_sessions_c1_q20)
+        combined: n=20  substringEM=0.3000  F1=0.4089  judge=0.5500
+================ MemoryAgentBench longmemeval_s* mode=combined_recent adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_recent512_qdate.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_recent512_qdate.jsonl
+  run  : 20261028_164451_21057 on brev-40xxhycqy at Wed Oct 28 16:44:51 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_recent512_qdate.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261028_164451_21057.log
+==============================================
+GPU 0: 81154 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100 80GB PCIe, 0 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 21225, log /home/shadeform/caimms/outputs/server_20261028_164451_21057.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 21225, model verified).
+[3/3] Starting eval on GPU 0...
+[init] source=longmemeval_s* mode=combined_recent split=sessions write=message_mean prompt_tokens=32768 out=/home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_recent512_qdate.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 1 histories, 20 questions, 0 done, 1 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 20 questions {'multi-session': 3, 'knowledge-update': 3, 'temporal-reasoning': 5, 'single-session-assistant': 4, 'single-session-preference': 3, 'single-session-user': 2}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.14it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.30it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.88it/s]
+[window] history 0: prompt keeps the last 1/1261 passages
+[0.0] subEM=0 F1=0.00 judge=0 pred='10 hours' gold='50'
+[0.1] subEM=0 F1=0.00 judge=1 pred='10 neon tetras, 5 golden honey gouramis, 1 pleco catfish, 1 ' gold='17'
+[0.2] subEM=0 F1=0.00 judge=0 pred="One free night's stay" gold='Two'
+[0.3] subEM=1 F1=0.40 judge=1 pred='Tomatoes were started first.' gold='Tomatoes'
+[0.4] subEM=0 F1=0.40 judge=1 pred='June 3, 2023' gold='June 3rd'
+[0.5] subEM=0 F1=0.71 judge=1 pred='The center is any one of its hexagons, and the circumference' gold="According to Borges, 'The Library is a s"
+[0.6] subEM=0 F1=0.03 judge=0 pred='Virtual coffee breaks' gold='The user would prefer responses that ack'
+[0.7] subEM=0 F1=0.17 judge=0 pred='19 days' gold='7 days. 8 days (including the last day) '
+[0.8] subEM=0 F1=0.67 judge=0 pred='10 weeks ago' gold='3 weeks ago'
+[0.9] subEM=0 F1=0.00 judge=0 pred='Three sessions' gold='five'
+[0.10] subEM=0 F1=0.06 judge=0 pred='Bake cookies or a cake' gold='The user would prefer baking suggestions'
+[0.11] subEM=0 F1=0.55 judge=1 pred='Pilsner or lager' gold='I recommended using a Pilsner or Lager f'
+[0.12] subEM=1 F1=1.00 judge=1 pred='"Nu, pogodi!"' gold='Nu, pogodi!'
+[0.13] subEM=0 F1=0.00 judge=0 pred='Korean-style BBQ beef short ribs' gold='The user would prefer responses that sug'
+[0.14] subEM=1 F1=1.00 judge=1 pred='Three months' gold='three months'
+[0.15] subEM=0 F1=0.00 judge=0 pred='$1,200' gold='$800'
+[0.16] subEM=0 F1=0.00 judge=0 pred='Two' gold='4'
+[0.17] subEM=0 F1=0.80 judge=1 pred='narrator receiving their new phone case' gold='Receiving the new phone case'
+[0.18] subEM=1 F1=1.00 judge=1 pred='9 months' gold='9 months'
+[0.19] subEM=0 F1=0.67 judge=1 pred='GR-90' gold='The GR-90 trail.'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=combined_recent | prompt_tokens=32768 | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+ALL                          n=  20  substringEM=0.2000  EM=0.1500  F1=0.3722  judge=0.5000  skipped=0
+  knowledge-update           n=   3  substringEM=0.3333  EM=0.3333  F1=0.3333  judge=0.3333  skipped=0
+  multi-session              n=   3  substringEM=0.0000  EM=0.0000  F1=0.0000  judge=0.3333  skipped=0
+  single-session-assistant   n=   4  substringEM=0.2500  EM=0.2500  F1=0.7304  judge=1.0000  skipped=0
+  single-session-preference  n=   3  substringEM=0.0000  EM=0.0000  F1=0.0299  judge=0.0000  skipped=0
+  single-session-user        n=   2  substringEM=0.5000  EM=0.5000  F1=0.5000  judge=0.5000  skipped=0
+  temporal-reasoning         n=   5  substringEM=0.2000  EM=0.0000  F1=0.4867  judge=0.6000  skipped=0
+==============================================================================
+==============================================
+  Done at Wed Oct 28 17:09:13 UTC 2026 | exit 0
+  Rows written: 20
+  Results: /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_recent512_qdate.jsonl
+==============================================
+Stopping vLLM (process group 21225)...
+
+================ summary (longmemeval_s*, released_A2brev_sessions_c1_q20_recent512_qdate)
+ combined_recent: n=20  substringEM=0.2000  F1=0.3722  judge=0.5000
+================ MemoryAgentBench longmemeval_s* mode=combined_recent adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_recent2048_qdate.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_recent2048_qdate.jsonl
+  run  : 20261028_170915_23850 on brev-40xxhycqy at Wed Oct 28 17:09:16 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_recent2048_qdate.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261028_170915_23850.log
+==============================================
+GPU 0: 81154 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100 80GB PCIe, 0 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 24009, log /home/shadeform/caimms/outputs/server_20261028_170915_23850.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 24009, model verified).
+[3/3] Starting eval on GPU 0...
+[init] source=longmemeval_s* mode=combined_recent split=sessions write=message_mean prompt_tokens=32768 out=/home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_recent2048_qdate.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 1 histories, 20 questions, 0 done, 1 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 20 questions {'multi-session': 3, 'knowledge-update': 3, 'temporal-reasoning': 5, 'single-session-assistant': 4, 'single-session-preference': 3, 'single-session-user': 2}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.16it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.30it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.90it/s]
+[window] history 0: prompt keeps the last 6/1261 passages
+[0.0] subEM=0 F1=0.00 judge=0 pred='45 hours' gold='50'
+[0.1] subEM=0 F1=0.00 judge=0 pred='10 neon tetras, 5 golden honey gouramis, 1 pleco catfish, 1 ' gold='17'
+[0.2] subEM=0 F1=0.00 judge=0 pred="One free night's stay" gold='Two'
+[0.3] subEM=1 F1=0.40 judge=1 pred='Tomatoes were started first.' gold='Tomatoes'
+[0.4] subEM=1 F1=1.00 judge=1 pred='June 3rd' gold='June 3rd'
+[0.5] subEM=0 F1=0.71 judge=1 pred='The center is any one of its hexagons, and the circumference' gold="According to Borges, 'The Library is a s"
+[0.6] subEM=0 F1=0.03 judge=0 pred='Virtual coffee breaks' gold='The user would prefer responses that ack'
+[0.7] subEM=0 F1=0.17 judge=0 pred='15 days' gold='7 days. 8 days (including the last day) '
+[0.8] subEM=1 F1=1.00 judge=1 pred='3 weeks ago' gold='3 weeks ago'
+[0.9] subEM=0 F1=0.00 judge=0 pred='Three sessions' gold='five'
+[0.10] subEM=0 F1=0.06 judge=0 pred='Lemon Lavender Pound Cake' gold='The user would prefer baking suggestions'
+[0.11] subEM=0 F1=0.55 judge=1 pred='Pilsner or lager' gold='I recommended using a Pilsner or Lager f'
+[0.12] subEM=1 F1=1.00 judge=1 pred='"Nu, pogodi!"' gold='Nu, pogodi!'
+[0.13] subEM=0 F1=0.02 judge=0 pred='Try Korean-style BBQ beef short ribs with a marinade of soy ' gold='The user would prefer responses that sug'
+[0.14] subEM=1 F1=1.00 judge=1 pred='Three months' gold='three months'
+[0.15] subEM=0 F1=0.00 judge=0 pred='$1,200' gold='$800'
+[0.16] subEM=0 F1=0.00 judge=0 pred='2' gold='4'
+[0.17] subEM=0 F1=0.80 judge=1 pred='narrator receiving their new phone case' gold='Receiving the new phone case'
+[0.18] subEM=1 F1=0.80 judge=1 pred='About 9 months' gold='9 months'
+[0.19] subEM=0 F1=0.67 judge=1 pred='GR-90' gold='The GR-90 trail.'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=combined_recent | prompt_tokens=32768 | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+ALL                          n=  20  substringEM=0.3000  EM=0.2000  F1=0.4101  judge=0.5000  skipped=0
+  knowledge-update           n=   3  substringEM=0.3333  EM=0.0000  F1=0.2667  judge=0.3333  skipped=0
+  multi-session              n=   3  substringEM=0.0000  EM=0.0000  F1=0.0000  judge=0.0000  skipped=0
+  single-session-assistant   n=   4  substringEM=0.2500  EM=0.2500  F1=0.7304  judge=1.0000  skipped=0
+  single-session-preference  n=   3  substringEM=0.0000  EM=0.0000  F1=0.0377  judge=0.0000  skipped=0
+  single-session-user        n=   2  substringEM=0.5000  EM=0.5000  F1=0.5000  judge=0.5000  skipped=0
+  temporal-reasoning         n=   5  substringEM=0.6000  EM=0.4000  F1=0.6733  judge=0.8000  skipped=0
+==============================================================================
+==============================================
+  Done at Wed Oct 28 17:33:47 UTC 2026 | exit 0
+  Rows written: 20
+  Results: /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_recent2048_qdate.jsonl
+==============================================
+Stopping vLLM (process group 24009)...
+
+================ summary (longmemeval_s*, released_A2brev_sessions_c1_q20_recent2048_qdate)
+ combined_recent: n=20  substringEM=0.3000  F1=0.4101  judge=0.5000
+================ MemoryAgentBench longmemeval_s* mode=combined_recent adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_qdate.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_qdate.jsonl
+  run  : 20261028_173349_26805 on brev-40xxhycqy at Wed Oct 28 17:33:50 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_qdate.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261028_173349_26805.log
+==============================================
+GPU 0: 81154 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100 80GB PCIe, 0 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 26971, log /home/shadeform/caimms/outputs/server_20261028_173349_26805.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 26971, model verified).
+[3/3] Starting eval on GPU 0...
+[init] source=longmemeval_s* mode=combined_recent split=sessions write=message_mean prompt_tokens=32768 out=/home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_qdate.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 1 histories, 20 questions, 0 done, 1 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 20 questions {'multi-session': 3, 'knowledge-update': 3, 'temporal-reasoning': 5, 'single-session-assistant': 4, 'single-session-preference': 3, 'single-session-user': 2}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.16it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.30it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.89it/s]
+[window] history 0: prompt keeps the last 25/1261 passages
+[0.0] subEM=0 F1=0.00 judge=0 pred='45 hours' gold='50'
+[0.1] subEM=0 F1=0.00 judge=0 pred='15' gold='17'
+[0.2] subEM=0 F1=0.00 judge=0 pred="One free night's stay" gold='Two'
+[0.3] subEM=1 F1=0.40 judge=1 pred='Tomatoes were started first.' gold='Tomatoes'
+[0.4] subEM=1 F1=1.00 judge=1 pred='June 3rd' gold='June 3rd'
+[0.5] subEM=0 F1=0.71 judge=1 pred='The center is any one of its hexagons, and the circumference' gold="According to Borges, 'The Library is a s"
+[0.6] subEM=0 F1=0.03 judge=0 pred='Virtual coffee breaks' gold='The user would prefer responses that ack'
+[0.7] subEM=0 F1=0.17 judge=0 pred='14 days' gold='7 days. 8 days (including the last day) '
+[0.8] subEM=0 F1=0.67 judge=0 pred='10 weeks ago' gold='3 weeks ago'
+[0.9] subEM=1 F1=0.67 judge=1 pred='Five sessions' gold='five'
+[0.10] subEM=0 F1=0.03 judge=0 pred='Bake a batch of chocolate chip cookies' gold='The user would prefer baking suggestions'
+[0.11] subEM=0 F1=0.55 judge=1 pred='Pilsner or lager' gold='I recommended using a Pilsner or Lager f'
+[0.12] subEM=1 F1=1.00 judge=1 pred='"Nu, pogodi!"' gold='Nu, pogodi!'
+[0.13] subEM=0 F1=0.07 judge=1 pred='Try lentil bolognese with roasted sweet potatoes and quinoa.' gold='The user would prefer responses that sug'
+[0.14] subEM=1 F1=1.00 judge=1 pred='Three months' gold='three months'
+[0.15] subEM=1 F1=1.00 judge=1 pred='$800' gold='$800'
+[0.16] subEM=0 F1=0.00 judge=0 pred='3' gold='4'
+[0.17] subEM=0 F1=0.55 judge=1 pred='The narrator received their new phone case first.' gold='Receiving the new phone case'
+[0.18] subEM=1 F1=1.00 judge=1 pred='9 months' gold='9 months'
+[0.19] subEM=0 F1=0.67 judge=1 pred='GR-90' gold='The GR-90 trail.'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=combined_recent | prompt_tokens=32768 | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+ALL                          n=  20  substringEM=0.3500  EM=0.2500  F1=0.4750  judge=0.6000  skipped=0
+  knowledge-update           n=   3  substringEM=0.6667  EM=0.3333  F1=0.5556  judge=0.6667  skipped=0
+  multi-session              n=   3  substringEM=0.0000  EM=0.0000  F1=0.0000  judge=0.0000  skipped=0
+  single-session-assistant   n=   4  substringEM=0.2500  EM=0.2500  F1=0.7304  judge=1.0000  skipped=0
+  single-session-preference  n=   3  substringEM=0.0000  EM=0.0000  F1=0.0445  judge=0.3333  skipped=0
+  single-session-user        n=   2  substringEM=1.0000  EM=1.0000  F1=1.0000  judge=1.0000  skipped=0
+  temporal-reasoning         n=   5  substringEM=0.4000  EM=0.2000  F1=0.5558  judge=0.6000  skipped=0
+==============================================================================
+==============================================
+  Done at Wed Oct 28 17:59:50 UTC 2026 | exit 0
+  Rows written: 20
+  Results: /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_A2brev_sessions_c1_q20_qdate.jsonl
+==============================================
+Stopping vLLM (process group 26971)...
+
+================ summary (longmemeval_s*, released_A2brev_sessions_c1_q20_qdate)
+ combined_recent: n=20  substringEM=0.3500  F1=0.4750  judge=0.6000
+QUEUE BREV DONE Wed Oct 28 17:59:53 UTC 2026
