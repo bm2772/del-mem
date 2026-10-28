@@ -11,10 +11,10 @@ from deltamem.eval.locomo_protocol import (
     score_locomo_prediction,
 )
 from deltamem.runtime.session import DeltaMemChatSession
-from deltamem.workmem.longctx_retrieval import evidence_items, present_evidence, retrieve_evidence
+from deltamem.workmem.longctx_retrieval import ITERRET_BANK_PATH, evidence_items, make_bank, present_evidence, retrieve_evidence
 from deltamem.workmem.osam_workmem import (
     answer_with_osam, answer_with_modes, populate_osam_from_evidence, maybe_narrow_evidence,
-    EVIDENCE_IN_PROMPT,
+    EVIDENCE_IN_PROMPT, build_answer_prompt, _evidence_carries_dates,
 )
 from iterret.llm_client import OpenAICompatibleLLMClient, usage_delta
 from iterret.llm_judge import judge_answer
@@ -31,7 +31,14 @@ ADAPTER_DIR  = os.environ.get("CAIMMS_ADAPTER_DIR", f"{_ROOT}/models/delta-mem-a
 DATA_FILE    = os.environ.get("CAIMMS_DATA_FILE",   f"{_ROOT}/workmem-vertical/delta-Mem/data/locomo10.json")
 # Overridable because port 8000 is not guaranteed free on a shared workstation.
 VLLM_BASE_URL   = os.environ.get("CAIMMS_VLLM_BASE_URL", "http://localhost:8000/v1")
-VLLM_MODEL_NAME = "Qwen/Qwen3-4B-Instruct-2507"
+VLLM_MODEL_NAME = os.environ.get("CAIMMS_SERVED_MODEL_NAME", "Qwen/Qwen3-4B-Instruct-2507")
+# Answer path (test-plan D1): "deltamem" (default) = Qwen + delta-mem adapter, evidence
+# written into S; "vllm" = the served model answers from the same prompt with no
+# delta-mem (combined mode only), so graph, search and answer all use another
+# model family. WORKMEM_GRAPH_CACHE_DIR keeps that family's graphs apart.
+ANSWER_BACKEND = os.environ.get("WORKMEM_ANSWER_BACKEND", "deltamem")
+if ANSWER_BACKEND not in ("deltamem", "vllm"):
+    raise SystemExit(f"[FATAL] WORKMEM_ANSWER_BACKEND={ANSWER_BACKEND!r} (expected deltamem | vllm)")
 # Retrieval rounds / retriever / experience bank are set in
 # deltamem.workmem.longctx_retrieval (ITERRET_MAX_ITERATIONS, RETRIEVER, FLAT_TOP_K)
 # so every benchmark ablates them identically.
@@ -93,6 +100,23 @@ if OSAM_MODE not in ("combined", "vanilla", "hybrid"):
 
 
 
+class PlainEvidenceSession:
+    """D1 answer path without delta-mem: the served model gets the evidence in
+    the prompt (one item per line, the order present_evidence chose) and the
+    same instructions build_answer_prompt gives the delta-mem path."""
+
+    def __init__(self, evidence: List[str], llm) -> None:
+        self.llm = llm
+        self.messages = [{"role": "user", "content": e} for e in evidence]
+
+    def answer(self, query: str) -> dict:
+        prompt = build_answer_prompt(query, evidence_carries_dates=_evidence_carries_dates(self))
+        evidence = "\n".join(m["content"] for m in self.messages)
+        reply = self.llm.chat("You are a helpful assistant.", f"Evidence:\n{evidence}\n\n{prompt}")
+        self.messages.append({"role": "assistant", "content": reply})
+        return {"response": reply}
+
+
 def extract_prediction(out, session) -> str:
     prediction = ""
     if isinstance(out, dict):
@@ -148,17 +172,23 @@ def gold_answer_of(q: dict) -> str:
 
 def main() -> None:
     print(f"[init] MAX_SAMPLES={MAX_SAMPLES!r}  OUTPUT_FILE={OUTPUT_FILE!r}", flush=True)
-    print(f"[init] Loading base model from {MODEL_PATH}", flush=True)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, local_files_only=True)
-    if tokenizer.pad_token_id is None:
-        tokenizer.pad_token = tokenizer.eos_token
-    model = AutoModelForCausalLM.from_pretrained(
-        MODEL_PATH, torch_dtype=torch.bfloat16, device_map="cuda:0", local_files_only=True,
-    )
-    print(f"[init] Attaching Delta-Mem adapter from {ADAPTER_DIR}", flush=True)
-    attach_delta_adapter_in_place(model, Path(ADAPTER_DIR))
-    model.eval()
-    print("[init] Delta-Mem model ready.\n", flush=True)
+    if ANSWER_BACKEND == "vllm" and OSAM_MODE != "combined":
+        raise SystemExit("[FATAL] WORKMEM_ANSWER_BACKEND=vllm supports WORKMEM_OSAM_MODE=combined only")
+    model = tokenizer = None
+    if ANSWER_BACKEND == "vllm":
+        print(f"[init] Answering through vLLM ({VLLM_MODEL_NAME}), no delta-mem.\n", flush=True)
+    else:
+        print(f"[init] Loading base model from {MODEL_PATH}", flush=True)
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, local_files_only=True)
+        if tokenizer.pad_token_id is None:
+            tokenizer.pad_token = tokenizer.eos_token
+        model = AutoModelForCausalLM.from_pretrained(
+            MODEL_PATH, torch_dtype=torch.bfloat16, device_map="cuda:0", local_files_only=True,
+        )
+        print(f"[init] Attaching Delta-Mem adapter from {ADAPTER_DIR}", flush=True)
+        attach_delta_adapter_in_place(model, Path(ADAPTER_DIR))
+        model.eval()
+        print("[init] Delta-Mem model ready.\n", flush=True)
 
     print(f"[init] Loading dataset from {DATA_FILE}", flush=True)
     with open(DATA_FILE) as f:
@@ -177,11 +207,12 @@ def main() -> None:
     # for the sample that was in progress no longer has to be rebuilt from the
     # ~400 LLM calls in build_ctc_graph_from_dialogue on resume -- only the
     # remaining unanswered questions in it get (re)processed.
-    GRAPH_CACHE_DIR = Path(OUTPUT_FILE).parent / "graph_cache"
+    GRAPH_CACHE_DIR = Path(os.environ.get("WORKMEM_GRAPH_CACHE_DIR") or Path(OUTPUT_FILE).parent / "graph_cache")
     GRAPH_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
     graph_llm    = OpenAICompatibleLLMClient(base_url=VLLM_BASE_URL, model=VLLM_MODEL_NAME)
     question_llm = OpenAICompatibleLLMClient(base_url=VLLM_BASE_URL, model=VLLM_MODEL_NAME)
+    answer_llm   = OpenAICompatibleLLMClient(base_url=VLLM_BASE_URL, model=VLLM_MODEL_NAME, max_tokens=512)
 
     # Graph-LLM health tracking (see GRAPH_LLM_CHECK_AFTER). Counts freshly
     # answered questions this process produced -- not checkpoint-resumed ones.
@@ -249,8 +280,10 @@ def main() -> None:
             # vs empty bank. A bank built from 1 of 10 conversations does not
             # generalise to the other 9. Use empty bank until a diverse bank
             # built from multiple conversations is available.
-            bank = ExperienceBank(build_default_embedding_backend())
-            print(f"[sample {sample_idx}] Using empty experience bank (diverse bank not available).", flush=True)
+            # ITERRET_BANK_PATH (ablation C3): a bank bootstrapped on held-out
+            # conversations (build_heldout_bank.py) replaces the empty one.
+            bank = make_bank(build_default_embedding_backend())
+            print(f"[sample {sample_idx}] Experience bank: {ITERRET_BANK_PATH or 'empty'}.", flush=True)
             # Give the graph the same MiniLM backend the bank uses, so
             # reflect_node's fail-open fallback (nodes.py) can rank candidates
             # by embedding similarity instead of keeping everything untouched
@@ -360,8 +393,11 @@ def main() -> None:
                 print(f"[sample {sample_idx}.{q_idx}] No evidence, score=0", flush=True)
                 continue
 
-            session = DeltaMemChatSession(model=model, tokenizer=tokenizer, device="cuda:0")
-            session.reset()
+            if ANSWER_BACKEND == "vllm":
+                session = PlainEvidenceSession(evidence, answer_llm)
+            else:
+                session = DeltaMemChatSession(model=model, tokenizer=tokenizer, device="cuda:0")
+                session.reset()
             # No fixed OSAM cap here (removed): it bounded total evidence
             # per question regardless of whether each item was a deliberate,
             # well-reasoned keep or fail-open noise, and penalized multi-hop
@@ -370,7 +406,7 @@ def main() -> None:
             # per-round, in nodes.py's fail-open fallback (FAIL_OPEN_FALLBACK_TOP_K)
             # -- which only limits evidence from rounds where routing couldn't
             # be trusted, leaving genuinely-vetted multi-round evidence intact.
-            if OSAM_MODE == "combined":
+            if OSAM_MODE == "combined" and ANSWER_BACKEND == "deltamem":
                 populate_osam_from_evidence(session, evidence)
 
             prediction = ""
@@ -386,7 +422,9 @@ def main() -> None:
                 # type (see its docstring/comments). cat_int is only used
                 # above for the adversarial exclusion and below for score
                 # bucketing.
-                if OSAM_MODE == "combined":
+                if ANSWER_BACKEND == "vllm":
+                    out = session.answer(q_text)
+                elif OSAM_MODE == "combined":
                     out = answer_with_osam(session, q_text)
                 elif OSAM_MODE == "vanilla":
                     # S = full conversation; prompt = full context (if

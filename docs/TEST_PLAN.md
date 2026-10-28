@@ -47,7 +47,7 @@ File names get a suffix automatically in `run_mab.sh`; for LoCoMo name
 |---|---|---|---|---|
 | C1 | 1 retrieval round vs 5 | the paper's core claim (iteration helps), never isolated | 🔧 | `ITERRET_MAX_ITERATIONS=1` |
 | C2 | AFC graph vs plain embedding top-k (same encoder, same passages, matched size) | does the graph beat ordinary vector search? | 🔧 | `RETRIEVER=flat FLAT_TOP_K=<IterRet's median evidence count>` |
-| C3 | experience bank: bootstrapped (held-out) vs empty | R1: contribution; R2: cost/conflicts. A 1-conversation bank previously hurt; all published runs use an empty bank | ✏️ held-out bank build + pass `bank=` to `retrieve_evidence` | — |
+| C3 | experience bank: bootstrapped (held-out) vs empty | R1: contribution; R2: cost/conflicts. A 1-conversation bank previously hurt; all published runs use an empty bank | 🔧 bank from LoCoMo conversations 5–10 (`build_heldout_bank.py`), used on LoCoMo-4 and LME | `bash scripts/run_c3.sh` (`ITERRET_BANK_PATH=…`) |
 | C4 | relative-date resolution on/off | R1 praises temporal results; much of that comes from this step | 🔧 **LoCoMo only** (LME passages carry dates as text, so the switch is a no-op there) | `ITERRET_RESOLVE_DATES=0` |
 | C5 | facet ranking keyword-only vs keyword+meaning | +0.081 measured on an older config; re-measure | 🔧 | `DISABLE_TAG_EMBEDDER_FUSION=1` |
 | C6 | evidence presentation | free from A1 (LoCoMo) / done on Qasper | ✅ Qasper | — |
@@ -56,7 +56,7 @@ File names get a suffix automatically in `run_mab.sh`; for LoCoMo name
 
 | # | Test | Why | Status |
 |---|---|---|---|
-| D1 | Second model family (Llama-3.1-8B / Mistral-7B) for graph, search and answering | R1: another LLM family; R2: justify model choice | ✏️ answer path without δ-mem; model download |
+| D1 | Second model family (Llama-3.1-8B / Mistral-7B) for graph, search and answering | R1: another LLM family; R2: justify model choice | 🔧 `WORKMEM_ANSWER_BACKEND=vllm` (served model answers, no δ-mem) + Qwen-without-δ-mem reference arm; `D1_MODEL=<hf repo> bash scripts/run_d1.sh` (Llama/Mistral are gated: `hf auth login` first) |
 | D2 | Same configuration twice (LoCoMo-4) | R2 doubts reproducibility; quantify run-to-run noise (vLLM nondeterminism) next to released cached graphs | 🔧 |
 | D3 | Cost: LLM calls / tokens / seconds per question; graph-build cost | R2: cost and scaling | 🔧 recorded in every new run; `python3 scripts/cost_report.py --results … --graphs …` |
 

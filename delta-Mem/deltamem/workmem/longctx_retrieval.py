@@ -30,6 +30,26 @@ RETRIEVER = os.environ.get("RETRIEVER", "iterret")
 FLAT_TOP_K = int(os.environ.get("FLAT_TOP_K", "12"))
 if RETRIEVER not in ("iterret", "flat"):
     raise SystemExit(f"[FATAL] unknown RETRIEVER={RETRIEVER!r} (expected iterret | flat)")
+# ITERRET_BANK_PATH: experience bank JSON (from build_heldout_bank.py) used by
+#   every retrieval instead of the empty bank (ablation C3). Unset = empty bank,
+#   as in every published run.
+ITERRET_BANK_PATH = os.environ.get("ITERRET_BANK_PATH", "")
+if ITERRET_BANK_PATH and not Path(ITERRET_BANK_PATH).is_file():
+    raise SystemExit(f"[FATAL] ITERRET_BANK_PATH={ITERRET_BANK_PATH!r} does not exist")
+_BANKS: dict = {}
+
+
+def make_bank(backend: EmbeddingBackend) -> ExperienceBank:
+    """The experience bank for retrieval: ITERRET_BANK_PATH if set, else empty.
+    Loaded once per backend (loading embeds every entry)."""
+    if not ITERRET_BANK_PATH:
+        return ExperienceBank(backend)
+    if id(backend) not in _BANKS:
+        _BANKS[id(backend)] = ExperienceBank.load(ITERRET_BANK_PATH, backend)
+        b = _BANKS[id(backend)]
+        print(f"[bank] loaded {ITERRET_BANK_PATH}: {len(b.planning_bank)} Planning + "
+              f"{len(b.reflection_bank)} Reflection entries", flush=True)
+    return _BANKS[id(backend)]
 
 
 class LockedBackend(EmbeddingBackend):
@@ -108,10 +128,10 @@ def retrieve_evidence(question: str, graph: CueTagContentGraph, backend: Embeddi
                       max_iterations: Optional[int] = None) -> List[str]:
     """Retrieval (IterRet retrieve/reflect/route without its answer node, or the
     flat baseline) + relevance sort -- the same steps the LoCoMo eval applies
-    before the OSAM write. ``bank`` defaults to an empty experience bank (as in
-    every published run); pass a bootstrapped one for ablation C3."""
+    before the OSAM write. ``bank`` defaults to make_bank(): empty (as in every
+    published run) unless ITERRET_BANK_PATH names a bootstrapped one (ablation C3)."""
     graph.attach_embedder(backend)
-    bank = bank if bank is not None else ExperienceBank(backend)
+    bank = bank if bank is not None else make_bank(backend)
     diag = diag if diag is not None else {}
     diag["retriever"] = RETRIEVER
     before = getattr(llm, "usage", dict)()

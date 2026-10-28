@@ -17,6 +17,7 @@
 #   RETRIEVER=flat FLAT_TOP_K=13 ...       # embedding top-k, no graph (ablation C2)
 #   ITERRET_RESOLVE_DATES=0 ...            # no date resolution (C4)
 #   DISABLE_TAG_EMBEDDER_FUSION=1 ...      # keyword-only facet ranking (C5)
+#   ITERRET_BANK_PATH=$CAIMMS_OUTPUT_DIR/experience_bank_heldout.json ...  # bootstrapped bank (C3)
 #
 # Modes: truncated (recent window only) | truncated_fullS (recent window + whole
 # history in S) | combined (IterRet evidence in S and prompt) | hybrid (whole
@@ -45,6 +46,7 @@ SUFFIX="_${MAB_SPLIT}"
 [ "${RETRIEVER:-iterret}" = "iterret" ] || SUFFIX="${SUFFIX}_${RETRIEVER}k${FLAT_TOP_K:-12}"
 [ "${ITERRET_RESOLVE_DATES:-1}" = "1" ] || SUFFIX="${SUFFIX}_nodates"
 [ -z "${DISABLE_TAG_EMBEDDER_FUSION:-}" ] || SUFFIX="${SUFFIX}_nofusion"
+[ -z "${ITERRET_BANK_PATH:-}" ] || SUFFIX="${SUFFIX}_bank$(basename "${ITERRET_BANK_PATH}" .json | sed "s/^experience_bank//")"
 
 for ARM in ${ARMS}; do
     case "${ARM}" in combined|truncated|truncated_fullS|hybrid|combined_recent) ;; *) echo "unknown mode '${ARM}'"; exit 1 ;; esac

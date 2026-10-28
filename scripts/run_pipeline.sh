@@ -72,8 +72,15 @@ echo "=============================================="
 # Cheap checks up front. The alternative is discovering a missing file after
 # vLLM has spent 90s loading weights, or worse, 20 hours in.
 fail=0
-for f in "${CAIMMS_MODEL_PATH}/config.json" "${CAIMMS_ADAPTER_DIR}/delta_mem_config.json" \
-         "${CAIMMS_ADAPTER_DIR}/delta_mem_adapter.pt" "${CAIMMS_DATA_FILE}"; do
+# Model served by vLLM (graph building, search and -- with
+# WORKMEM_ANSWER_BACKEND=vllm -- answering). Another family for test-plan D1:
+#   CAIMMS_MODEL_PATH=$CAIMMS_WORKSPACE/models/Llama-3.1-8B-Instruct \
+#   CAIMMS_SERVED_MODEL_NAME=meta-llama/Llama-3.1-8B-Instruct WORKMEM_ANSWER_BACKEND=vllm ...
+export CAIMMS_SERVED_MODEL_NAME="${CAIMMS_SERVED_MODEL_NAME:-Qwen/Qwen3-4B-Instruct-2507}"
+export WORKMEM_ANSWER_BACKEND="${WORKMEM_ANSWER_BACKEND:-deltamem}"
+NEED=("${CAIMMS_MODEL_PATH}/config.json" "${CAIMMS_DATA_FILE}")
+[ "${WORKMEM_ANSWER_BACKEND}" = "vllm" ] || NEED+=("${CAIMMS_ADAPTER_DIR}/delta_mem_config.json" "${CAIMMS_ADAPTER_DIR}/delta_mem_adapter.pt")
+for f in "${NEED[@]}"; do
     [ -e "$f" ] || { echo "MISSING: $f"; fail=1; }
 done
 [ "$fail" = "0" ] || { echo "Run download_assets.sh first."; exit 1; }
@@ -255,7 +262,7 @@ echo "[1/3] Starting vLLM on GPU ${VLLM_GPU} (port ${VLLM_PORT})..."
 shrink_holder
 CUDA_VISIBLE_DEVICES="${VLLM_GPU}" setsid python3 -m vllm.entrypoints.openai.api_server \
     --model "${CAIMMS_MODEL_PATH}" \
-    --served-model-name Qwen/Qwen3-4B-Instruct-2507 \
+    --served-model-name "${CAIMMS_SERVED_MODEL_NAME}" \
     --port "${VLLM_PORT}" \
     --dtype bfloat16 \
     --max-model-len 8192 \
@@ -295,8 +302,8 @@ if ! kill -0 "${SERVER_PID}" 2>/dev/null; then
     exit 1
 fi
 MODELS_JSON="$(curl -sf --max-time 5 "http://localhost:${VLLM_PORT}/v1/models" || true)"
-if ! printf '%s' "${MODELS_JSON}" | grep -q "Qwen/Qwen3-4B-Instruct-2507"; then
-    echo "ERROR: server on ${VLLM_PORT} is not serving Qwen/Qwen3-4B-Instruct-2507:"
+if ! printf '%s' "${MODELS_JSON}" | grep -q "${CAIMMS_SERVED_MODEL_NAME}"; then
+    echo "ERROR: server on ${VLLM_PORT} is not serving ${CAIMMS_SERVED_MODEL_NAME}:"
     printf '%s\n' "${MODELS_JSON}" | head -c 400; echo
     exit 1
 fi
