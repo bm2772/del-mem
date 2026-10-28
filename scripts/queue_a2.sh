@@ -32,12 +32,16 @@ answered() {
 
 # A2_RECENT_SIZES: recent-window sizes (tokens) for combined_recent, e.g.
 # "512 1024 2048"; run_mab.sh names non-8192 files with a _recent<N> suffix.
+# MAB_RECENT_ALIGN=question_date (from env) adds _qdate; it applies to combined_recent only.
 JOBS=""
 for N in ${A2_RECENT_SIZES:-8192}; do JOBS="${JOBS} combined_recent:${N}"; done
 JOBS="${JOBS} combined:8192"
 for JOB in ${JOBS}; do
     ARM="${JOB%%:*}"; N="${JOB##*:}"
     SFX="$([ "${N}" = "8192" ] || echo "_recent${N}")"
+    # same suffix order as run_mab.sh: _recent<N> then _qdate
+    AL="${MAB_RECENT_ALIGN:-end}"; [ "${ARM}" = "combined_recent" ] || AL=end   # window-free arm: unaffected
+    [ "${AL}" = "end" ] || SFX="${SFX}_qdate"
     OUT="${O}/mab_longmemeval_sstar_${ARM}_released_A2_sessions_c1_q20${SFX}.jsonl"
     for try in 1 2 3 4 5 6; do
         [ "$(answered "${OUT}")" -ge 20 ] && break
@@ -49,7 +53,7 @@ for JOB in ${JOBS}; do
         if [ ! -f "${READY}" ]; then echo "[queue] could not reserve GPU $G -- retrying"; sleep 60; continue; fi
         echo "[queue] A2 ${ARM}${SFX} try ${try} on GPU ${G}, reserved by pid ${HP} ($(date))"
         CAIMMS_GPU_HOLDER_PID=$HP VLLM_GPU=$G EVAL_GPU=$G VLLM_PORT=8002 MAB_MAX_CONTEXTS=1 MAB_MAX_QUESTIONS=20 \
-            MAB_RECENT_TOKENS=$N TAG=released_A2 ARMS=$ARM bash scripts/run_mab.sh
+            MAB_RECENT_TOKENS=$N MAB_RECENT_ALIGN="${AL}" TAG=released_A2 ARMS=$ARM bash scripts/run_mab.sh
         kill "$HP" 2>/dev/null; wait "$HP" 2>/dev/null
     done
     echo "[queue] A2 ${ARM}${SFX}: $(answered "${OUT}")/20 answered"

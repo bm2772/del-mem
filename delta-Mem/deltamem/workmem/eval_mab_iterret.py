@@ -27,6 +27,8 @@ Environment:
   MAB_JUDGE           1 = also score with the LLM judge on the graph vLLM (default 1)
   MAB_MAX_EVIDENCE_TOKENS  optional cap on IterRet evidence (default 0 = none)
   MAB_SPLIT           sessions (LongMemEval-aware, dated passages; default) | fixed
+  MAB_RECENT_ALIGN    combined_recent window: end (last tokens of the history; default) |
+                      question_date (last tokens of the sessions dated <= the question's Current Date)
   MAB_STATE_DIAG      1 = measure S's memory span after streaming (default 1)
   OSAM_PHASE1_GRANULARITY  message_mean (one write per passage; default) | token
   WORKMEM_OUTPUT_FILE results JSONL (resumable)
@@ -50,7 +52,7 @@ from deltamem.eval.common import attach_delta_adapter_in_place
 from deltamem.runtime.session import DeltaMemChatSession
 from deltamem.workmem.longctx_data import (
     MAB_MAX_NEW_TOKENS, MAB_QUERY_TEMPLATES, doc_key, load_mab, longmemeval_passages, mab_family,
-    mab_question_core, mab_scores,
+    mab_question_core, mab_question_date, mab_scores, passages_before,
 )
 from deltamem.workmem.longctx_retrieval import (
     DEFAULT_EVIDENCE_LAYERS, DEFAULT_EVIDENCE_ORDER, evidence_items, get_or_build_doc_graph,
@@ -100,11 +102,17 @@ MODES = ("combined", "truncated", "truncated_fullS", "hybrid", "combined_recent"
 # Retrieval alone lost knowledge-update / preference questions, which need the
 # latest state, to the recent-window baseline; this keeps both.
 RECENT_TOKENS = int(os.environ.get("MAB_RECENT_TOKENS", "8192"))
+# Each LongMemEval question carries its own "Current Date", and the history spans
+# far longer, so the history's tail can be from the wrong period: question_date
+# ends the window at the last session dated <= that date instead.
+RECENT_ALIGN = os.environ.get("MAB_RECENT_ALIGN", "end")
 if MODE not in MODES:
     raise SystemExit(f"[FATAL] unknown MAB_MODE={MODE!r} (expected {' | '.join(MODES)})")
 FAMILY = mab_family(SOURCE)
 if FAMILY not in MAB_QUERY_TEMPLATES:
     raise SystemExit(f"[FATAL] no query template for MAB source {SOURCE!r}")
+if RECENT_ALIGN not in ("end", "question_date"):
+    raise SystemExit(f"[FATAL] unknown MAB_RECENT_ALIGN={RECENT_ALIGN!r} (expected end | question_date)")
 if SPLIT not in ("sessions", "fixed"):
     raise SystemExit(f"[FATAL] unknown MAB_SPLIT={SPLIT!r} (expected sessions | fixed)")
 NEEDS_RETRIEVAL = MODE in ("combined", "hybrid", "combined_recent")
@@ -150,6 +158,27 @@ def _recent_window(passages: list, tokenizer, budget: int) -> list:
         kept.append(p)
         used += n
     return list(reversed(kept))
+
+
+def _aligned_window(passages: list, tokenizer, budget: int, question: str, align: str) -> tuple:
+    """(window, diagnostics) for combined_recent. ``question_date`` takes the
+    window from the passages dated <= the question's Current Date; if that date
+    or the passage dates cannot be parsed it falls back to ``end``."""
+    diag = {"recent_align": align, "recent_align_used": "end", "recent_cutoff": None}
+    pool = passages
+    if align == "question_date":
+        cutoff = mab_question_date(question)
+        before = passages_before(passages, cutoff) if cutoff else None
+        if before is None:
+            diag["recent_align_fallback"] = "no_question_date" if cutoff is None else "unparsed_passage_dates"
+        else:
+            pool = before
+            diag["recent_align_used"] = "question_date"
+            diag["recent_cutoff"] = "%04d/%02d/%02d" % cutoff
+    window = _recent_window(pool, tokenizer, budget)
+    diag["n_window_passages"] = len(window)
+    diag["n_window_tokens"] = sum(len(tokenizer(p, add_special_tokens=False)["input_ids"]) for p in window)
+    return window, diag
 
 
 def _state_similarity(a: dict, b: dict) -> tuple:
@@ -288,6 +317,10 @@ def main() -> None:
                     "n_passages": len(passages), "n_window": len(window)}
 
             evidence, diag = [], {}
+            if MODE == "combined_recent":
+                window, wdiag = _aligned_window(passages, tokenizer, RECENT_TOKENS, question, RECENT_ALIGN)
+                window_set = set(window)
+                base.update(wdiag, n_window=len(window))
             if NEEDS_RETRIEVAL:
                 try:
                     # search on the question itself, not its "Current Date: ..." header

@@ -321,6 +321,30 @@ def mab_question_core(question: str) -> str:
     return question.split(marker, 1)[1].strip() if marker in question else question
 
 
+_DATE_RE = re.compile(r"(\d{4})/(\d{2})/(\d{2})")
+
+
+def mab_question_date(question: str) -> Optional[tuple]:
+    """(year, month, day) from the question's 'Current Date: YYYY/MM/DD (Day) HH:MM' header."""
+    m = re.search(r"Current Date:\s*(\d{4})/(\d{2})/(\d{2})", question)
+    return tuple(int(g) for g in m.groups()) if m else None
+
+
+def passage_date(passage: str) -> Optional[tuple]:
+    """(year, month, day) of a dated session passage ('[YYYY/MM/DD (Day) HH:MM] ...')."""
+    m = _DATE_RE.match(passage[1:]) if passage.startswith("[") else None
+    return tuple(int(g) for g in m.groups()) if m else None
+
+
+def passages_before(passages: Sequence[str], cutoff: tuple) -> Optional[List[str]]:
+    """Passages whose session date is <= cutoff, in history order. None if any
+    passage has no parsable date (the caller then falls back to the history's end)."""
+    dates = [passage_date(p) for p in passages]
+    if any(d is None for d in dates):
+        return None
+    return [p for p, d in zip(passages, dates) if d <= cutoff]
+
+
 def mab_scores(prediction: str, answers: Sequence[str]) -> Dict[str, float]:
     """Exact match, substring exact match (normalised gold inside normalised
     prediction -- MemoryAgentBench's accuracy for Accurate Retrieval) and token F1;

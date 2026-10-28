@@ -12,6 +12,7 @@
 #   OSAM_PHASE1_GRANULARITY=token ... # write every token into S (how the adapter was trained)
 #   OSAM_DELTA_GAIN=0 ARMS=truncated ...   # base model: delta-mem's corrections zeroed
 #   ARMS=combined_recent MAB_RECENT_TOKENS=8192 ...   # IterRet evidence + recent window (A2)
+#   MAB_RECENT_ALIGN=question_date ...     # window ends at the question's Current Date, not the history's end
 #   ITERRET_MAX_ITERATIONS=1 ...           # single-round retrieval (ablation C1)
 #   RETRIEVER=flat FLAT_TOP_K=13 ...       # embedding top-k, no graph (ablation C2)
 #   ITERRET_RESOLVE_DATES=0 ...            # no date resolution (C4)
@@ -39,6 +40,7 @@ SUFFIX="_${MAB_SPLIT}"
 [ "${OSAM_DELTA_GAIN:-1}" = "1" ] || SUFFIX="${SUFFIX}_gain${OSAM_DELTA_GAIN}"
 # Test-plan ablations (defaults keep the original file names)
 [ "${MAB_RECENT_TOKENS:-8192}" = "8192" ] || SUFFIX="${SUFFIX}_recent${MAB_RECENT_TOKENS}"
+[ "${MAB_RECENT_ALIGN:-end}" = "end" ] || SUFFIX="${SUFFIX}_qdate"
 [ "${ITERRET_MAX_ITERATIONS:-5}" = "5" ] || SUFFIX="${SUFFIX}_rounds${ITERRET_MAX_ITERATIONS}"
 [ "${RETRIEVER:-iterret}" = "iterret" ] || SUFFIX="${SUFFIX}_${RETRIEVER}k${FLAT_TOP_K:-12}"
 [ "${ITERRET_RESOLVE_DATES:-1}" = "1" ] || SUFFIX="${SUFFIX}_nodates"
