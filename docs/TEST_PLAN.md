@@ -34,7 +34,7 @@ Status legend: ✅ done · ⏳ queued/running · 🔧 code ready, needs a run ·
 | # | Test | Why | Status |
 |---|---|---|---|
 | B1 | Full LoCoMo (1,540 q) | headline must reflect dates-in-memory + final evidence format | 🔧 after A1 (~30–35 h) |
-| B2 | Full LME (300 q): retrieval vs recent window, judge | strongest generalisation evidence (histories ≫ window); only 20 q so far | 🔧 after A2 (~4 h/setup) |
+| B2 | Full LME (300 q): retrieval vs recent window, judge | strongest generalisation evidence (histories ≫ window); only 20 q so far | ✅ 300 q (5 histories), Brev A100, paired: evidence only judge 0.480 / F1 0.381 / subEM 0.313; +8192-tok window ending at question date judge 0.497 / F1 0.391 / subEM 0.327 (judge +0.017, CI −0.027..+0.060, 24 vs 19 wins; F1 +0.011, CI −0.017..+0.039). Gains where the latest state matters (preference +0.133, CI 0..+0.30; knowledge-update +0.067), small losses on single-session-user (−0.044). Not significant overall; graph build ~21 min/history on A100. `cached_results/stageB/` |
 | B3 | Qasper, all 200 papers | document QA; 50 papers give ±0.07 CIs | 🔧 `N=200 ARMS=combined bash scripts/run_longbench.sh` |
 
 ## Stage C — component ablations (main reviewer request)

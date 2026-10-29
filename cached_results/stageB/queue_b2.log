@@ -1,0 +1,879 @@
+================ MemoryAgentBench longmemeval_s* mode=combined adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+  run  : 20261028_201241_18454 on brev-lxricypmn at Wed Oct 28 20:12:41 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261028_201241_18454.log
+==============================================
+GPU 0: 71525 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100-SXM4-80GB, 9513 MiB, 81920 MiB
+  NOTE: 1 compute process(es) already on these GPUs:
+    17858, /usr/local/lib/ollama/llama-server, 9504 MiB
+  Continuing in 10s -- ctrl-c to abort.
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 18618, log /home/shadeform/caimms/outputs/server_20261028_201241_18454.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 18618, model verified).
+[3/3] Starting eval on GPU 0...
+[init] source=longmemeval_s* mode=combined split=sessions write=message_mean prompt_tokens=32768 out=/home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 5 histories, 300 questions, 0 done, 5 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 60 questions {'multi-session': 15, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-assistant': 6, 'single-session-preference': 6, 'single-session-user': 9}
+[data] history 1: 1,589,693 chars, ~239,616 words, 60 questions {'multi-session': 15, 'single-session-user': 9, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-preference': 6, 'single-session-assistant': 6}
+[data] history 2: 1,715,268 chars, ~260,208 words, 60 questions {'single-session-preference': 6, 'single-session-assistant': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9}
+[data] history 3: 1,588,305 chars, ~237,896 words, 60 questions {'temporal-reasoning': 15, 'single-session-preference': 6, 'multi-session': 15, 'single-session-assistant': 6, 'knowledge-update': 9, 'single-session-user': 9}
+[data] history 4: 1,646,919 chars, ~244,890 words, 60 questions {'single-session-preference': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9, 'single-session-assistant': 6}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+[graphs] building history 1 ...
+[graphs] history 1: 1244 passages, 5898 facts, 1140s
+[graphs] building history 2 ...
+[graphs] history 2: 1365 passages, 6643 facts, 1316s
+[graphs] building history 3 ...
+[graphs] history 3: 1260 passages, 5992 facts, 1184s
+[graphs] building history 4 ...
+[graphs] history 4: 1295 passages, 6338 facts, 1223s
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:01<00:02,  1.12s/it]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.04it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.50it/s]
+[0.0] subEM=0 F1=0.00 judge=0 pred='45 hours' gold='50'
+[0.1] subEM=0 F1=0.00 judge=1 pred='10 neon tetras, 5 golden honey gouramis, 1 pleco catfish, 1 ' gold='17'
+[0.2] subEM=0 F1=0.00 judge=0 pred='Depends on points and hotel category' gold='Two'
+[0.3] subEM=1 F1=0.40 judge=1 pred='Tomatoes were started first.' gold='Tomatoes'
+[0.4] subEM=1 F1=1.00 judge=1 pred='June 3rd' gold='June 3rd'
+[0.5] subEM=0 F1=0.71 judge=1 pred='The center is any one of its hexagons, and the circumference' gold="According to Borges, 'The Library is a s"
+[0.6] subEM=0 F1=0.03 judge=0 pred='Virtual coffee breaks' gold='The user would prefer responses that ack'
+[0.7] subEM=0 F1=0.17 judge=0 pred='10 days' gold='7 days. 8 days (including the last day) '
+[0.8] subEM=1 F1=1.00 judge=1 pred='3 weeks ago' gold='3 weeks ago'
+[0.9] subEM=0 F1=0.00 judge=0 pred='Three sessions' gold='five'
+[0.10] subEM=0 F1=0.06 judge=0 pred='Lemon Lavender Pound Cake' gold='The user would prefer baking suggestions'
+[0.11] subEM=0 F1=0.55 judge=1 pred='Pilsner or lager' gold='I recommended using a Pilsner or Lager f'
+[0.12] subEM=1 F1=1.00 judge=1 pred='"Nu, pogodi!"' gold='Nu, pogodi!'
+[0.13] subEM=0 F1=0.00 judge=0 pred='Korean-style BBQ marinade for beef short ribs' gold='The user would prefer responses that sug'
+[0.14] subEM=1 F1=1.00 judge=1 pred='Three months' gold='three months'
+[0.15] subEM=0 F1=0.00 judge=0 pred='$1,200' gold='$800'
+[0.16] subEM=0 F1=0.00 judge=0 pred='2' gold='4'
+[0.17] subEM=0 F1=0.60 judge=1 pred='The narrator received their new phone case.' gold='Receiving the new phone case'
+[0.18] subEM=1 F1=1.00 judge=1 pred='9 months' gold='9 months'
+[0.19] subEM=0 F1=0.67 judge=1 pred='GR-90' gold='The GR-90 trail.'
+[0.20] subEM=0 F1=0.09 judge=1 pred='Listen to history podcasts' gold='The user would prefer suggestions relate'
+[0.21] subEM=1 F1=1.00 judge=1 pred='The Glass Menagerie' gold='The Glass Menagerie'
+[0.22] subEM=0 F1=0.00 judge=0 pred='300 points' gold='100'
+[0.23] subEM=0 F1=0.00 judge=0 pred="I don't know how many years older your grandma is than you." gold='43'
+[0.24] subEM=1 F1=0.44 judge=1 pred='The start of my Spanish classes happened first.' gold='Spanish classes'
+[0.25] subEM=0 F1=0.00 judge=0 pred='Mondays, Tuesdays, Thursdays, and Sundays' gold='5'
+[0.26] subEM=1 F1=1.00 judge=1 pred='Roscioli' gold='Roscioli'
+[0.27] subEM=0 F1=0.00 judge=1 pred='Four bikes' gold='4'
+[0.28] subEM=0 F1=0.00 judge=0 pred='The chat history does not contain information about the airl' gold='American Airlines'
+[0.29] subEM=0 F1=0.47 judge=1 pred='Not enough information to determine the total number of days' gold='The information provided is not enough. '
+[0.30] subEM=0 F1=0.00 judge=0 pred='10 weeks ago' gold='4'
+[0.31] subEM=0 F1=0.10 judge=0 pred='Alex' gold='The information provided is not enough. '
+[0.32] subEM=1 F1=1.00 judge=1 pred='Page Turners' gold='Page Turners'
+[0.33] subEM=0 F1=0.17 judge=0 pred='100 days' gold='18 days. 19 days (including the last day'
+[0.34] subEM=0 F1=0.07 judge=0 pred='Grilled vegetables with a herb-infused olive oil and a side ' gold='The user would prefer dinner suggestions'
+[0.35] subEM=1 F1=0.67 judge=1 pred='Five tops' gold='five'
+[0.36] subEM=1 F1=1.00 judge=1 pred='Xfinity Center' gold='Xfinity Center'
+[0.37] subEM=0 F1=0.00 judge=1 pred='3' gold='I visited three different doctors: a pri'
+[0.38] subEM=0 F1=0.07 judge=0 pred='The chat history does not specify the number of days spent o' gold='2 days. 3 days (including the last day) '
+[0.39] subEM=0 F1=0.00 judge=0 pred='1 week' gold='17 days'
+[0.40] subEM=0 F1=0.00 judge=0 pred='24%' gold='20%'
+[0.41] subEM=1 F1=1.00 judge=1 pred='Serenity Yoga' gold='Serenity Yoga'
+[0.42] subEM=1 F1=0.67 judge=1 pred='30 videos' gold='30'
+[0.43] subEM=0 F1=0.06 judge=0 pred='Explore diverse art movements and artists' gold='The user would prefer responses that bui'
+[0.44] subEM=0 F1=0.00 judge=0 pred='The total amount spent on luxury items in the past few month' gold='$2,500'
+[0.45] subEM=1 F1=1.00 judge=1 pred='500 Mbps' gold='500 Mbps'
+[0.46] subEM=1 F1=1.00 judge=1 pred='16GB' gold='16GB'
+[0.47] subEM=1 F1=0.50 judge=1 pred='3 months ago' gold='3'
+[0.48] subEM=1 F1=1.00 judge=1 pred='train' gold='train'
+[0.49] subEM=1 F1=0.33 judge=1 pred='$15 + $5 + $10 + $20 = $50' gold='$50'
+[0.50] subEM=0 F1=0.50 judge=0 pred='124 points' gold='132 points'
+[0.51] subEM=0 F1=0.00 judge=0 pred="I don't have the phone number of the Speyer tourism board fr" gold='+49 (0) 62 32 / 14 23 - 0'
+[0.52] subEM=1 F1=1.00 judge=1 pred='Lavender gin fizz' gold='lavender gin fizz'
+[0.53] subEM=0 F1=0.00 judge=1 pred='You use 3 health-related devices: Fitbit Versa 3, Accu-Chek ' gold='4'
+[0.54] subEM=0 F1=0.06 judge=0 pred='The order of the sports events you watched in January is not' gold='First, I attended a NBA game at the Stap'
+[0.55] subEM=1 F1=0.67 judge=1 pred='7 shirts' gold='7'
+[0.56] subEM=1 F1=1.00 judge=1 pred='$420' gold='$420'
+[0.57] subEM=0 F1=0.40 judge=0 pred='2 years and 4 months' gold='1 year and 5 months'
+[0.58] subEM=0 F1=0.00 judge=1 pred='Two pieces: emerald earrings and silver necklace' gold='3'
+[0.59] subEM=1 F1=1.00 judge=1 pred='Nine months' gold='nine months'
+[1.0] subEM=0 F1=0.00 judge=0 pred='440 pages' gold='856'
+[1.1] subEM=1 F1=0.50 judge=1 pred='18 years old' gold='18'
+[1.2] subEM=1 F1=1.00 judge=1 pred='Premier Silver' gold='Premier Silver'
+[1.3] subEM=0 F1=0.00 judge=1 pred='5 tomato plants, 3 cucumber plants' gold='8'
+[1.4] subEM=0 F1=0.06 judge=0 pred='The chat history does not contain information about the date' gold='6 months'
+[1.5] subEM=1 F1=1.00 judge=1 pred='Yes' gold='Yes'
+[1.6] subEM=1 F1=1.00 judge=1 pred='A coffee shop in the city.' gold='a coffee shop in the city'
+[1.7] subEM=0 F1=0.10 judge=0 pred='Look for a guitar that matches your playing style and musica' gold='The user would prefer responses that hig'
+[1.8] subEM=0 F1=0.00 judge=0 pred='32, 56.5, 75' gold='59.6'
+[1.9] subEM=0 F1=0.53 judge=1 pred='Emma (first), Rachel (second), Alex (third)' gold='Emma graduated first, followed by Rachel'
+[1.10] subEM=1 F1=0.67 judge=1 pred='5-2 record' gold='5-2'
+[1.11] subEM=0 F1=0.00 judge=0 pred='2' gold='I attended three weddings. The couples w'
+[1.12] subEM=1 F1=1.00 judge=1 pred='Dr. Arati Prabhakar' gold='Dr. Arati Prabhakar'
+[1.13] subEM=0 F1=0.00 judge=0 pred='Online survey taker' gold='Transcriptionist.'
+[1.14] subEM=0 F1=0.50 judge=0 pred='7:00 AM' gold='6:45 AM'
+[1.15] subEM=0 F1=0.00 judge=0 pred='11 weeks ago' gold='2'
+[1.16] subEM=1 F1=0.80 judge=1 pred='The malfunction of the stand mixer happened first.' gold='The malfunction of the stand mixer'
+[1.17] subEM=1 F1=1.00 judge=1 pred='Wednesday' gold='Wednesday'
+[1.18] subEM=0 F1=0.00 judge=0 pred='I met with David and his wife during lunch last Tuesday.' gold='Emma'
+[1.19] subEM=1 F1=0.33 judge=1 pred='Yes, you have a spare screwdriver.' gold='Yes'
+[1.20] subEM=0 F1=0.00 judge=0 pred="I don't know who gave you a new stand mixer as a birthday gi" gold='my sister'
+[1.21] subEM=0 F1=0.10 judge=1 pred='Phone wallet case, power bank, wireless charging pad' gold='The user would prefer suggestions of acc'
+[1.22] subEM=0 F1=0.17 judge=1 pred='10 days in Hawaii, 5 days in New York City' gold='15 days'
+[1.23] subEM=0 F1=0.00 judge=0 pred='The Ritz-Carlton, South Beach' gold='The user would prefer suggestions of hot'
+[1.24] subEM=1 F1=1.00 judge=1 pred='4' gold='4'
+[1.25] subEM=0 F1=0.00 judge=0 pred="I don't have information about your usual work hours or when" gold='6:30 pm'
+[1.26] subEM=0 F1=0.17 judge=0 pred='2 days' gold='7 days. 8 days (including the last day) '
+[1.27] subEM=1 F1=1.00 judge=1 pred='Johnson' gold='Johnson'
+[1.28] subEM=0 F1=0.00 judge=0 pred='3' gold='4'
+[1.29] subEM=0 F1=0.00 judge=0 pred='Three times' gold="We've met up twice."
+[1.30] subEM=0 F1=0.22 judge=0 pred='Under my bed' gold='in a shoe rack in my closet'
+[1.31] subEM=1 F1=1.00 judge=1 pred='TikTok' gold='TikTok'
+[1.32] subEM=0 F1=0.00 judge=0 pred='12' gold='20'
+[1.33] subEM=0 F1=0.08 judge=0 pred='12 weeks' gold="2 weeks for 'The Nightingale', 4 weeks f"
+[1.34] subEM=0 F1=0.00 judge=1 pred='$15 on car wash, $50 on parking ticket' gold='$65'
+[1.35] subEM=0 F1=0.50 judge=0 pred='10:00 PM' gold='7 pm'
+[1.36] subEM=0 F1=0.00 judge=0 pred='Check for software updates' gold='The user would prefer responses that bui'
+[1.37] subEM=0 F1=0.00 judge=0 pred='4 babies' gold='5'
+[1.38] subEM=1 F1=1.00 judge=1 pred='smoker' gold='a smoker'
+[1.39] subEM=0 F1=0.00 judge=0 pred='No budget allocated' gold='$2,000'
+[1.40] subEM=0 F1=0.17 judge=0 pred='10 days' gold='29 days. 30 days (including the last day'
+[1.41] subEM=0 F1=0.33 judge=1 pred='5 days' gold='5 days. 6 days (including the last day) '
+[1.42] subEM=0 F1=0.00 judge=0 pred='Hawaii' gold='Paris'
+[1.43] subEM=1 F1=0.80 judge=1 pred='The narrator took the family road trip across the American S' gold='The family road trip across the American'
+[1.44] subEM=0 F1=0.00 judge=0 pred='The provided chat history does not contain information about' gold='$50'
+[1.45] subEM=1 F1=1.00 judge=1 pred='IKEA' gold='IKEA'
+[1.46] subEM=0 F1=0.00 judge=0 pred='No investment was mentioned.' gold='I got my own set of sculpting tools.'
+[1.47] subEM=0 F1=0.07 judge=0 pred='Clean and organize kitchen utensils regularly.' gold='The user would prefer responses that ack'
+[1.48] subEM=1 F1=1.00 judge=1 pred='Every week' gold='every week'
+[1.49] subEM=0 F1=0.12 judge=1 pred='Not specified' gold='You did not mention this information. Yo'
+[1.50] subEM=0 F1=0.04 judge=0 pred='Use a low heat setting and maintain consistent temperature' gold='The user would prefer responses that pro'
+[1.51] subEM=0 F1=0.53 judge=1 pred='Admon was on the Day Shift on Sunday.' gold='Admon was assigned to the 8 am - 4 pm (D'
+[1.52] subEM=0 F1=0.17 judge=0 pred='2 days' gold='14 days. 15 days (including the last day'
+[1.53] subEM=1 F1=1.00 judge=1 pred='2 hours' gold='2 hours'
+[1.54] subEM=0 F1=0.00 judge=0 pred='1' gold='2'
+[1.55] subEM=0 F1=0.29 judge=0 pred='30 days ago' gold='12 days ago. 13 days (including the last'
+[1.56] subEM=0 F1=0.00 judge=0 pred='New York City → Paris → Tokyo' gold='I went on a day hike to Muir Woods Natio'
+[1.57] subEM=0 F1=0.00 judge=0 pred='Not enough information' gold='10 minutes'
+[1.58] subEM=0 F1=0.57 judge=1 pred='The Sugar Factory' gold='The Sugar Factory at Icon Park.'
+[1.59] subEM=0 F1=0.00 judge=0 pred="I don't have information about your bedtime on the day befor" gold='2 AM'
+[2.0] subEM=0 F1=0.05 judge=0 pred='Try a Mezcal Gimlet with lime and honey.' gold='Considering their mixology class backgro'
+[2.1] subEM=0 F1=0.86 judge=1 pred='sexual fixations, problematic sexual behaviors, sexual impul' gold="I suggested 'sexual fixations', 'problem"
+[2.2] subEM=0 F1=0.60 judge=1 pred='Charity bake sale' gold='I participated in the charity bake sale '
+[2.3] subEM=1 F1=1.00 judge=1 pred='Manolo García' gold='Manolo García'
+[2.4] subEM=0 F1=0.00 judge=1 pred='9 largemouth bass' gold='7'
+[2.5] subEM=1 F1=1.00 judge=1 pred='Jaipur Rugs' gold='Jaipur Rugs'
+[2.6] subEM=0 F1=0.00 judge=0 pred="I don't have access to your personal fundraising data." gold='$5,850'
+[2.7] subEM=0 F1=0.29 judge=0 pred='10 days ago' gold='3 days ago. 4 days (including the last d'
+[2.8] subEM=1 F1=0.67 judge=1 pred='20 dozen' gold='20'
+[2.9] subEM=0 F1=0.17 judge=0 pred='1 day' gold='14 days. 15 days (including the last day'
+[2.10] subEM=1 F1=0.50 judge=1 pred='$50 + $25 = $75' gold='$75'
+[2.11] subEM=1 F1=0.89 judge=1 pred='The solo trip to Thailand first.' gold='The solo trip to Thailand'
+[2.12] subEM=1 F1=0.67 judge=1 pred='3:1 ratio' gold='3:1'
+[2.13] subEM=0 F1=0.00 judge=0 pred='Harvard University' gold='The information provided is not enough. '
+[2.14] subEM=0 F1=0.19 judge=1 pred='Try a homemade creamer with almond milk, stevia, and a pinch' gold='The user would prefer responses that sug'
+[2.15] subEM=0 F1=0.17 judge=0 pred='0 days' gold='21 days. 22 days (including the last day'
+[2.16] subEM=0 F1=0.50 judge=0 pred='3 weeks' gold='4 weeks'
+[2.17] subEM=0 F1=0.00 judge=0 pred='Not specified in the chat history.' gold='Marketing specialist at a small startup'
+[2.18] subEM=1 F1=0.17 judge=1 pred='Yes, your mom is using the same grocery list app as you.' gold='Yes.'
+[2.19] subEM=0 F1=0.00 judge=0 pred='The total time is not specified in the chat history.' gold='an hour and a half'
+[2.20] subEM=0 F1=0.35 judge=0 pred='G G G G A G F' gold='C D E F G A B A G F E D C'
+[2.21] subEM=0 F1=0.03 judge=0 pred='Wait for better prices or deals' gold='The user would prefer responses that tak'
+[2.22] subEM=1 F1=1.00 judge=1 pred='Sarah' gold='Sarah'
+[2.23] subEM=0 F1=0.00 judge=0 pred='The user did not graduate with a degree.' gold='Business Administration'
+[2.24] subEM=0 F1=0.00 judge=0 pred='tripod, flash, external battery pack, cleaning cloth' gold='The user would prefer suggestions of Son'
+[2.25] subEM=0 F1=0.75 judge=1 pred='Irish and Italian' gold='A mix of Irish and Italian'
+[2.26] subEM=1 F1=1.00 judge=1 pred='Grand Ballroom' gold='The Grand Ballroom'
+[2.27] subEM=0 F1=0.50 judge=0 pred='1,200 miles' gold='3,000 miles'
+[2.28] subEM=0 F1=0.33 judge=1 pred='You have been collecting vintage cameras for three months.' gold='You did not mention this information. Yo'
+[2.29] subEM=0 F1=0.00 judge=0 pred='$297' gold='$185'
+[2.30] subEM=0 F1=0.00 judge=1 pred='3 dinner parties' gold='three'
+[2.31] subEM=0 F1=0.60 judge=0 pred='26 minutes and 30 seconds' gold='27 minutes and 45 seconds'
+[2.32] subEM=0 F1=0.11 judge=0 pred='10 hours (Celeste) + 30 hours (The Last of Us Part II) + 70 ' gold='140 hours'
+[2.33] subEM=0 F1=0.71 judge=1 pred='Yes, you have a road bike and a hybrid bike.' gold='Yes. (You have a road bike too.)'
+[2.34] subEM=0 F1=0.20 judge=0 pred='The outdoor concert series in the park' gold='The order of the concerts I attended is:'
+[2.35] subEM=1 F1=1.00 judge=1 pred='MusicTheory.net' gold='MusicTheory.net'
+[2.36] subEM=0 F1=0.00 judge=0 pred='$60' gold='$12'
+[2.37] subEM=0 F1=0.00 judge=0 pred='car' gold='bike'
+[2.38] subEM=0 F1=0.12 judge=1 pred='I used my new binoculars for 3 weeks before I saw the Americ' gold='Two weeks'
+[2.39] subEM=1 F1=1.00 judge=1 pred='smart thermostat' gold='Smart thermostat'
+[2.40] subEM=0 F1=0.13 judge=0 pred='10 hours' gold='15 hours for getting to the three destin'
+[2.41] subEM=0 F1=0.18 judge=1 pred='Drum set, piano, ukulele, guitar' gold='I currently own 4 musical instruments. I'
+[2.42] subEM=1 F1=1.00 judge=1 pred='10 minutes' gold='10 minutes'
+[2.43] subEM=1 F1=1.00 judge=1 pred='20%' gold='20%'
+[2.44] subEM=0 F1=0.02 judge=0 pred='It depends on your current feelings and goals.' gold='The user would prefer responses that dra'
+[2.45] subEM=0 F1=0.29 judge=0 pred='Promoted a charity event on social media' gold='You participated in a social media chall'
+[2.46] subEM=0 F1=0.73 judge=0 pred='Spirit Airlines, American Airlines, JetBlue, Delta' gold='JetBlue, Delta, United, American Airline'
+[2.47] subEM=1 F1=0.67 judge=1 pred='+100 followers' gold='100'
+[2.48] subEM=1 F1=0.67 judge=1 pred='10% discount' gold='10%'
+[2.49] subEM=0 F1=0.25 judge=0 pred='2.5 weeks + 1 week = 3.5 weeks' gold='5.5 weeks'
+[2.50] subEM=0 F1=0.17 judge=0 pred='10 days' gold='4 days. 5 days (including the last day) '
+[2.51] subEM=1 F1=0.75 judge=1 pred='Kansas City Masterpiece BBQ sauce' gold='Kansas City Masterpiece'
+[2.52] subEM=0 F1=0.00 judge=0 pred='Store them in a shoe rack.' gold='under my bed'
+[2.53] subEM=1 F1=1.00 judge=1 pred='55-inch' gold='55-inch'
+[2.54] subEM=1 F1=1.00 judge=1 pred="My cousin's wedding" gold="my cousin's wedding"
+[2.55] subEM=0 F1=0.00 judge=0 pred='One pair of boots' gold='3'
+[2.56] subEM=0 F1=0.00 judge=0 pred='Toyota Corolla Hybrid' gold='Ford F-150 pickup truck'
+[2.57] subEM=0 F1=0.00 judge=1 pred='You have 3 goals and 2 assists.' gold='5'
+[2.58] subEM=0 F1=0.08 judge=0 pred='Group rides can improve bike performance through collective ' gold='The user would prefer responses that ref'
+[2.59] subEM=1 F1=1.00 judge=1 pred='The Hate U Give' gold="'The Hate U Give'"
+[3.0] subEM=0 F1=0.15 judge=0 pred='10 days ago' gold='26 days. 27 days (including the last day'
+[3.1] subEM=0 F1=0.67 judge=0 pred='3 months ago' gold='Five months ago'
+[3.2] subEM=0 F1=0.08 judge=0 pred='Visit Red Rocks Amphitheater, explore local music venues, an' gold='The user would prefer responses that tak'
+[3.3] subEM=0 F1=0.07 judge=0 pred='The chat history does not contain information about the numb' gold='21 days. 22 days (including the last day'
+[3.4] subEM=0 F1=0.00 judge=0 pred='Not specified' gold='40%'
+[3.5] subEM=0 F1=0.00 judge=0 pred='Walmart' gold='Thrive Market'
+[3.6] subEM=0 F1=0.00 judge=0 pred='3' gold='2'
+[3.7] subEM=1 F1=1.00 judge=1 pred='28. Kg3' gold='28. Kg3'
+[3.8] subEM=0 F1=0.00 judge=0 pred='$0.47' gold='$0.75'
+[3.9] subEM=0 F1=0.00 judge=0 pred='Two' gold='3'
+[3.10] subEM=0 F1=0.50 judge=0 pred='4 years' gold='10 years'
+[3.11] subEM=1 F1=0.40 judge=0 pred='14 days ago' gold='4 days.'
+[3.12] subEM=0 F1=0.50 judge=0 pred='50 pounds' gold='70 pounds'
+[3.13] subEM=1 F1=0.00 judge=1 pred='Fridays' gold='Friday'
+[3.14] subEM=0 F1=0.16 judge=1 pred="I don't have information about your work history before Goog" gold='The information provided is not enough. '
+[3.15] subEM=1 F1=0.33 judge=1 pred='Two sports: tennis and swimming.' gold='two'
+[3.16] subEM=0 F1=0.17 judge=0 pred='18 days' gold='14 days. 15 days (including the last day'
+[3.17] subEM=0 F1=0.09 judge=0 pred='Premiere Pro, YouTube, Udemy, LinkedIn Learning' gold='The user would prefer responses that sug'
+[3.18] subEM=0 F1=0.00 judge=0 pred='One' gold='2'
+[3.19] subEM=1 F1=1.00 judge=1 pred='Memrise' gold='Memrise'
+[3.20] subEM=0 F1=0.24 judge=1 pred='1:10 ratio' gold='The recommended ratio is 1:10, meaning o'
+[3.21] subEM=1 F1=1.00 judge=1 pred='Tom' gold='Tom'
+[3.22] subEM=0 F1=0.00 judge=0 pred='11 months' gold='5'
+[3.23] subEM=1 F1=0.67 judge=1 pred='1300 followers' gold='1300'
+[3.24] subEM=0 F1=0.00 judge=0 pred="I don't have the information to calculate the total money sp" gold='$720'
+[3.25] subEM=0 F1=0.00 judge=0 pred='The Killers' gold='a bluegrass band that features a banjo p'
+[3.26] subEM=1 F1=0.80 judge=1 pred='Data Science certification' gold='Data Science'
+[3.27] subEM=1 F1=1.00 judge=1 pred='"Evolution"' gold='Evolution'
+[3.28] subEM=1 F1=1.00 judge=1 pred='A lighter shade of gray' gold='a lighter shade of gray'
+[3.29] subEM=1 F1=1.00 judge=1 pred='TechCorp' gold='TechCorp'
+[3.30] subEM=0 F1=0.76 judge=0 pred='Science Museum, Natural History Museum, Modern Art Museum, T' gold='Science Museum, Museum of Contemporary A'
+[3.31] subEM=0 F1=0.18 judge=0 pred='1 (toaster replaced with toaster oven)' gold='I replaced or fixed five items: the kitc'
+[3.32] subEM=0 F1=0.00 judge=0 pred="Trimming the goats' hooves" gold='Fixing the fence'
+[3.33] subEM=0 F1=0.08 judge=1 pred='Relax with guided meditation or a soothing sleep story.' gold='The user would prefer suggestions that i'
+[3.34] subEM=0 F1=0.50 judge=0 pred='3 months' gold='2 months'
+[3.35] subEM=0 F1=0.17 judge=0 pred='Check local event calendars or social media for cultural eve' gold='The user would prefer responses that sug'
+[3.36] subEM=0 F1=0.18 judge=0 pred='5 tomato plants' gold='The information provided is not enough. '
+[3.37] subEM=1 F1=0.67 judge=1 pred='30 minutes every day' gold='30 minutes'
+[3.38] subEM=0 F1=0.00 judge=1 pred="$100 for coworker's baby shower and $100 for brother's gradu" gold='$200'
+[3.39] subEM=0 F1=0.55 judge=1 pred='Landing my first client' gold='I signed a contract with my first client'
+[3.40] subEM=1 F1=1.00 judge=1 pred='Yes' gold='Yes'
+[3.41] subEM=1 F1=1.00 judge=1 pred='Luna' gold='Luna'
+[3.42] subEM=0 F1=0.00 judge=0 pred='No savings on Jimmy Choo heels' gold='$300'
+[3.43] subEM=0 F1=0.00 judge=0 pred='"Chasing Coral"' gold='The user would prefer documentary recomm'
+[3.44] subEM=0 F1=0.11 judge=1 pred='Not specified in the chat history.' gold='You did not mention this information. Yo'
+[3.45] subEM=0 F1=0.00 judge=1 pred='7 short stories' gold='seven'
+[3.46] subEM=1 F1=1.00 judge=1 pred='10 pounds' gold='10 pounds'
+[3.47] subEM=1 F1=0.67 judge=1 pred='Five trips' gold='five'
+[3.48] subEM=0 F1=0.26 judge=1 pred="The user's question is about a 30-gallon tank, but the chat " gold='The information provided is not enough. '
+[3.49] subEM=0 F1=0.43 judge=1 pred='Python, Ruby, PHP' gold='I recommended learning Ruby, Python, or '
+[3.50] subEM=0 F1=0.43 judge=0 pred='5K Run, Charity Soccer Tournament, Triathlon' gold='I first completed the Spring Sprint Tria'
+[3.51] subEM=0 F1=0.67 judge=1 pred='February' gold='February 14th'
+[3.52] subEM=0 F1=0.00 judge=0 pred='You mentioned watching four Marvel movies recently.' gold='2'
+[3.53] subEM=0 F1=0.02 judge=0 pred='Halloween-themed events' gold='The user would prefer theme park suggest'
+[3.54] subEM=0 F1=0.00 judge=0 pred='Last Sunday' gold='Target'
+[3.55] subEM=0 F1=0.17 judge=0 pred='less' gold='You switched to less water (5 ounces) pe'
+[3.56] subEM=0 F1=0.29 judge=1 pred='UCLA' gold='University of California, Los Angeles (U'
+[3.57] subEM=0 F1=0.50 judge=0 pred='Six weeks' gold='Four weeks'
+[3.58] subEM=1 F1=0.67 judge=1 pred='10 hours' gold='10'
+[3.59] subEM=0 F1=0.00 judge=0 pred='27. Accent' gold="The 27th parameter was 'Sound effects (e"
+[4.0] subEM=0 F1=0.04 judge=0 pred='Add a touch of sea salt to balance the sweetness.' gold='The user would prefer responses that bui'
+[4.1] subEM=0 F1=0.17 judge=0 pred='12 days' gold='7 days. 8 days (including the last day) '
+[4.2] subEM=0 F1=0.15 judge=1 pred="I don't know how many Italian restaurants you've tried in yo" gold='The information provided is not enough. '
+[4.3] subEM=0 F1=0.33 judge=1 pred='Coffee and baking' gold='photography and cooking'
+[4.4] subEM=0 F1=0.00 judge=0 pred='above the living room sofa' gold='in my bedroom'
+[4.5] subEM=0 F1=0.00 judge=1 pred='NeurIPS, ICML, MICCAI' gold='The user would prefer suggestions relate'
+[4.6] subEM=1 F1=1.00 judge=1 pred='Nike' gold='Nike'
+[4.7] subEM=0 F1=0.44 judge=1 pred='No information provided about a birthday gift from your dad.' gold='You did not mention this information. Yo'
+[4.8] subEM=0 F1=0.27 judge=0 pred="4 years (undergrad) + 2 years (master's) = 6 years" gold='The information provided is not enough. '
+[4.9] subEM=0 F1=0.00 judge=0 pred='1 week' gold='3 weeks'
+[4.10] subEM=1 F1=1.00 judge=1 pred='white Adidas sneakers' gold='white Adidas sneakers'
+[4.11] subEM=0 F1=0.29 judge=0 pred='10 days ago' gold='3 days ago. 4 days (including the last d'
+[4.12] subEM=0 F1=0.00 judge=0 pred="I don't have enough information to determine your age when A" gold='11'
+[4.13] subEM=0 F1=0.43 judge=1 pred='10 days ago' gold='10 days ago. 11 days (including the last'
+[4.14] subEM=0 F1=0.50 judge=0 pred='3 times' gold='10 times'
+[4.15] subEM=0 F1=0.74 judge=1 pred='1. Identify molecular subtypes using genomic and transcripto' gold='The three objectives were: 1) to identif'
+[4.16] subEM=0 F1=0.00 judge=0 pred="I don't have information about your asylum application decis" gold='over a year'
+[4.17] subEM=1 F1=0.29 judge=1 pred='$5 discount on your next purchase' gold='$5'
+[4.18] subEM=0 F1=0.67 judge=1 pred='The average improvement in framerate was approximately 20%.' gold='The average improvement in framerate was'
+[4.19] subEM=1 F1=1.00 judge=1 pred='5 hours' gold='5 hours'
+[4.20] subEM=1 F1=0.67 judge=1 pred='Six times' gold='six'
+[4.21] subEM=0 F1=0.54 judge=0 pred='You have worked on or bought 2 model kits: a Revell F-15 Eag' gold='I have worked on or bought five model ki'
+[4.22] subEM=0 F1=0.75 judge=0 pred='Museum of Modern Art' gold='The Metropolitan Museum of Art.'
+[4.23] subEM=0 F1=0.29 judge=0 pred='137 days ago' gold='19 days ago. 20 days (including the last'
+[4.24] subEM=0 F1=0.00 judge=0 pred='$225' gold='$495'
+[4.25] subEM=0 F1=0.00 judge=0 pred='No' gold='Yes.'
+[4.26] subEM=1 F1=0.50 judge=1 pred='$800 + $500 = $1300' gold='$1,300'
+[4.27] subEM=1 F1=1.00 judge=1 pred='Lemon blueberry cake' gold='a lemon blueberry cake'
+[4.28] subEM=0 F1=0.00 judge=0 pred="I don't know how many largemouth bass you caught." gold='12'
+[4.29] subEM=1 F1=0.00 judge=0 pred='Around $100-150' gold='$50'
+[4.30] subEM=0 F1=0.00 judge=0 pred='The Liquor Store' gold='Revolution Hall'
+[4.31] subEM=1 F1=1.00 judge=1 pred='32' gold='32'
+[4.32] subEM=0 F1=0.67 judge=0 pred='11 months ago' gold='4 months ago'
+[4.33] subEM=0 F1=0.00 judge=0 pred="I don't know your age when you moved to the United States." gold='27'
+[4.34] subEM=0 F1=0.00 judge=0 pred='UCLA' gold='Harvard University'
+[4.35] subEM=0 F1=0.08 judge=1 pred='Use Suica card, check schedules, stay alert' gold='The user would prefer responses that uti'
+[4.36] subEM=1 F1=1.00 judge=1 pred='Miss Bee Providore' gold='Miss Bee Providore'
+[4.37] subEM=0 F1=0.00 judge=0 pred="I don't know how long you've been bird watching." gold='Two months'
+[4.38] subEM=0 F1=0.12 judge=0 pred='15 autographed footballs' gold='The information provided is not enough. '
+[4.39] subEM=1 F1=1.00 judge=1 pred='Patagonia and Southwest Airlines' gold='Patagonia and Southwest Airlines.'
+[4.40] subEM=0 F1=0.75 judge=1 pred='Charity soccer tournament' gold="The company's annual charity soccer tour"
+[4.41] subEM=0 F1=0.13 judge=0 pred='Consider the flow of movement and ensure comfort and functio' gold='The user would prefer responses that tak'
+[4.42] subEM=0 F1=0.00 judge=0 pred='strawberry rhubarb crisp' gold='a chocolate cake'
+[4.43] subEM=1 F1=1.00 judge=1 pred='bronchitis' gold='bronchitis'
+[4.44] subEM=0 F1=0.50 judge=0 pred='2 days' gold='3 days.'
+[4.45] subEM=0 F1=0.16 judge=1 pred='Yes, your living room with cat shedding could be a source of' gold='The user would prefer responses that con'
+[4.46] subEM=0 F1=0.00 judge=0 pred='0' gold='3'
+[4.47] subEM=1 F1=1.00 judge=1 pred='Oahu' gold='Oahu'
+[4.48] subEM=0 F1=0.44 judge=0 pred='The necklace for my sister.' gold='the photo album for my mom'
+[4.49] subEM=0 F1=0.00 judge=0 pred='1' gold='2'
+[4.50] subEM=1 F1=1.00 judge=1 pred='38 subjects' gold='38 subjects'
+[4.51] subEM=0 F1=0.23 judge=0 pred='Every other week' gold='Previously, you play tennis with your fr'
+[4.52] subEM=0 F1=0.17 judge=0 pred='10 days' gold='24 days. 25 days (including the last day'
+[4.53] subEM=1 F1=1.00 judge=1 pred="Michael's engagement party" gold="Michael's engagement party"
+[4.54] subEM=0 F1=0.00 judge=0 pred='"Love, Actually"' gold='The user would prefer recommendations fo'
+[4.55] subEM=1 F1=1.00 judge=1 pred='15' gold='15'
+[4.56] subEM=0 F1=0.00 judge=0 pred='The provided chat history does not contain information about' gold='the suburbs'
+[4.57] subEM=0 F1=0.13 judge=0 pred="I don't have information about your jogging and yoga hours f" gold='0.5 hours'
+[4.58] subEM=1 F1=1.00 judge=1 pred='24 hours' gold='24 hours'
+[4.59] subEM=1 F1=1.00 judge=1 pred='The Seven Husbands of Evelyn Hugo' gold='The Seven Husbands of Evelyn Hugo'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=combined | prompt_tokens=32768 | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+ALL                          n= 300  substringEM=0.3133  EM=0.2067  F1=0.3805  judge=0.4800  skipped=0
+  knowledge-update           n=  45  substringEM=0.5333  EM=0.2889  F1=0.4918  judge=0.6444  skipped=0
+  multi-session              n=  75  substringEM=0.1200  EM=0.0267  F1=0.1441  judge=0.3067  skipped=0
+  single-session-assistant   n=  30  substringEM=0.4667  EM=0.4667  F1=0.6767  judge=0.8000  skipped=0
+  single-session-preference  n=  30  substringEM=0.0000  EM=0.0000  F1=0.0615  judge=0.2333  skipped=0
+  single-session-user        n=  45  substringEM=0.6444  EM=0.4889  F1=0.6630  judge=0.8000  skipped=0
+  temporal-reasoning         n=  75  substringEM=0.2400  EM=0.1467  F1=0.3897  judge=0.3333  skipped=0
+==============================================================================
+==============================================
+  Done at Thu Oct 29 01:51:32 UTC 2026 | exit 0
+  Rows written: 300
+  Results: /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+==============================================
+Stopping vLLM (process group 18618)...
+
+================ summary (longmemeval_s*, released_B2_sessions)
+        combined: n=300  substringEM=0.3133  F1=0.3805  judge=0.4800
+================ MemoryAgentBench longmemeval_s* mode=combined_recent adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+  run  : 20261029_015134_49579 on brev-lxricypmn at Thu Oct 29 01:51:34 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261029_015134_49579.log
+==============================================
+GPU 0: 81038 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100-SXM4-80GB, 1 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 49723, log /home/shadeform/caimms/outputs/server_20261029_015134_49579.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 49723, model verified).
+[3/3] Starting eval on GPU 0...
+[init] source=longmemeval_s* mode=combined_recent split=sessions write=message_mean prompt_tokens=32768 out=/home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 5 histories, 300 questions, 0 done, 5 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 60 questions {'multi-session': 15, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-assistant': 6, 'single-session-preference': 6, 'single-session-user': 9}
+[data] history 1: 1,589,693 chars, ~239,616 words, 60 questions {'multi-session': 15, 'single-session-user': 9, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-preference': 6, 'single-session-assistant': 6}
+[data] history 2: 1,715,268 chars, ~260,208 words, 60 questions {'single-session-preference': 6, 'single-session-assistant': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9}
+[data] history 3: 1,588,305 chars, ~237,896 words, 60 questions {'temporal-reasoning': 15, 'single-session-preference': 6, 'multi-session': 15, 'single-session-assistant': 6, 'knowledge-update': 9, 'single-session-user': 9}
+[data] history 4: 1,646,919 chars, ~244,890 words, 60 questions {'single-session-preference': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9, 'single-session-assistant': 6}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.26it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.45it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.10it/s]
+[window] history 0: prompt keeps the last 25/1261 passages
+[0.0] subEM=0 F1=0.00 judge=0 pred='45 hours' gold='50'
+[0.1] subEM=0 F1=0.00 judge=0 pred='15' gold='17'
+[0.2] subEM=0 F1=0.00 judge=0 pred="One free night's stay" gold='Two'
+[0.3] subEM=1 F1=0.40 judge=1 pred='Tomatoes were started first.' gold='Tomatoes'
+[0.4] subEM=1 F1=1.00 judge=1 pred='June 3rd' gold='June 3rd'
+[0.5] subEM=0 F1=0.71 judge=1 pred='The center is any one of its hexagons, and the circumference' gold="According to Borges, 'The Library is a s"
+[0.6] subEM=0 F1=0.03 judge=0 pred='Virtual coffee breaks' gold='The user would prefer responses that ack'
+[0.7] subEM=0 F1=0.17 judge=0 pred='10 days' gold='7 days. 8 days (including the last day) '
+[0.8] subEM=0 F1=0.67 judge=0 pred='10 weeks ago' gold='3 weeks ago'
+[0.9] subEM=1 F1=0.67 judge=1 pred='Five sessions' gold='five'
+[0.10] subEM=0 F1=0.03 judge=0 pred='Bake a batch of chocolate chip cookies' gold='The user would prefer baking suggestions'
+[0.11] subEM=0 F1=0.55 judge=1 pred='Pilsner or lager' gold='I recommended using a Pilsner or Lager f'
+[0.12] subEM=1 F1=1.00 judge=1 pred='"Nu, pogodi!"' gold='Nu, pogodi!'
+[0.13] subEM=0 F1=0.07 judge=1 pred='Try lentil bolognese with roasted sweet potatoes and quinoa.' gold='The user would prefer responses that sug'
+[0.14] subEM=1 F1=1.00 judge=1 pred='Three months' gold='three months'
+[0.15] subEM=1 F1=1.00 judge=1 pred='$800' gold='$800'
+[0.16] subEM=0 F1=0.00 judge=0 pred='3' gold='4'
+[0.17] subEM=0 F1=0.55 judge=1 pred='The narrator received their new phone case first.' gold='Receiving the new phone case'
+[0.18] subEM=1 F1=1.00 judge=1 pred='9 months' gold='9 months'
+[0.19] subEM=0 F1=0.67 judge=1 pred='GR-90' gold='The GR-90 trail.'
+[0.20] subEM=0 F1=0.09 judge=1 pred='Listen to history podcasts' gold='The user would prefer suggestions relate'
+[0.21] subEM=1 F1=1.00 judge=1 pred='The Glass Menagerie' gold='The Glass Menagerie'
+[0.22] subEM=0 F1=0.00 judge=0 pred='300 points' gold='100'
+[0.23] subEM=0 F1=0.00 judge=0 pred="I don't have enough information to determine how many years " gold='43'
+[0.24] subEM=1 F1=0.57 judge=1 pred='The start of my Spanish classes' gold='Spanish classes'
+[0.25] subEM=0 F1=0.00 judge=0 pred='2 classes per week' gold='5'
+[0.26] subEM=1 F1=1.00 judge=1 pred='Roscioli' gold='Roscioli'
+[0.27] subEM=0 F1=0.00 judge=1 pred='You currently own four bikes.' gold='4'
+[0.28] subEM=0 F1=0.00 judge=0 pred="The user did not mention flying on Valentine's Day." gold='American Airlines'
+[0.29] subEM=0 F1=0.33 judge=1 pred='The user did not mention spending time in Seattle.' gold='The information provided is not enough. '
+[0.30] subEM=0 F1=0.00 judge=0 pred='13 weeks ago' gold='4'
+[0.31] subEM=0 F1=0.10 judge=0 pred='Alex' gold='The information provided is not enough. '
+[0.32] subEM=1 F1=1.00 judge=1 pred='Page Turners' gold='Page Turners'
+[0.33] subEM=0 F1=0.17 judge=0 pred='10 days' gold='18 days. 19 days (including the last day'
+[0.34] subEM=0 F1=0.00 judge=0 pred='Roasted vegetables with grilled chicken' gold='The user would prefer dinner suggestions'
+[0.35] subEM=1 F1=0.67 judge=1 pred='Five tops' gold='five'
+[0.36] subEM=1 F1=1.00 judge=1 pred='Xfinity Center' gold='Xfinity Center'
+[0.37] subEM=0 F1=0.00 judge=1 pred='3' gold='I visited three different doctors: a pri'
+[0.38] subEM=0 F1=0.00 judge=0 pred="You didn't specify the duration of your solo camping trip to" gold='2 days. 3 days (including the last day) '
+[0.39] subEM=0 F1=0.50 judge=0 pred='10 days' gold='17 days'
+[0.40] subEM=1 F1=1.00 judge=1 pred='20%' gold='20%'
+[0.41] subEM=1 F1=1.00 judge=1 pred='Serenity Yoga' gold='Serenity Yoga'
+[0.42] subEM=1 F1=0.67 judge=1 pred='30 videos' gold='30'
+[0.43] subEM=0 F1=0.14 judge=1 pred='Explore new themes, techniques, and local art scenes.' gold='The user would prefer responses that bui'
+[0.44] subEM=0 F1=0.00 judge=0 pred='I cannot determine the total amount you spent on luxury item' gold='$2,500'
+[0.45] subEM=1 F1=1.00 judge=1 pred='500 Mbps' gold='500 Mbps'
+[0.46] subEM=1 F1=1.00 judge=1 pred='16GB' gold='16GB'
+[0.47] subEM=1 F1=0.50 judge=1 pred='3 months ago' gold='3'
+[0.48] subEM=1 F1=1.00 judge=1 pred='train' gold='train'
+[0.49] subEM=1 F1=0.33 judge=1 pred='$15 + $5 + $10 + $20 = $50' gold='$50'
+[0.50] subEM=1 F1=1.00 judge=1 pred='132 points' gold='132 points'
+[0.51] subEM=0 F1=0.00 judge=0 pred='I cannot provide the phone number of the Speyer tourism boar' gold='+49 (0) 62 32 / 14 23 - 0'
+[0.52] subEM=1 F1=1.00 judge=1 pred='Lavender gin fizz' gold='lavender gin fizz'
+[0.53] subEM=0 F1=0.00 judge=1 pred='You use 3 health-related devices in a day: Fitbit Versa 3, A' gold='4'
+[0.54] subEM=0 F1=0.25 judge=0 pred='College Football National Championship, Kansas City Chiefs v' gold='First, I attended a NBA game at the Stap'
+[0.55] subEM=1 F1=0.67 judge=1 pred='7 shirts' gold='7'
+[0.56] subEM=1 F1=1.00 judge=1 pred='$420' gold='$420'
+[0.57] subEM=0 F1=0.40 judge=0 pred='2 years and 4 months' gold='1 year and 5 months'
+[0.58] subEM=0 F1=0.00 judge=0 pred='2' gold='3'
+[0.59] subEM=1 F1=1.00 judge=1 pred='Nine months' gold='nine months'
+[window] history 1: prompt keeps the last 26/1244 passages
+[1.0] subEM=0 F1=0.00 judge=0 pred='440 pages' gold='856'
+[1.1] subEM=1 F1=0.50 judge=1 pred='18 years old' gold='18'
+[1.2] subEM=1 F1=1.00 judge=1 pred='Premier Silver' gold='Premier Silver'
+[1.3] subEM=0 F1=0.00 judge=0 pred='5 tomato plants' gold='8'
+[1.4] subEM=0 F1=0.00 judge=0 pred='The history does not contain information about the dates of ' gold='6 months'
+[1.5] subEM=1 F1=1.00 judge=1 pred='Yes' gold='Yes'
+[1.6] subEM=1 F1=1.00 judge=1 pred='A coffee shop in the city.' gold='a coffee shop in the city'
+[1.7] subEM=0 F1=0.10 judge=0 pred='Look for a guitar that matches your playing style and musica' gold='The user would prefer responses that hig'
+[1.8] subEM=0 F1=0.00 judge=0 pred='32, 55, 75' gold='59.6'
+[1.9] subEM=0 F1=0.75 judge=1 pred='Emma graduated first, then Rachel, then Alex.' gold='Emma graduated first, followed by Rachel'
+[1.10] subEM=1 F1=1.00 judge=1 pred='5-2' gold='5-2'
+[1.11] subEM=0 F1=0.00 judge=0 pred='2' gold='I attended three weddings. The couples w'
+[1.12] subEM=1 F1=1.00 judge=1 pred='Dr. Arati Prabhakar' gold='Dr. Arati Prabhakar'
+[1.13] subEM=0 F1=0.00 judge=0 pred='Telemarketing representative' gold='Transcriptionist.'
+[1.14] subEM=0 F1=0.50 judge=0 pred='7:00 AM' gold='6:45 AM'
+[1.15] subEM=0 F1=0.00 judge=0 pred='3 weeks ago' gold='2'
+[1.16] subEM=1 F1=0.80 judge=1 pred='The malfunction of the stand mixer happened first.' gold='The malfunction of the stand mixer'
+[1.17] subEM=1 F1=1.00 judge=1 pred='Wednesday' gold='Wednesday'
+[1.18] subEM=1 F1=1.00 judge=1 pred='Emma' gold='Emma'
+[1.19] subEM=1 F1=0.33 judge=1 pred='Yes, you have a spare screwdriver.' gold='Yes'
+[1.20] subEM=0 F1=0.00 judge=0 pred="I don't know who gave you a new stand mixer as a birthday gi" gold='my sister'
+[1.21] subEM=0 F1=0.14 judge=1 pred='Phone wallet case, power bank, screen protector' gold='The user would prefer suggestions of acc'
+[1.22] subEM=0 F1=0.17 judge=1 pred='10 days in Hawaii, 5 days in New York City' gold='15 days'
+[1.23] subEM=0 F1=0.04 judge=0 pred='The Ritz-Carlton, Miami' gold='The user would prefer suggestions of hot'
+[1.24] subEM=1 F1=1.00 judge=1 pred='4' gold='4'
+[1.25] subEM=0 F1=0.50 judge=0 pred='9:00 PM' gold='6:30 pm'
+[1.26] subEM=0 F1=0.17 judge=0 pred='14 days' gold='7 days. 8 days (including the last day) '
+[1.27] subEM=1 F1=1.00 judge=1 pred='Johnson' gold='Johnson'
+[1.28] subEM=0 F1=0.00 judge=0 pred='3' gold='4'
+[1.29] subEM=0 F1=0.40 judge=1 pred='Twice' gold="We've met up twice."
+[1.30] subEM=0 F1=0.00 judge=0 pred='Under the bed' gold='in a shoe rack in my closet'
+[1.31] subEM=0 F1=0.00 judge=0 pred='Twitter' gold='TikTok'
+[1.32] subEM=0 F1=0.00 judge=0 pred='12' gold='20'
+[1.33] subEM=0 F1=0.08 judge=0 pred='12 weeks' gold="2 weeks for 'The Nightingale', 4 weeks f"
+[1.34] subEM=1 F1=0.25 judge=1 pred='$15 (car wash) + $50 (parking ticket) = $65' gold='$65'
+[1.35] subEM=0 F1=0.00 judge=0 pred="I don't have access to your personal schedule or work hours." gold='7 pm'
+[1.36] subEM=0 F1=0.00 judge=1 pred='Check for background apps, reduce screen brightness, and dis' gold='The user would prefer responses that bui'
+[1.37] subEM=1 F1=1.00 judge=1 pred='5' gold='5'
+[1.38] subEM=0 F1=0.00 judge=0 pred="I don't have access to your personal purchase history or spe" gold='a smoker'
+[1.39] subEM=0 F1=0.00 judge=0 pred='No specific budget was mentioned for influencer marketing in' gold='$2,000'
+[1.40] subEM=0 F1=0.17 judge=0 pred='18 days' gold='29 days. 30 days (including the last day'
+[1.41] subEM=0 F1=0.17 judge=0 pred='10 days' gold='5 days. 6 days (including the last day) '
+[1.42] subEM=0 F1=0.00 judge=0 pred='Hawaii' gold='Paris'
+[1.43] subEM=1 F1=0.80 judge=1 pred='The narrator took the family road trip across the American S' gold='The family road trip across the American'
+[1.44] subEM=1 F1=0.00 judge=0 pred='$250' gold='$50'
+[1.45] subEM=0 F1=0.00 judge=0 pred="I don't know where you bought your bookshelf from." gold='IKEA'
+[1.46] subEM=0 F1=0.00 judge=0 pred='No investment was mentioned.' gold='I got my own set of sculpting tools.'
+[1.47] subEM=0 F1=0.07 judge=0 pred='Clean kitchen regularly and organize utensils' gold='The user would prefer responses that ack'
+[1.48] subEM=0 F1=0.40 judge=0 pred='Every two weeks' gold='every week'
+[1.49] subEM=0 F1=0.24 judge=1 pred="I don't know how long you were in Korea for." gold='You did not mention this information. Yo'
+[1.50] subEM=0 F1=0.07 judge=0 pred='Use a thermometer to monitor temperature and adjust incubati' gold='The user would prefer responses that pro'
+[1.51] subEM=0 F1=0.53 judge=1 pred='Admon was on the Day Shift on Sunday.' gold='Admon was assigned to the 8 am - 4 pm (D'
+[1.52] subEM=0 F1=0.17 judge=0 pred='13 days' gold='14 days. 15 days (including the last day'
+[1.53] subEM=1 F1=1.00 judge=1 pred='2 hours' gold='2 hours'
+[1.54] subEM=1 F1=1.00 judge=1 pred='2' gold='2'
+[1.55] subEM=0 F1=0.29 judge=0 pred='17 days ago' gold='12 days ago. 13 days (including the last'
+[1.56] subEM=0 F1=0.00 judge=0 pred='Paris, Tokyo, Eastern Sierra' gold='I went on a day hike to Muir Woods Natio'
+[1.57] subEM=0 F1=0.40 judge=0 pred='14 minutes faster' gold='10 minutes'
+[1.58] subEM=0 F1=0.57 judge=1 pred='The Sugar Factory' gold='The Sugar Factory at Icon Park.'
+[1.59] subEM=0 F1=0.00 judge=0 pred="I don't have information about your bedtime on the day befor" gold='2 AM'
+[window] history 2: prompt keeps the last 27/1365 passages
+[2.0] subEM=0 F1=0.00 judge=0 pred='Try a Mezcal Gimlet' gold='Considering their mixology class backgro'
+[2.1] subEM=0 F1=0.86 judge=1 pred='sexual fixations, problematic sexual behaviors, sexual impul' gold="I suggested 'sexual fixations', 'problem"
+[2.2] subEM=0 F1=0.60 judge=1 pred='Charity Bake Sale' gold='I participated in the charity bake sale '
+[2.3] subEM=1 F1=1.00 judge=1 pred='Manolo García' gold='Manolo García'
+[2.4] subEM=0 F1=0.00 judge=0 pred='The user mentioned catching 9 largemouth bass with Alex on J' gold='7'
+[2.5] subEM=1 F1=1.00 judge=1 pred='Jaipur Rugs' gold='Jaipur Rugs'
+[2.6] subEM=0 F1=0.00 judge=0 pred='$600' gold='$5,850'
+[2.7] subEM=0 F1=0.43 judge=1 pred='4 days ago' gold='3 days ago. 4 days (including the last d'
+[2.8] subEM=1 F1=0.67 judge=1 pred='20 dozen' gold='20'
+[2.9] subEM=0 F1=0.17 judge=0 pred='1 day' gold='14 days. 15 days (including the last day'
+[2.10] subEM=1 F1=0.50 judge=1 pred='$50 + $25 = $75' gold='$75'
+[2.11] subEM=1 F1=0.89 judge=1 pred='The solo trip to Thailand first.' gold='The solo trip to Thailand'
+[2.12] subEM=1 F1=0.67 judge=1 pred='3:1 ratio' gold='3:1'
+[2.13] subEM=0 F1=0.00 judge=0 pred='Harvard University' gold='The information provided is not enough. '
+[2.14] subEM=0 F1=0.19 judge=1 pred='Try a homemade creamer with stevia, almond milk, and a pinch' gold='The user would prefer responses that sug'
+[2.15] subEM=0 F1=0.17 judge=0 pred='10 days' gold='21 days. 22 days (including the last day'
+[2.16] subEM=1 F1=1.00 judge=1 pred='4 weeks' gold='4 weeks'
+[2.17] subEM=0 F1=0.00 judge=0 pred="I don't have information about your previous occupation." gold='Marketing specialist at a small startup'
+[2.18] subEM=1 F1=0.17 judge=1 pred='Yes, your mom is using the same grocery list app as you.' gold='Yes.'
+[2.19] subEM=0 F1=0.29 judge=1 pred='1 hour 30 minutes' gold='an hour and a half'
+[2.20] subEM=0 F1=0.35 judge=0 pred='G G G G A G F' gold='C D E F G A B A G F E D C'
+[2.21] subEM=0 F1=0.10 judge=0 pred='Consider your storage needs and budget.' gold='The user would prefer responses that tak'
+[2.22] subEM=1 F1=1.00 judge=1 pred='Sarah' gold='Sarah'
+[2.23] subEM=0 F1=0.00 judge=0 pred="I don't have information about your graduation degree." gold='Business Administration'
+[2.24] subEM=0 F1=0.00 judge=0 pred='tripod, lens cleaning kit, camera bag' gold='The user would prefer suggestions of Son'
+[2.25] subEM=0 F1=0.75 judge=1 pred='Irish and Italian' gold='A mix of Irish and Italian'
+[2.26] subEM=1 F1=1.00 judge=1 pred='Grand Ballroom' gold='The Grand Ballroom'
+[2.27] subEM=0 F1=0.50 judge=0 pred='1,800 miles' gold='3,000 miles'
+[2.28] subEM=0 F1=0.24 judge=0 pred="I don't know how long you've been collecting vintage films." gold='You did not mention this information. Yo'
+[2.29] subEM=0 F1=0.00 judge=0 pred='$145' gold='$185'
+[2.30] subEM=0 F1=0.00 judge=1 pred='3' gold='three'
+[2.31] subEM=0 F1=0.60 judge=0 pred='26 minutes and 30 seconds' gold='27 minutes and 45 seconds'
+[2.32] subEM=0 F1=0.50 judge=0 pred='10 hours' gold='140 hours'
+[2.33] subEM=0 F1=0.71 judge=1 pred='Yes, you have a road bike and a hybrid bike.' gold='Yes. (You have a road bike too.)'
+[2.34] subEM=0 F1=0.16 judge=0 pred='1. Brooklyn music festival (April 2023)' gold='The order of the concerts I attended is:'
+[2.35] subEM=1 F1=1.00 judge=1 pred='MusicTheory.net' gold='MusicTheory.net'
+[2.36] subEM=0 F1=0.00 judge=0 pred='$60' gold='$12'
+[2.37] subEM=1 F1=1.00 judge=1 pred='bike' gold='bike'
+[2.38] subEM=0 F1=0.00 judge=0 pred="I didn't use the binoculars before seeing the American goldf" gold='Two weeks'
+[2.39] subEM=1 F1=1.00 judge=1 pred='smart thermostat' gold='Smart thermostat'
+[2.40] subEM=0 F1=0.13 judge=0 pred='12 hours' gold='15 hours for getting to the three destin'
+[2.41] subEM=0 F1=0.13 judge=0 pred='Drum set, saxophone, piano, ukulele, violin' gold='I currently own 4 musical instruments. I'
+[2.42] subEM=1 F1=1.00 judge=1 pred='10 minutes' gold='10 minutes'
+[2.43] subEM=1 F1=1.00 judge=1 pred='20%' gold='20%'
+[2.44] subEM=0 F1=0.02 judge=0 pred='It depends on your current feelings and goals.' gold='The user would prefer responses that dra'
+[2.45] subEM=0 F1=0.29 judge=0 pred='Promoted a charity event on social media' gold='You participated in a social media chall'
+[2.46] subEM=0 F1=0.73 judge=0 pred='Spirit Airlines, American Airlines, Delta, JetBlue' gold='JetBlue, Delta, United, American Airline'
+[2.47] subEM=0 F1=0.00 judge=1 pred='From 250 to 350 followers.' gold='100'
+[2.48] subEM=1 F1=1.00 judge=1 pred='10%' gold='10%'
+[2.49] subEM=0 F1=0.33 judge=0 pred='2.5 weeks + 17 hours' gold='5.5 weeks'
+[2.50] subEM=0 F1=0.17 judge=0 pred='15 days' gold='4 days. 5 days (including the last day) '
+[2.51] subEM=1 F1=0.75 judge=1 pred='Kansas City Masterpiece BBQ sauce' gold='Kansas City Masterpiece'
+[2.52] subEM=0 F1=0.00 judge=0 pred='In a shoe rack in the closet' gold='under my bed'
+[2.53] subEM=1 F1=1.00 judge=1 pred='55-inch' gold='55-inch'
+[2.54] subEM=0 F1=0.00 judge=0 pred='Whitewater rafting trip' gold="my cousin's wedding"
+[2.55] subEM=0 F1=0.00 judge=0 pred='One pair of boots' gold='3'
+[2.56] subEM=1 F1=1.00 judge=1 pred='Ford F-150 pickup truck' gold='Ford F-150 pickup truck'
+[2.57] subEM=0 F1=0.00 judge=1 pred='3 goals, 2 assists' gold='5'
+[2.58] subEM=0 F1=0.18 judge=1 pred='New chain and cassette replacement improved performance.' gold='The user would prefer responses that ref'
+[2.59] subEM=1 F1=1.00 judge=1 pred='The Hate U Give' gold="'The Hate U Give'"
+[window] history 3: prompt keeps the last 26/1260 passages
+[3.0] subEM=0 F1=0.15 judge=0 pred='10 days ago' gold='26 days. 27 days (including the last day'
+[3.1] subEM=0 F1=0.67 judge=0 pred='3 months ago' gold='Five months ago'
+[3.2] subEM=0 F1=0.07 judge=0 pred='Visit Red Rocks Amphitheatre, explore historic venues like T' gold='The user would prefer responses that tak'
+[3.3] subEM=0 F1=0.08 judge=0 pred='The user did not specify the exact number of days it took to' gold='21 days. 22 days (including the last day'
+[3.4] subEM=0 F1=0.00 judge=0 pred="I don't have information about the percentage of packed shoe" gold='40%'
+[3.5] subEM=0 F1=0.00 judge=0 pred='I spent the most money at Walmart.' gold='Thrive Market'
+[3.6] subEM=0 F1=0.00 judge=0 pred='3' gold='2'
+[3.7] subEM=1 F1=1.00 judge=1 pred='28. Kg3' gold='28. Kg3'
+[3.8] subEM=0 F1=0.00 judge=0 pred='$0.47' gold='$0.75'
+[3.9] subEM=0 F1=0.00 judge=0 pred='Two' gold='3'
+[3.10] subEM=0 F1=0.50 judge=0 pred='4 years' gold='10 years'
+[3.11] subEM=0 F1=0.40 judge=0 pred='10 days ago' gold='4 days.'
+[3.12] subEM=0 F1=0.13 judge=0 pred='The total weight of the new feed purchased in the past two m' gold='70 pounds'
+[3.13] subEM=1 F1=0.00 judge=1 pred='Fridays' gold='Friday'
+[3.14] subEM=0 F1=0.16 judge=1 pred="I don't have information about your work history before Goog" gold='The information provided is not enough. '
+[3.15] subEM=1 F1=0.67 judge=1 pred='Two sports' gold='two'
+[3.16] subEM=0 F1=0.33 judge=1 pred='15 days' gold='14 days. 15 days (including the last day'
+[3.17] subEM=0 F1=0.11 judge=1 pred="Adobe Premiere Pro's official documentation and tutorials, Y" gold='The user would prefer responses that sug'
+[3.18] subEM=0 F1=0.00 judge=0 pred='One' gold='2'
+[3.19] subEM=1 F1=1.00 judge=1 pred='Memrise' gold='Memrise'
+[3.20] subEM=0 F1=0.24 judge=1 pred='1:10 ratio' gold='The recommended ratio is 1:10, meaning o'
+[3.21] subEM=1 F1=1.00 judge=1 pred='Tom' gold='Tom'
+[3.22] subEM=0 F1=0.00 judge=0 pred='11 months' gold='5'
+[3.23] subEM=1 F1=0.67 judge=1 pred='1300 followers' gold='1300'
+[3.24] subEM=0 F1=0.00 judge=0 pred='$500' gold='$720'
+[3.25] subEM=0 F1=0.00 judge=0 pred='The user did not mention an artist they started to listen to' gold='a bluegrass band that features a banjo p'
+[3.26] subEM=1 F1=0.80 judge=1 pred='Data Science certification' gold='Data Science'
+[3.27] subEM=1 F1=1.00 judge=1 pred='"Evolution"' gold='Evolution'
+[3.28] subEM=1 F1=1.00 judge=1 pred='A lighter shade of gray' gold='a lighter shade of gray'
+[3.29] subEM=1 F1=1.00 judge=1 pred='TechCorp' gold='TechCorp'
+[3.30] subEM=0 F1=0.71 judge=0 pred="Natural History Museum, Children's Museum, Modern Art Museum" gold='Science Museum, Museum of Contemporary A'
+[3.31] subEM=0 F1=0.00 judge=0 pred='2' gold='I replaced or fixed five items: the kitc'
+[3.32] subEM=0 F1=0.00 judge=0 pred="Trimming the goats' hooves" gold='Fixing the fence'
+[3.33] subEM=0 F1=0.13 judge=0 pred='Relaxing walk, reading, or watching a movie' gold='The user would prefer suggestions that i'
+[3.34] subEM=0 F1=0.50 judge=0 pred='3 months' gold='2 months'
+[3.35] subEM=0 F1=0.11 judge=0 pred='I cannot provide specific cultural events around you.' gold='The user would prefer responses that sug'
+[3.36] subEM=0 F1=0.41 judge=1 pred='The chat history does not mention the number of plants initi' gold='The information provided is not enough. '
+[3.37] subEM=1 F1=1.00 judge=1 pred='30 minutes' gold='30 minutes'
+[3.38] subEM=1 F1=0.33 judge=1 pred='$100 (coworker) + $100 (brother) = $200' gold='$200'
+[3.39] subEM=0 F1=0.12 judge=0 pred="I didn't mention any significant business milestone four wee" gold='I signed a contract with my first client'
+[3.40] subEM=1 F1=0.20 judge=1 pred='Yes, you go to the gym more frequently than before.' gold='Yes'
+[3.41] subEM=1 F1=1.00 judge=1 pred='Luna' gold='Luna'
+[3.42] subEM=0 F1=0.00 judge=0 pred='The user did not mention any savings on the Jimmy Choo heels' gold='$300'
+[3.43] subEM=0 F1=0.00 judge=0 pred='"Chasing Coral"' gold='The user would prefer documentary recomm'
+[3.44] subEM=0 F1=0.25 judge=1 pred='Not mentioned' gold='You did not mention this information. Yo'
+[3.45] subEM=0 F1=0.00 judge=1 pred='7' gold='seven'
+[3.46] subEM=1 F1=1.00 judge=1 pred='10 pounds' gold='10 pounds'
+[3.47] subEM=0 F1=0.00 judge=1 pred='5 trips' gold='five'
+[3.48] subEM=0 F1=0.32 judge=1 pred='The chat history does not mention the number of fish in a 30' gold='The information provided is not enough. '
+[3.49] subEM=0 F1=0.53 judge=1 pred='Python, Ruby, or PHP' gold='I recommended learning Ruby, Python, or '
+[3.50] subEM=0 F1=0.39 judge=0 pred='The 5K Run, the charity soccer tournament, and the volleybal' gold='I first completed the Spring Sprint Tria'
+[3.51] subEM=0 F1=0.00 judge=1 pred="Valentine's Day" gold='February 14th'
+[3.52] subEM=0 F1=0.00 judge=0 pred='One' gold='2'
+[3.53] subEM=0 F1=0.08 judge=0 pred='Check the park websites for upcoming events and special menu' gold='The user would prefer theme park suggest'
+[3.54] subEM=0 F1=0.00 judge=0 pred='Last Sunday' gold='Target'
+[3.55] subEM=0 F1=0.13 judge=0 pred='You did not switch the ratio.' gold='You switched to less water (5 ounces) pe'
+[3.56] subEM=0 F1=0.29 judge=1 pred='UCLA' gold='University of California, Los Angeles (U'
+[3.57] subEM=0 F1=0.50 judge=0 pred='6 weeks' gold='Four weeks'
+[3.58] subEM=1 F1=0.67 judge=1 pred='10 hours' gold='10'
+[3.59] subEM=0 F1=0.00 judge=0 pred='Accent' gold="The 27th parameter was 'Sound effects (e"
+[window] history 4: prompt keeps the last 28/1295 passages
+[4.0] subEM=0 F1=0.04 judge=0 pred='Add a touch of sea salt to balance the sweetness.' gold='The user would prefer responses that bui'
+[4.1] subEM=0 F1=0.17 judge=0 pred='15 days' gold='7 days. 8 days (including the last day) '
+[4.2] subEM=0 F1=0.15 judge=1 pred="I don't know how many Italian restaurants you've tried in yo" gold='The information provided is not enough. '
+[4.3] subEM=0 F1=0.57 judge=0 pred='Photography and model building' gold='photography and cooking'
+[4.4] subEM=0 F1=0.00 judge=0 pred='The painting "Ethereal Dreams" by Emma Taylor is currently h' gold='in my bedroom'
+[4.5] subEM=0 F1=0.00 judge=1 pred='NeurIPS, ICML, MICCAI' gold='The user would prefer suggestions relate'
+[4.6] subEM=0 F1=0.00 judge=0 pred="I don't know what brand your favorite running shoes are." gold='Nike'
+[4.7] subEM=0 F1=0.26 judge=1 pred='No birthday gift was mentioned.' gold='You did not mention this information. Yo'
+[4.8] subEM=0 F1=0.27 judge=0 pred="4 years (undergrad) + 2 years (master's) = 6 years" gold='The information provided is not enough. '
+[4.9] subEM=0 F1=0.00 judge=0 pred='1 week' gold='3 weeks'
+[4.10] subEM=1 F1=1.00 judge=1 pred='white Adidas sneakers' gold='white Adidas sneakers'
+[4.11] subEM=0 F1=0.43 judge=1 pred='4 days ago' gold='3 days ago. 4 days (including the last d'
+[4.12] subEM=0 F1=0.00 judge=0 pred="I don't have the information to determine your age when Alex" gold='11'
+[4.13] subEM=0 F1=0.29 judge=0 pred='14 days ago' gold='10 days ago. 11 days (including the last'
+[4.14] subEM=0 F1=0.50 judge=0 pred='3 times' gold='10 times'
+[4.15] subEM=0 F1=0.71 judge=1 pred='1. Identify molecular subtypes of endometrial cancer using g' gold='The three objectives were: 1) to identif'
+[4.16] subEM=0 F1=0.00 judge=0 pred="I don't have information about your asylum application decis" gold='over a year'
+[4.17] subEM=1 F1=0.40 judge=1 pred='500 points = $5 discount' gold='$5'
+[4.18] subEM=0 F1=0.25 judge=1 pred='approximately 20%' gold='The average improvement in framerate was'
+[4.19] subEM=1 F1=1.00 judge=1 pred='5 hours' gold='5 hours'
+[4.20] subEM=1 F1=0.67 judge=1 pred='Six times' gold='six'
+[4.21] subEM=0 F1=0.00 judge=0 pred='2' gold='I have worked on or bought five model ki'
+[4.22] subEM=1 F1=1.00 judge=1 pred='Metropolitan Museum of Art' gold='The Metropolitan Museum of Art.'
+[4.23] subEM=0 F1=0.29 judge=0 pred='14 days ago' gold='19 days ago. 20 days (including the last'
+[4.24] subEM=0 F1=0.00 judge=1 pred='$225 from jam, $120 from herbs, and $7.50 each from 20 potte' gold='$495'
+[4.25] subEM=0 F1=0.00 judge=0 pred='No' gold='Yes.'
+[4.26] subEM=1 F1=0.50 judge=1 pred='$800 + $500 = $1300' gold='$1,300'
+[4.27] subEM=1 F1=1.00 judge=1 pred='Lemon blueberry cake' gold='a lemon blueberry cake'
+[4.28] subEM=0 F1=0.00 judge=0 pred='The provided chat history does not contain information about' gold='12'
+[4.29] subEM=0 F1=0.00 judge=0 pred='$100-200' gold='$50'
+[4.30] subEM=0 F1=0.00 judge=0 pred='The Liquor Store' gold='Revolution Hall'
+[4.31] subEM=1 F1=1.00 judge=1 pred='32' gold='32'
+[4.32] subEM=0 F1=0.67 judge=0 pred='10 months ago' gold='4 months ago'
+[4.33] subEM=0 F1=0.00 judge=0 pred="I don't know your age when you moved to the United States." gold='27'
+[4.34] subEM=0 F1=0.00 judge=0 pred="I don't have information about presenting a poster on your t" gold='Harvard University'
+[4.35] subEM=0 F1=0.08 judge=1 pred='Use Suica/Pasmo card for seamless travel.' gold='The user would prefer responses that uti'
+[4.36] subEM=1 F1=1.00 judge=1 pred='Miss Bee Providore' gold='Miss Bee Providore'
+[4.37] subEM=0 F1=0.00 judge=0 pred="I don't know how long you've been bird watching." gold='Two months'
+[4.38] subEM=0 F1=0.00 judge=0 pred='15' gold='The information provided is not enough. '
+[4.39] subEM=1 F1=1.00 judge=1 pred='Patagonia and Southwest Airlines' gold='Patagonia and Southwest Airlines.'
+[4.40] subEM=0 F1=0.75 judge=1 pred='Charity soccer tournament' gold="The company's annual charity soccer tour"
+[4.41] subEM=0 F1=0.00 judge=0 pred='Start with a clear, open space.' gold='The user would prefer responses that tak'
+[4.42] subEM=1 F1=0.57 judge=1 pred='Chocolate cake with espresso powder' gold='a chocolate cake'
+[4.43] subEM=1 F1=1.00 judge=1 pred='Bronchitis' gold='bronchitis'
+[4.44] subEM=0 F1=0.50 judge=0 pred='2 days' gold='3 days.'
+[4.45] subEM=0 F1=0.12 judge=1 pred='Yes, your living room with cat shedding could be the cause.' gold='The user would prefer responses that con'
+[4.46] subEM=0 F1=0.00 judge=0 pred='2' gold='3'
+[4.47] subEM=1 F1=1.00 judge=1 pred='Oahu' gold='Oahu'
+[4.48] subEM=0 F1=0.44 judge=0 pred='The necklace for my sister.' gold='the photo album for my mom'
+[4.49] subEM=0 F1=0.00 judge=0 pred="I don't have access to your personal project history or lead" gold='2'
+[4.50] subEM=1 F1=1.00 judge=1 pred='38 subjects' gold='38 subjects'
+[4.51] subEM=0 F1=0.23 judge=0 pred='Every other week' gold='Previously, you play tennis with your fr'
+[4.52] subEM=0 F1=0.17 judge=0 pred='10 days' gold='24 days. 25 days (including the last day'
+[4.53] subEM=1 F1=1.00 judge=1 pred="Michael's engagement party" gold="Michael's engagement party"
+[4.54] subEM=0 F1=0.00 judge=0 pred='"Love, Actually"' gold='The user would prefer recommendations fo'
+[4.55] subEM=1 F1=1.00 judge=1 pred='15' gold='15'
+[4.56] subEM=0 F1=0.00 judge=0 pred='The provided chat history does not contain information about' gold='the suburbs'
+[4.57] subEM=0 F1=0.00 judge=0 pred="I don't have access to your personal activity logs or data." gold='0.5 hours'
+[4.58] subEM=1 F1=1.00 judge=1 pred='24 hours' gold='24 hours'
+[4.59] subEM=1 F1=1.00 judge=1 pred='The Seven Husbands of Evelyn Hugo' gold='The Seven Husbands of Evelyn Hugo'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=combined_recent | prompt_tokens=32768 | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+ALL                          n= 300  substringEM=0.3267  EM=0.2233  F1=0.3912  judge=0.4967  skipped=0
+  knowledge-update           n=  45  substringEM=0.5778  EM=0.3333  F1=0.5128  judge=0.7111  skipped=0
+  multi-session              n=  75  substringEM=0.1600  EM=0.0533  F1=0.1828  judge=0.2933  skipped=0
+  single-session-assistant   n=  30  substringEM=0.4667  EM=0.4667  F1=0.6653  judge=0.8000  skipped=0
+  single-session-preference  n=  30  substringEM=0.0000  EM=0.0000  F1=0.0672  judge=0.3667  skipped=0
+  single-session-user        n=  45  substringEM=0.6222  EM=0.5111  F1=0.6406  judge=0.7556  skipped=0
+  temporal-reasoning         n=  75  substringEM=0.2400  EM=0.1467  F1=0.3970  judge=0.3467  skipped=0
+==============================================================================
+==============================================
+  Done at Thu Oct 29 05:54:57 UTC 2026 | exit 0
+  Rows written: 300
+  Results: /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+==============================================
+Stopping vLLM (process group 49723)...
+
+================ summary (longmemeval_s*, released_B2_sessions_qdate)
+ combined_recent: n=300  substringEM=0.3267  F1=0.3912  judge=0.4967
+================ MemoryAgentBench longmemeval_s* mode=combined adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+  run  : 20261029_055459_71363 on brev-lxricypmn at Thu Oct 29 05:54:59 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261029_055459_71363.log
+==============================================
+GPU 0: 81038 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100-SXM4-80GB, 1 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 71512, log /home/shadeform/caimms/outputs/server_20261029_055459_71363.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 71512, model verified).
+[3/3] Starting eval on GPU 0...
+[init] source=longmemeval_s* mode=combined split=sessions write=message_mean prompt_tokens=32768 out=/home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 5 histories, 300 questions, 300 done, 0 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 60 questions {'multi-session': 15, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-assistant': 6, 'single-session-preference': 6, 'single-session-user': 9}
+[data] history 1: 1,589,693 chars, ~239,616 words, 60 questions {'multi-session': 15, 'single-session-user': 9, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-preference': 6, 'single-session-assistant': 6}
+[data] history 2: 1,715,268 chars, ~260,208 words, 60 questions {'single-session-preference': 6, 'single-session-assistant': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9}
+[data] history 3: 1,588,305 chars, ~237,896 words, 60 questions {'temporal-reasoning': 15, 'single-session-preference': 6, 'multi-session': 15, 'single-session-assistant': 6, 'knowledge-update': 9, 'single-session-user': 9}
+[data] history 4: 1,646,919 chars, ~244,890 words, 60 questions {'single-session-preference': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9, 'single-session-assistant': 6}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=combined | prompt_tokens=32768 | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+ALL                          n= 300  substringEM=0.3133  EM=0.2067  F1=0.3805  judge=0.4800  skipped=0
+  knowledge-update           n=  45  substringEM=0.5333  EM=0.2889  F1=0.4918  judge=0.6444  skipped=0
+  multi-session              n=  75  substringEM=0.1200  EM=0.0267  F1=0.1441  judge=0.3067  skipped=0
+  single-session-assistant   n=  30  substringEM=0.4667  EM=0.4667  F1=0.6767  judge=0.8000  skipped=0
+  single-session-preference  n=  30  substringEM=0.0000  EM=0.0000  F1=0.0615  judge=0.2333  skipped=0
+  single-session-user        n=  45  substringEM=0.6444  EM=0.4889  F1=0.6630  judge=0.8000  skipped=0
+  temporal-reasoning         n=  75  substringEM=0.2400  EM=0.1467  F1=0.3897  judge=0.3333  skipped=0
+==============================================================================
+==============================================
+  Done at Thu Oct 29 05:55:42 UTC 2026 | exit 0
+  Rows written: 300
+  Results: /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+==============================================
+Stopping vLLM (process group 71512)...
+
+================ summary (longmemeval_s*, released_B2_sessions)
+        combined: n=300  substringEM=0.3133  F1=0.3805  judge=0.4800
+================ MemoryAgentBench longmemeval_s* mode=combined_recent adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+  run  : 20261029_055544_71931 on brev-lxricypmn at Thu Oct 29 05:55:44 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261029_055544_71931.log
+==============================================
+GPU 0: 81038 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100-SXM4-80GB, 1 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 72069, log /home/shadeform/caimms/outputs/server_20261029_055544_71931.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 72069, model verified).
+[3/3] Starting eval on GPU 0...
+[init] source=longmemeval_s* mode=combined_recent split=sessions write=message_mean prompt_tokens=32768 out=/home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 5 histories, 300 questions, 300 done, 0 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 60 questions {'multi-session': 15, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-assistant': 6, 'single-session-preference': 6, 'single-session-user': 9}
+[data] history 1: 1,589,693 chars, ~239,616 words, 60 questions {'multi-session': 15, 'single-session-user': 9, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-preference': 6, 'single-session-assistant': 6}
+[data] history 2: 1,715,268 chars, ~260,208 words, 60 questions {'single-session-preference': 6, 'single-session-assistant': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9}
+[data] history 3: 1,588,305 chars, ~237,896 words, 60 questions {'temporal-reasoning': 15, 'single-session-preference': 6, 'multi-session': 15, 'single-session-assistant': 6, 'knowledge-update': 9, 'single-session-user': 9}
+[data] history 4: 1,646,919 chars, ~244,890 words, 60 questions {'single-session-preference': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9, 'single-session-assistant': 6}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=combined_recent | prompt_tokens=32768 | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+ALL                          n= 300  substringEM=0.3267  EM=0.2233  F1=0.3912  judge=0.4967  skipped=0
+  knowledge-update           n=  45  substringEM=0.5778  EM=0.3333  F1=0.5128  judge=0.7111  skipped=0
+  multi-session              n=  75  substringEM=0.1600  EM=0.0533  F1=0.1828  judge=0.2933  skipped=0
+  single-session-assistant   n=  30  substringEM=0.4667  EM=0.4667  F1=0.6653  judge=0.8000  skipped=0
+  single-session-preference  n=  30  substringEM=0.0000  EM=0.0000  F1=0.0672  judge=0.3667  skipped=0
+  single-session-user        n=  45  substringEM=0.6222  EM=0.5111  F1=0.6406  judge=0.7556  skipped=0
+  temporal-reasoning         n=  75  substringEM=0.2400  EM=0.1467  F1=0.3970  judge=0.3467  skipped=0
+==============================================================================
+==============================================
+  Done at Thu Oct 29 05:56:28 UTC 2026 | exit 0
+  Rows written: 300
+  Results: /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+==============================================
+Stopping vLLM (process group 72069)...
+
+================ summary (longmemeval_s*, released_B2_sessions_qdate)
+ combined_recent: n=300  substringEM=0.3267  F1=0.3912  judge=0.4967
+================ MemoryAgentBench longmemeval_s* mode=combined adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+  run  : 20261029_055630_72492 on brev-lxricypmn at Thu Oct 29 05:56:30 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261029_055630_72492.log
+==============================================
+GPU 0: 81038 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100-SXM4-80GB, 1 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 72634, log /home/shadeform/caimms/outputs/server_20261029_055630_72492.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 72634, model verified).
+[3/3] Starting eval on GPU 0...
+[init] source=longmemeval_s* mode=combined split=sessions write=message_mean prompt_tokens=32768 out=/home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 5 histories, 300 questions, 300 done, 0 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 60 questions {'multi-session': 15, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-assistant': 6, 'single-session-preference': 6, 'single-session-user': 9}
+[data] history 1: 1,589,693 chars, ~239,616 words, 60 questions {'multi-session': 15, 'single-session-user': 9, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-preference': 6, 'single-session-assistant': 6}
+[data] history 2: 1,715,268 chars, ~260,208 words, 60 questions {'single-session-preference': 6, 'single-session-assistant': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9}
+[data] history 3: 1,588,305 chars, ~237,896 words, 60 questions {'temporal-reasoning': 15, 'single-session-preference': 6, 'multi-session': 15, 'single-session-assistant': 6, 'knowledge-update': 9, 'single-session-user': 9}
+[data] history 4: 1,646,919 chars, ~244,890 words, 60 questions {'single-session-preference': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9, 'single-session-assistant': 6}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=combined | prompt_tokens=32768 | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+ALL                          n= 300  substringEM=0.3133  EM=0.2067  F1=0.3805  judge=0.4800  skipped=0
+  knowledge-update           n=  45  substringEM=0.5333  EM=0.2889  F1=0.4918  judge=0.6444  skipped=0
+  multi-session              n=  75  substringEM=0.1200  EM=0.0267  F1=0.1441  judge=0.3067  skipped=0
+  single-session-assistant   n=  30  substringEM=0.4667  EM=0.4667  F1=0.6767  judge=0.8000  skipped=0
+  single-session-preference  n=  30  substringEM=0.0000  EM=0.0000  F1=0.0615  judge=0.2333  skipped=0
+  single-session-user        n=  45  substringEM=0.6444  EM=0.4889  F1=0.6630  judge=0.8000  skipped=0
+  temporal-reasoning         n=  75  substringEM=0.2400  EM=0.1467  F1=0.3897  judge=0.3333  skipped=0
+==============================================================================
+==============================================
+  Done at Thu Oct 29 05:57:13 UTC 2026 | exit 0
+  Rows written: 300
+  Results: /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_B2_sessions.jsonl
+==============================================
+Stopping vLLM (process group 72634)...
+
+================ summary (longmemeval_s*, released_B2_sessions)
+        combined: n=300  substringEM=0.3133  F1=0.3805  judge=0.4800
+================ MemoryAgentBench longmemeval_s* mode=combined_recent adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+  run  : 20261029_055715_73077 on brev-lxricypmn at Thu Oct 29 05:57:15 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_recent_released_B2_sessions_qdate.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261029_055715_73077.log
+==============================================
+GPU 0: 81038 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100-SXM4-80GB, 1 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 73220, log /home/shadeform/caimms/outputs/server_20261029_055715_73077.log
+[2/3] Waiting for server (up to 600s)...
