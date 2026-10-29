@@ -33,7 +33,7 @@ Status legend: ✅ done · ⏳ queued/running · 🔧 code ready, needs a run ·
 
 | # | Test | Why | Status |
 |---|---|---|---|
-| B1 | Full LoCoMo (1,540 q) | headline must reflect dates-in-memory + final evidence format | 🔧 after A1 (~30–35 h) |
+| B1 | Full LoCoMo (1,540 q) | headline must reflect dates-in-memory + final evidence format | ✅ 1,540 q (10 conversations), final config (passages only, chronological), Brev A100: F1 **0.487**, 0 skipped; multi-hop 0.435, temporal 0.579, open-domain 0.111, single-hop 0.513. Conversations 1–4 vs A1 (same config, other machine): +0.015 (CI −0.001..+0.032), i.e. run-to-run noise. ~70 q/h. `cached_results/stageB/` |
 | B2 | Full LME (300 q): retrieval vs recent window, judge | strongest generalisation evidence (histories ≫ window); only 20 q so far | ✅ 300 q (5 histories), Brev A100, paired: evidence only judge 0.480 / F1 0.381 / subEM 0.313; +8192-tok window ending at question date judge 0.497 / F1 0.391 / subEM 0.327 (judge +0.017, CI −0.027..+0.060, 24 vs 19 wins; F1 +0.011, CI −0.017..+0.039). Gains where the latest state matters (preference +0.133, CI 0..+0.30; knowledge-update +0.067), small losses on single-session-user (−0.044). Not significant overall; graph build ~21 min/history on A100. `cached_results/stageB/` |
 | B3 | Qasper, all 200 papers | document QA; 50 papers give ±0.07 CIs | ✅ 200 papers, final config (passages only, paper order; released adapter), Brev A100: F1 0.450, 0 skipped, 11.8 evidence passages/q. `cached_results/stageB/` |
 
@@ -45,8 +45,8 @@ File names get a suffix automatically in `run_mab.sh`; for LoCoMo name
 
 | # | Ablation | Why | Status | Switch |
 |---|---|---|---|---|
-| C1 | 1 retrieval round vs 5 | the paper's core claim (iteration helps), never isolated | 🔧 | `ITERRET_MAX_ITERATIONS=1` |
-| C2 | AFC graph vs plain embedding top-k (same encoder, same passages, matched size) | does the graph beat ordinary vector search? | 🔧 | `RETRIEVER=flat FLAT_TOP_K=<IterRet's median evidence count>` |
+| C1 | 1 retrieval round vs 5 | the paper's core claim (iteration helps), never isolated | ✅ iteration clearly helps. LoCoMo-4 F1 0.470 → 0.345 (−0.125, CI −0.157..−0.095; multi-hop −0.257); LME judge 0.480 → 0.297 (−0.183, CI −0.24..−0.13), F1 −0.127. With 1 round 77/300 LME questions end with no evidence; on the 223 with evidence judge still −0.10 (CI −0.17..−0.04). Baselines A1 / B2 (other machines). `cached_results/stageC/` | `ITERRET_MAX_ITERATIONS=1` |
+| C2 | AFC graph vs plain embedding top-k (same encoder, same passages, matched size) | does the graph beat ordinary vector search? | ✅ k = IterRet's median evidence count (36 LoCoMo, 15 LME). LoCoMo-4 F1 0.470 → 0.412 (−0.058, CI −0.080..−0.036; multi-hop −0.094, single-hop −0.054); LME no difference: judge 0.480 → 0.463 (−0.017, CI −0.063..+0.030), F1 +0.019 (n.s.). Flat retrieval run took ~35 min total vs ~11 h. `cached_results/stageC/` | `RETRIEVER=flat FLAT_TOP_K=<IterRet's median evidence count>` |
 | C3 | experience bank: bootstrapped (held-out) vs empty | R1: contribution; R2: cost/conflicts. A 1-conversation bank previously hurt; all published runs use an empty bank | 🔧 bank from LoCoMo conversations 5–10 (`build_heldout_bank.py`), used on LoCoMo-4 and LME | `bash scripts/run_c3.sh` (`ITERRET_BANK_PATH=…`) |
 | C4 | relative-date resolution on/off | R1 praises temporal results; much of that comes from this step | 🔧 **LoCoMo only** (LME passages carry dates as text, so the switch is a no-op there) | `ITERRET_RESOLVE_DATES=0` |
 | C5 | facet ranking keyword-only vs keyword+meaning | +0.081 measured on an older config; re-measure | 🔧 | `DISABLE_TAG_EMBEDDER_FUSION=1` |
