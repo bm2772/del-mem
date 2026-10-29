@@ -1,0 +1,325 @@
+================ qasper arm=combined segmentation=fixed adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+==============================================
+  C-AIMMS eval_longbench_iterret -> lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+  run  : 20261029_052239_22821 on brev-ly26it6c9 at Thu Oct 29 05:22:39 UTC 2026
+  out  : /home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261029_052239_22821.log
+==============================================
+GPU 0: 81154 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100 80GB PCIe, 0 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 22988, log /home/shadeform/caimms/outputs/server_20261029_052239_22821.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 22988, model verified).
+[3/3] Starting eval on GPU 0...
+[init] task=qasper mode=combined max_samples=200 out=/home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/lb_graph_cache/qasper max_evidence_tokens=off evidence=episodic/document s_source=self
+[init] 200 rows, 0 already done, 200 to run
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.10it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.23it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.79it/s]
+[0] F1=0.381 n_ev=14/14 osam=0.0334 pred='The ground truth for fake news is established through manual inspectio' gold='Ground truth is not established in the p'
+[1] F1=0.258 n_ev=11/12 osam=0.0325 pred='GhostVLAD is a pooling method that adds ghost clusters to NetVLAD to a' gold='extension of the NetVLAD, adds Ghost clu'
+[2] F1=0.125 n_ev=6/14 osam=0.0312 pred='68.8% to 71.8%' gold='the attention model, MDREA, also outperf'
+[3] F1=0.400 n_ev=10/11 osam=0.0328 pred='Context tweets and character-level features' gold='using tweets that one has replied or quo'
+[4] F1=1.000 n_ev=15/18 osam=0.0328 pred='FoxNews, CNN, ESPN, New York Times, Time magazine, Huffington Post Wei' gold='FoxNews, CNN, ESPN, New York Times, Time'
+[5] F1=1.000 n_ev=12/18 osam=0.0313 pred='Yes' gold='Yes'
+[6] F1=0.000 n_ev=15/20 osam=0.0332 pred='concept-map-based MDS' gold='Answer with content missing: (Evaluation'
+[7] F1=0.333 n_ev=17/20 osam=0.0328 pred='CNN/DailyMail, NYT, and XSum' gold='CNN/DailyMail news highlights, New York '
+[8] F1=0.200 n_ev=8/11 osam=0.0322 pred='It outperforms other approaches on benchmark datasets.' gold='GM$\\_$KL achieves better correlation tha'
+[9] F1=0.667 n_ev=14/20 osam=0.0319 pred='Averaging predictions from the best-performing models.' gold='simply averaging the predictions from th'
+[10] F1=0.571 n_ev=11/16 osam=0.0327 pred='The Friends dataset comes from the TV sitcom "Friends", and the Emotio' gold='Friends TV sitcom, Facebook messenger ch'
+[11] F1=1.000 n_ev=7/9 osam=0.0331 pred='English' gold='English'
+[12] F1=0.667 n_ev=10/12 osam=0.033 pred='IMDb dataset' gold='IMDb dataset of movie reviews'
+[13] F1=0.000 n_ev=14/25 osam=0.0334 pred='unanswerable' gold='F1 scores of 85.99 on the DL-PS data,  7'
+[14] F1=0.000 n_ev=13/16 osam=0.0334 pred='Yes' gold='No'
+[15] F1=0.333 n_ev=18/63 osam=0.0322 pred='Portuguese financial tweets and news articles' gold='Custom dataset with user questions; set '
+[16] F1=0.000 n_ev=16/49 osam=0.0331 pred='unanswerable' gold='Energy with accuracy of 0.538'
+[17] F1=0.750 n_ev=9/17 osam=0.0327 pred='RNN-based NMT and Transformer-NMT' gold='RNN-based NMT model, Transformer-NMT'
+[18] F1=0.480 n_ev=17/17 osam=0.0332 pred='neutral features, maximum entropy, KL divergence' gold='a regularization term associated with ne'
+[19] F1=0.741 n_ev=12/23 osam=0.0332 pred='SVM with unigram, bigram, and trigram features, SVM with average word ' gold='SVM with unigram, bigram, and trigram fe'
+[20] F1=0.000 n_ev=12/13 osam=0.0336 pred='improved state-of-the-art performance' gold='They decrease MAE in 0.34'
+[21] F1=0.414 n_ev=18/23 osam=0.0316 pred='By enabling sparse attention weights and allowing different heads to s' gold='the attention heads in the proposed adap'
+[22] F1=0.000 n_ev=12/18 osam=0.0327 pred='The baseline was the context-agnostic sentence-level machine translati' gold=' MT system on the data released by BIBRE'
+[23] F1=0.769 n_ev=12/16 osam=0.0335 pred='XNLI test accuracy and Labeled Attachment Scores (LAS).' gold='translation probabilities, Labeled Attac'
+[24] F1=0.500 n_ev=15/22 osam=0.0331 pred='The attention module is pretrained on the MT task.' gold='the model is pre-trained on CTC-based AS'
+[25] F1=1.000 n_ev=14/17 osam=0.0329 pred='unanswerable' gold='Unanswerable'
+[26] F1=0.667 n_ev=10/11 osam=0.033 pred='LSTM encoder' gold='LSTM'
+[27] F1=1.000 n_ev=16/28 osam=0.0318 pred='Yes' gold='Unanswerable'
+[28] F1=0.000 n_ev=7/8 osam=0.033 pred='The baselines were non-end-to-end models.' gold='Unanswerable'
+[29] F1=1.000 n_ev=12/19 osam=0.0328 pred='22,880 users' gold='22,880 users'
+[30] F1=0.178 n_ev=6/12 osam=0.0335 pred='Perplexity, user-ranking, BLEU-1, BLEU-4, recipe-level coherence, step' gold='Byte-Pair Encoding perplexity  (BPE PPL)'
+[31] F1=0.167 n_ev=11/16 osam=0.0323 pred='"Answer" and "No Answer"' gold='(1) the time the patient has been experi'
+[32] F1=0.000 n_ev=14/20 osam=0.0324 pred='unanswerable' gold='57,505 sentences'
+[33] F1=0.375 n_ev=15/23 osam=0.033 pred='Neural machine translation tasks' gold='four machine translation tasks: German -'
+[34] F1=0.000 n_ev=8/17 osam=0.0313 pred='The improvement in performance for Estonian in the NER task is not spe' gold='5 percent points.'
+[35] F1=0.000 n_ev=17/37 osam=0.0336 pred='Diverse disciplinary backgrounds and research practices' gold='Unanswerable'
+[36] F1=0.000 n_ev=11/11 osam=0.0313 pred='yes' gold='No'
+[37] F1=0.783 n_ev=9/10 osam=0.0328 pred='The Nguni languages and the Sotho languages are similar to each other.' gold='Nguni languages (zul, xho, nbl, ssw), So'
+[38] F1=0.250 n_ev=15/20 osam=0.0328 pred='9-layers and 2-layers LSTM models' gold='Unidirectional LSTM networks with 2, 6, '
+[39] F1=0.364 n_ev=18/19 osam=0.033 pred='29,794 articles' gold='a sample of  29,794 wikipedia articles a'
+[40] F1=0.267 n_ev=8/25 osam=0.0325 pred='A group of 50 native speakers of both English and Tamil evaluated the ' gold='50 human annotators ranked a random samp'
+[41] F1=1.000 n_ev=14/21 osam=0.0317 pred='Yes' gold='Yes'
+[42] F1=0.559 n_ev=8/9 osam=0.0328 pred='Models are evaluated by measuring the retention rate of tokens for eff' gold='by training an autocomplete system on 50'
+[43] F1=0.889 n_ev=11/14 osam=0.0331 pred='Accuracy, precision, recall, and F-measure' gold='Precision, Recall, F-measure, accuracy'
+[44] F1=0.235 n_ev=16/23 osam=0.033 pred='The source domain is the domain with labeled data, and the target doma' gold='Book, electronics, beauty, music, IMDB, '
+[45] F1=0.000 n_ev=13/16 osam=0.0321 pred='LSTMs' gold='Variational LSTM, CharCNN, Pointer Senti'
+[46] F1=1.000 n_ev=8/8 osam=0.032 pred='Embedding Layer, Neural Network Layers, Loss Function, Metrics' gold='Embedding Layer, Neural Network Layers, '
+[47] F1=0.444 n_ev=9/15 osam=0.0332 pred='Wiktionary pronunciation corpus' gold='the Carnegie Mellon Pronouncing Dictiona'
+[48] F1=0.114 n_ev=10/10 osam=0.0335 pred='BERT (BIBREF12)' gold='varied from Maximum Entropy Classifiers '
+[49] F1=0.857 n_ev=15/18 osam=0.0323 pred='English, Spanish, and Finnish' gold='English\nFrench\nSpanish\nGerman\nGreek\nBulg'
+[50] F1=0.000 n_ev=3/12 osam=0.0326 pred='They test their method on posts containing rare words and frequent wor' gold='None'
+[51] F1=1.000 n_ev=13/20 osam=0.0336 pred='Yes' gold='Yes'
+[52] F1=0.000 n_ev=10/13 osam=0.0323 pred='Yes' gold='No'
+[53] F1=0.105 n_ev=6/6 osam=0.0318 pred='They obtain psychological dimensions of people by analyzing word categ' gold='using the Meaning Extraction Method'
+[54] F1=1.000 n_ev=19/66 osam=0.0322 pred='claim, premise, backing, rebuttal, and refutation' gold='claim, premise, backing, rebuttal, and r'
+[55] F1=0.000 n_ev=12/19 osam=0.0312 pred='N-grams of order 4' gold='Unanswerable'
+[56] F1=1.000 n_ev=16/18 osam=0.033 pred='1,873 Twitter conversation threads, roughly 14k tweets.' gold='1,873 Twitter conversation threads, roug'
+[57] F1=0.583 n_ev=12/69 osam=0.0325 pred='Mandarin, Russian, French, Welsh, Kiswahili, Yue Chinese, and 9 others' gold='Chinese Mandarin, Welsh, English, Estoni'
+[58] F1=0.143 n_ev=15/21 osam=0.0332 pred='Wikipedia and Reddit CMV datasets' gold=" `Conversations Gone Awry' dataset, subr"
+[59] F1=1.000 n_ev=10/11 osam=0.0321 pred='no' gold='No'
+[60] F1=0.269 n_ev=8/11 osam=0.0316 pred='The quality of the data is empirically evaluated through various sanit' gold='Validated transcripts were sent to profe'
+[61] F1=0.353 n_ev=12/14 osam=0.0317 pred='They combine audio and text sequences using a dual recurrent encoder w' gold='combines the information from these sour'
+[62] F1=0.438 n_ev=2/9 osam=0.0318 pred='2.11 BLEU, 1.7 FKGL, and 1.07 SARI' gold='For the WikiLarge dataset, the improveme'
+[63] F1=0.000 n_ev=6/18 osam=0.0324 pred='700 humans evaluated the results.' gold='Unanswerable'
+[64] F1=0.545 n_ev=14/14 osam=0.0334 pred='A tweet goes viral if it is retweeted more than 1000 times.' gold='Viral tweets are the ones that are retwe'
+[65] F1=0.333 n_ev=5/7 osam=0.032 pred='BERT performs best by itself.' gold='BERT'
+[66] F1=0.400 n_ev=11/17 osam=0.0326 pred='The data was collected using crowdsourcing via an Android application.' gold='Android application'
+[67] F1=0.286 n_ev=19/34 osam=0.0319 pred='Logistic Regression and deep learning models with GloVe word embedding' gold='Logistic Regression, neural networks'
+[68] F1=0.526 n_ev=9/11 osam=0.0327 pred='The benchmark dataset is the Social Honeypot dataset, and its quality ' gold='Social Honeypot dataset (public) and Wei'
+[69] F1=0.400 n_ev=8/11 osam=0.0331 pred='The decoder has an LSTM architecture.' gold='LSTM'
+[70] F1=1.000 n_ev=15/19 osam=0.0324 pred='unanswerable' gold='Unanswerable'
+[71] F1=0.273 n_ev=7/7 osam=0.0317 pred='Best performing model: ensemble+ of (II and IV) from folds 1-3; perfor' gold='For SLC task, the "ltuorp" team  has the'
+[72] F1=0.444 n_ev=17/20 osam=0.0333 pred='The baseline was the M2M Transformer NMT model (b3).' gold='pivot-based translation relying on a hel'
+[73] F1=1.000 n_ev=15/32 osam=0.0315 pred='0.7033' gold='0.7033'
+[74] F1=0.000 n_ev=18/20 osam=0.0336 pred='second-order co-occurrence vectors with semantic similarity scores' gold='Skip–gram, CBOW'
+[75] F1=0.000 n_ev=10/11 osam=0.0327 pred='They translate each word in the source language into English using a b' gold='Unanswerable'
+[76] F1=0.000 n_ev=12/13 osam=0.0321 pred='unanswerable' gold='Yes'
+[77] F1=0.667 n_ev=14/17 osam=0.0314 pred='Seven experts with legal training' gold='Individuals with legal training'
+[78] F1=0.000 n_ev=8/8 osam=0.0317 pred='CNN-RNN model for painting embedding and seq2seq with global attention' gold='generating a poem from images we use an '
+[79] F1=0.667 n_ev=11/12 osam=0.031 pred='Transformer layer works better' gold='Transformer over BERT (ToBERT)'
+[80] F1=1.000 n_ev=11/21 osam=0.0306 pred='Yes' gold='Yes'
+[81] F1=1.000 n_ev=14/16 osam=0.0322 pred='personal attack, racism, and sexism' gold='personal attack, racism, and sexism'
+[82] F1=0.361 n_ev=11/12 osam=0.0325 pred='They split the context into left, middle, and right parts and combine ' gold='They use two independent convolutional a'
+[83] F1=0.276 n_ev=12/14 osam=0.0328 pred='Three different types of entities exist in the dataset: Person (PER), ' gold='OurNepali contains 3 different types of '
+[84] F1=0.054 n_ev=15/20 osam=0.0325 pred='Higher quality annotations from experts improve model performance sign' gold='improvement when the difficult subset wi'
+[85] F1=0.250 n_ev=18/19 osam=0.0332 pred='65% of the speakers are men, speaking more than 75% of the time.' gold='Women represent 33.16% of the speakers'
+[86] F1=1.000 n_ev=7/8 osam=0.0317 pred='English-German dataset' gold='the English-German dataset'
+[87] F1=0.000 n_ev=11/17 osam=0.0327 pred='unanswerable' gold='Baseline models are:\n- Chen et al., 2015'
+[88] F1=0.889 n_ev=16/23 osam=0.0329 pred='Logistic Regression and Multilayer Perceptron' gold='probabilistic model'
+[89] F1=0.727 n_ev=6/7 osam=0.0328 pred='BIBREF17, BIBREF18, TensiStrength, TwitterNLP, CogComp-NLP, Stanford N' gold='BIBREF17, BIBREF18, TensiStrength BIBREF'
+[90] F1=0.667 n_ev=11/17 osam=0.0324 pred='SQuAD dataset' gold='SQuAD'
+[91] F1=0.000 n_ev=16/20 osam=0.033 pred='existing approaches include bag-of-words representations and vector sp' gold='BOW-Tags, BOW-KL(Tags), BOW-All, GloVe'
+[92] F1=1.000 n_ev=4/8 osam=0.0321 pred='yes' gold='Yes'
+[93] F1=0.571 n_ev=12/12 osam=0.0332 pred='CSAT, 20 newsgroups, and Fisher datasets' gold='CSAT dataset, 20 newsgroups, Fisher Phas'
+[94] F1=0.889 n_ev=13/15 osam=0.0328 pred='IMDb movie review dataset' gold='the IMDb movie review dataset BIBREF17'
+[95] F1=1.000 n_ev=7/7 osam=0.0327 pred='Yes' gold='Yes'
+[96] F1=1.000 n_ev=5/7 osam=0.0324 pred='No' gold='No'
+[97] F1=0.333 n_ev=9/20 osam=0.0329 pred='The invertibility condition is that both the inverse and the Jacobian ' gold='The neural projector must be invertible.'
+[98] F1=0.000 n_ev=19/23 osam=0.0326 pred='The proposed qualitative annotation schema categorizes gold standards ' gold='The resulting taxonomy of the framework '
+[99] F1=0.486 n_ev=8/9 osam=0.0327 pred='WikiSmall: 89,042 training pairs, 100 test pairs; WikiLarge: 296,402 t' gold='training set has 89,042 sentence pairs, '
+[100] F1=0.364 n_ev=14/22 osam=0.0336 pred='many-to-many+pre-training, Triangle+pre-train' gold='Vanilla ST baseline, encoder pre-trainin'
+[101] F1=1.000 n_ev=16/21 osam=0.0328 pred='English' gold='Unanswerable'
+[102] F1=0.400 n_ev=8/11 osam=0.0326 pred='SVM, BiLSTM, and CNN models' gold='linear SVM, bidirectional Long Short-Ter'
+[103] F1=0.000 n_ev=7/8 osam=0.0314 pred='unanswerable' gold='No'
+[104] F1=0.667 n_ev=5/9 osam=0.0322 pred='GloVe, Edinburgh, and Emoji embeddings' gold='Pretrained word embeddings  were not use'
+[105] F1=0.276 n_ev=9/12 osam=0.0333 pred='Personalized models generate plausible, personalized, and coherent rec' gold='average recipe-level coherence scores of'
+[106] F1=0.462 n_ev=10/23 osam=0.0321 pred='The harmonic mean of irony reward and sentiment reward.' gold='irony accuracy, sentiment preservation'
+[107] F1=0.667 n_ev=7/8 osam=0.0328 pred='The generated English poem may not work well with Shakespeare style tr' gold='Since we do not have an end-to-end datas'
+[108] F1=0.833 n_ev=13/18 osam=0.0325 pred='Affective Text, Fairy Tales, and ISEAR datasets' gold='Affective Text, Fairy Tales, ISEAR'
+[109] F1=0.133 n_ev=14/14 osam=0.0342 pred='The distribution results showed significant differences in followers, ' gold='Distributions of Followers, Friends and '
+[110] F1=0.533 n_ev=14/18 osam=0.0324 pred='The dataset of hashtags is sourced from the Stanford Sentiment Analysi' gold='1,268 randomly selected tweets in the St'
+[111] F1=1.000 n_ev=15/17 osam=0.0326 pred='unanswerable' gold='Unanswerable'
+[112] F1=0.286 n_ev=17/24 osam=0.0323 pred='A compact, scalable and meaningful representation of the whole set of ' gold='Word vectors, usually in the context of '
+[113] F1=0.036 n_ev=17/37 osam=0.0332 pred='Random Forests (RF) and Support Vector Machines (SVM)' gold='For Article-Entity placement, they consi'
+[114] F1=1.000 n_ev=9/10 osam=0.0317 pred='unanswerable' gold='Yes'
+[115] F1=1.000 n_ev=7/11 osam=0.0311 pred='unanswerable' gold='Unanswerable'
+[116] F1=0.833 n_ev=11/13 osam=0.034 pred='SemEval-2016 “Sentiment Analysis in Twitter” task dataset' gold=' high-quality datasets  from SemEval-201'
+[117] F1=1.000 n_ev=10/10 osam=0.0328 pred='small BERT' gold='small BERT'
+[118] F1=0.000 n_ev=18/28 osam=0.0324 pred='Yes' gold='No'
+[119] F1=0.000 n_ev=16/17 osam=0.0326 pred='No' gold='Yes'
+[120] F1=0.000 n_ev=15/18 osam=0.0326 pred='Competitive or even state-of-the-art results for some emotion labels.' gold='Answer with content missing: (Table 3) B'
+[121] F1=0.385 n_ev=11/15 osam=0.033 pred='A novel tagging scheme with three tags to capture the structural const' gold='A new tagging scheme that tags the words'
+[122] F1=1.000 n_ev=10/11 osam=0.0313 pred='no' gold='No'
+[123] F1=0.500 n_ev=15/17 osam=0.0326 pred='Robustness of a model is defined by its insensitivity to bias in prior' gold='ability to accurately classify texts eve'
+[124] F1=0.714 n_ev=17/19 osam=0.0322 pred='InferSent, Universal Sentence Encoder, average GloVe embeddings' gold='GloVe, BERT, Universal Sentence Encoder,'
+[125] F1=0.476 n_ev=13/17 osam=0.0317 pred='+0.29 and +0.96 for English datasets, +0.97 and +2.36 for Chinese data' gold='English datasets including CoNLL2003 and'
+[126] F1=0.960 n_ev=10/13 osam=0.0331 pred="Quora Duplicate Question Pair Detection and Ranking questions in Bing'" gold='Task 1: Quora Duplicate Question Pair De'
+[127] F1=0.294 n_ev=16/24 osam=0.0332 pred='SATA Tree-LSTM, latent tree-based models, and other neural models' gold='Various tree structured neural networks '
+[128] F1=0.000 n_ev=18/21 osam=0.0323 pred='Improved relation detection' gold='answer questions by obtaining informatio'
+[129] F1=0.625 n_ev=11/12 osam=0.0334 pred='A simple Encoder-Decoder baseline with ingredient attention.' gold='name-based Nearest-Neighbor model (NN), '
+[130] F1=0.138 n_ev=9/11 osam=0.0321 pred='Manual inspection and automated tagging with part-of-speech and corefe' gold='spot patterns by just looking at a colle'
+[131] F1=0.933 n_ev=11/12 osam=0.0336 pred='English, French, Spanish, Italian, Portuguese, German, Hebrew, Arabic' gold='English, French, German '
+[132] F1=0.462 n_ev=11/15 osam=0.0331 pred='Cell-aware Stacked LSTMs (CAS-LSTMs)' gold='Stacked LSTMs, Cell-aware Stacked LSTMs,'
+[133] F1=1.000 n_ev=14/28 osam=0.0333 pred='yes' gold='Yes'
+[134] F1=0.000 n_ev=12/14 osam=0.0329 pred='Sumy package algorithms' gold='LSA, TextRank, LexRank and ILP-based sum'
+[135] F1=0.000 n_ev=15/18 osam=0.0326 pred='BIBREF7' gold='hLSTM'
+[136] F1=0.065 n_ev=18/19 osam=0.0327 pred='The least impactful component is the master node skip connection.' gold='Based on table results provided changing'
+[137] F1=0.800 n_ev=8/9 osam=0.0326 pred='DTA18 and DTA19' gold='DTA18, DTA19'
+[138] F1=0.933 n_ev=9/12 osam=0.0326 pred='Kannada, Hindi, Telugu, Malayalam, Bengali, and English.' gold='Hindi, English, Kannada, Telugu, Assames'
+[139] F1=0.000 n_ev=12/12 osam=0.0322 pred='Reasonable performance can be obtained.' gold='Table TABREF6, Table TABREF8'
+[140] F1=0.000 n_ev=17/24 osam=0.0322 pred='significant boost' gold='Metric difference between Aloha and best'
+[141] F1=0.092 n_ev=13/18 osam=0.0318 pred='ARAML improves stability and diversity in text generation.' gold='ARAM has achieved improvement over all b'
+[142] F1=0.195 n_ev=14/19 osam=0.0314 pred='The model misclassifies tweets with African American Vernacular Englis' gold='The authors showed few tweets where neit'
+[143] F1=0.000 n_ev=10/17 osam=0.0307 pred='Yes' gold='SVM, No-Answer Baseline (NA) , Word Coun'
+[144] F1=0.000 n_ev=12/14 osam=0.0333 pred='unanswerable' gold='Dataset contains 3606 total sentences an'
+[145] F1=0.667 n_ev=14/17 osam=0.0321 pred='+0.58 for MRPC and +0.73 for QQP' gold='Using DSC loss improves the F1 score by '
+[146] F1=0.286 n_ev=7/10 osam=0.0338 pred='ERP, eye-tracking, self-paced reading' gold='Answer with content missing: (Whole Meth'
+[147] F1=0.047 n_ev=5/12 osam=0.0312 pred='The subjects were presented with stimuli to elicit event-related respo' gold='7 phonemic/syllabic ( /iy/, /piy/, /tiy/'
+[148] F1=0.545 n_ev=13/21 osam=0.033 pred='Pointer-Gen, Pointer-Gen+RL+ROUGE, Pointer-Gen+RL-SEN, and Pointer-Gen' gold='Pointer-Gen, Pointer-Gen+Pos, Pointer-Ge'
+[149] F1=0.118 n_ev=9/11 osam=0.0327 pred='Traditional machine learning classifiers and neural network based mode' gold='Naïve Bayes (NB), Logistic Regression (L'
+[150] F1=0.211 n_ev=9/9 osam=0.0326 pred='bi-directional and uni-directional transformer models' gold='uni-directional model to augment the dec'
+[151] F1=0.194 n_ev=13/17 osam=0.0329 pred='Weights are dynamically adjusted by multiplying the soft probability $' gold='One can think $(1-p_{i1})$ as a weight a'
+[152] F1=0.261 n_ev=11/11 osam=0.033 pred='The proposed strategies successfully pass the bottleneck in Zork1 and ' gold='Reward of 11.8 for the A2C-chained model'
+[153] F1=0.316 n_ev=14/18 osam=0.0331 pred='Individual models consist of monolingual Bayesian models for each lang' gold='Bayesian model of garg2012unsupervised a'
+[154] F1=0.103 n_ev=12/14 osam=0.0324 pred='Non-standard pronunciation is identified through annotations of noises' gold='Unanswerable'
+[155] F1=0.650 n_ev=17/20 osam=0.0323 pred='A semi-character architecture processes words with misspelled characte' gold='A semi-character based RNN (ScRNN) treat'
+[156] F1=0.000 n_ev=11/13 osam=0.0342 pred='16 different languages' gold='Bulgarian, Croatian, Czech, Danish, Engl'
+[157] F1=0.222 n_ev=12/20 osam=0.0332 pred='NCEL outperforms state-of-the-art collective methods across five diffe' gold='NCEL consistently outperforms various ba'
+[158] F1=1.000 n_ev=17/20 osam=0.0328 pred='Yes' gold='Yes'
+[159] F1=0.556 n_ev=10/10 osam=0.0333 pred='The baseline used was the error detection system by Rei2016, trained u' gold='error detection system by Rei2016'
+[160] F1=0.400 n_ev=12/16 osam=0.0328 pred='2010 i2b2/VA' gold='clinical notes from the CE task in 2010 '
+[161] F1=0.385 n_ev=18/19 osam=0.0319 pred='It provides a more complete input sequence consistent with pre-trainin' gold='ecause this process is similar to the cl'
+[162] F1=1.000 n_ev=7/8 osam=0.0327 pred='unanswerable' gold='Unanswerable'
+[163] F1=0.000 n_ev=9/9 osam=0.0332 pred='TF-IDF features' gold='Unanswerable'
+[164] F1=0.441 n_ev=8/9 osam=0.0331 pred='The dataset is annotated with 9,473 annotations for 9,300 tweets, wher' gold='no evidence of depression, depressed moo'
+[165] F1=0.000 n_ev=6/13 osam=0.0324 pred='The eight publicly available NER tasks used in BIBREF2.' gold='BC5CDR-disease, NCBI-disease, BC5CDR-che'
+[166] F1=0.714 n_ev=11/11 osam=0.0326 pred='The training data was translated using the machine translation platfor' gold='using the machine translation platform A'
+[167] F1=0.421 n_ev=12/19 osam=0.0327 pred='multinomial Naive Bayes classifier' gold='AllWords model by counting the frequenci'
+[168] F1=0.390 n_ev=9/15 osam=0.0326 pred='The baseline for the SLC task was a logistic regression classifier wit' gold='The baseline system for the SLC task is '
+[169] F1=0.054 n_ev=12/15 osam=0.0332 pred='CRF baseline' gold='They compare with the following models: '
+[170] F1=0.473 n_ev=11/21 osam=0.0323 pred='The political bias of different sources is assigned using a procedure ' gold='By assigning a political bias label to e'
+[171] F1=0.692 n_ev=12/17 osam=0.0325 pred='Ancient Chinese history records and articles written by celebrities.' gold='ancient Chinese history records in sever'
+[172] F1=1.000 n_ev=9/11 osam=0.0325 pred='English' gold='English'
+[173] F1=0.000 n_ev=10/12 osam=0.033 pred='unanswerable' gold='Answer with content missing: (Data secti'
+[174] F1=0.250 n_ev=7/23 osam=0.0325 pred='The UTCNN model has three convolutional layers.' gold='eight layers'
+[175] F1=0.200 n_ev=17/20 osam=0.033 pred='Flickr tags and structured environmental datasets' gold=' the same datasets as BIBREF7'
+[176] F1=0.800 n_ev=17/22 osam=0.0329 pred='NUBes-PHI and MEDDOCAN' gold='MEDDOCAN, NUBes-PHI'
+[177] F1=0.000 n_ev=14/17 osam=0.033 pred='Unigrams and pragmatic features' gold='Unanswerable'
+[178] F1=1.000 n_ev=16/29 osam=0.031 pred='Coverage, Avg. MCC, and avg. +ve F1 score' gold='Coverage, Avg. MCC and avg. +ve F1 score'
+[179] F1=1.000 n_ev=9/10 osam=0.0312 pred='yes' gold='Yes'
+[180] F1=0.800 n_ev=11/11 osam=0.0327 pred='Galatasaray and Fenerbahçe' gold='Galatasaray, Fenerbahçe'
+[181] F1=0.167 n_ev=14/23 osam=0.0335 pred='Experiments on irony generation and irony-to-non-irony transformation.' gold='Irony Classifier, Sentiment Classifier f'
+[182] F1=0.347 n_ev=12/17 osam=0.0316 pred='Gaussian-masked directional multi-head attention uses a Gaussian weigh' gold='pays attentions to adjacent characters a'
+[183] F1=0.400 n_ev=15/19 osam=0.0328 pred='Facebook' gold='Facebook status update messages'
+[184] F1=0.500 n_ev=14/23 osam=0.0324 pred='The baseline features are the 100 features extracted from the fully-co' gold=' The features extracted from CNN.'
+[185] F1=0.571 n_ev=8/13 osam=0.0324 pred='Number of clusters and type of word embeddings.' gold='number of clusters, seed value in cluste'
+[186] F1=0.000 n_ev=9/11 osam=0.0323 pred='second (EI-Reg), second (EI-Oc), fourth (V-Reg) and fifth (V-Oc)' gold='column Ens Test in Table TABREF19'
+[187] F1=0.000 n_ev=13/14 osam=0.0333 pred='53 documents' gold='8,275 sentences and 167,739 words in tot'
+[188] F1=1.000 n_ev=10/14 osam=0.0311 pred='unanswerable' gold='Unanswerable'
+[189] F1=0.308 n_ev=15/17 osam=0.0333 pred='Text classification' gold='text classification for themes including'
+[190] F1=0.083 n_ev=15/29 osam=0.0322 pred='BERT-QC is compared to CNN, LSTM, term frequency methods, rule-based m' gold='bag-of-words model, CNN'
+[191] F1=0.111 n_ev=12/17 osam=0.031 pred='The training sets of these versions of ELMo are significantly larger t' gold='By 14 times.'
+[192] F1=0.000 n_ev=12/14 osam=0.0331 pred='unanswerable' gold='3606'
+[193] F1=0.667 n_ev=11/12 osam=0.0329 pred='MLP, Eusboost, and MWMOTE' gold='MLP'
+[194] F1=1.000 n_ev=15/17 osam=0.0321 pred='Yes' gold='Yes'
+[195] F1=1.000 n_ev=13/20 osam=0.0331 pred='yes' gold='Yes'
+[196] F1=1.000 n_ev=4/32 osam=0.0316 pred='0.6103' gold='0.5115'
+[197] F1=1.000 n_ev=10/20 osam=0.033 pred='Wall Street Journal (WSJ) portion of the Penn Treebank' gold=' Wall Street Journal (WSJ) portion of th'
+[198] F1=0.100 n_ev=6/8 osam=0.0295 pred='The authors evidence this by stating that building models under genera' gold='By conducting a survey among engineers'
+[199] F1=0.800 n_ev=18/21 osam=0.0321 pred='SimpleQuestions and WebQSP' gold='SimpleQuestions, WebQSP'
+============================================================
+qasper | mode=combined | segmentation=fixed | evidence=episodic/document | s_source=self | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+F1 (all 200):            0.4499
+F1 (answered 200):        0.4499
+  gold unanswerable (22): 0.5594
+  gold answerable   (178): 0.4364
+skipped (no evidence): 0
+============================================================
+==============================================
+  Done at Thu Oct 29 08:30:12 UTC 2026 | exit 0
+  Rows written: 200
+  Results: /home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+==============================================
+Stopping vLLM (process group 22988)...
+
+================ summary (qasper, released, fixed)
+ combined: n=200  F1=0.4499  skipped=0  evidence/q=11.8  units/doc=17.1
+================ qasper arm=combined segmentation=fixed adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+==============================================
+  C-AIMMS eval_longbench_iterret -> lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+  run  : 20261029_083013_41319 on brev-ly26it6c9 at Thu Oct 29 08:30:13 UTC 2026
+  out  : /home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261029_083013_41319.log
+==============================================
+GPU 0: 81154 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100 80GB PCIe, 0 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 41482, log /home/shadeform/caimms/outputs/server_20261029_083013_41319.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 41482, model verified).
+[3/3] Starting eval on GPU 0...
+[init] task=qasper mode=combined max_samples=200 out=/home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/lb_graph_cache/qasper max_evidence_tokens=off evidence=episodic/document s_source=self
+[init] 200 rows, 200 already done, 0 to run
+============================================================
+qasper | mode=combined | segmentation=fixed | evidence=episodic/document | s_source=self | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+F1 (all 200):            0.4499
+F1 (answered 200):        0.4499
+  gold unanswerable (22): 0.5594
+  gold answerable   (178): 0.4364
+skipped (no evidence): 0
+============================================================
+==============================================
+  Done at Thu Oct 29 08:30:58 UTC 2026 | exit 0
+  Rows written: 200
+  Results: /home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+==============================================
+Stopping vLLM (process group 41482)...
+
+================ summary (qasper, released, fixed)
+ combined: n=200  F1=0.4499  skipped=0  evidence/q=11.8  units/doc=17.1
+================ qasper arm=combined segmentation=fixed adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+==============================================
+  C-AIMMS eval_longbench_iterret -> lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+  run  : 20261029_083059_41960 on brev-ly26it6c9 at Thu Oct 29 08:31:00 UTC 2026
+  out  : /home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261029_083059_41960.log
+==============================================
+GPU 0: 81154 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.52):
+  0, NVIDIA A100 80GB PCIe, 0 MiB, 81920 MiB
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8000 is free...
+      port 8000 free.
+[1/3] Starting vLLM on GPU 0 (port 8000)...
+      pid 42131, log /home/shadeform/caimms/outputs/server_20261029_083059_41960.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 42131, model verified).
+[3/3] Starting eval on GPU 0...
+[init] task=qasper mode=combined max_samples=200 out=/home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/lb_graph_cache/qasper max_evidence_tokens=off evidence=episodic/document s_source=self
+[init] 200 rows, 200 already done, 0 to run
+============================================================
+qasper | mode=combined | segmentation=fixed | evidence=episodic/document | s_source=self | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+F1 (all 200):            0.4499
+F1 (answered 200):        0.4499
+  gold unanswerable (22): 0.5594
+  gold answerable   (178): 0.4364
+skipped (no evidence): 0
+============================================================
+==============================================
+  Done at Thu Oct 29 08:31:45 UTC 2026 | exit 0
+  Rows written: 200
+  Results: /home/shadeform/caimms/outputs/lb_qasper_combined_released_episodic_documentorder_n200.jsonl
+==============================================
+Stopping vLLM (process group 42131)...
+
+================ summary (qasper, released, fixed)
+ combined: n=200  F1=0.4499  skipped=0  evidence/q=11.8  units/doc=17.1
+QUEUE B3 DONE Thu Oct 29 08:31:46 UTC 2026
