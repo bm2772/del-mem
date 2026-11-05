@@ -1,0 +1,1594 @@
+==============================================
+  C-AIMMS SUBSET (4 sample(s)) -> C5_locomo4_combined_episodic_document.jsonl
+  run  : 20261104_191001_28781 on brev-yrkrbdvsl at Wed Nov  4 19:10:01 UTC 2026
+  out  : /home/shadeform/caimms/outputs/C5_locomo4_combined_episodic_document.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261104_191001_28781.log
+==============================================
+GPU 0: 51784 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.609):
+  0, NVIDIA A100-SXM4-80GB, 29369 MiB, 81920 MiB
+  NOTE: 2 compute process(es) already on these GPUs:
+    27843, /home/shadeform/miniconda3/envs/workmem/bin/python3, 20396 MiB
+    27985, python3, 8958 MiB
+  Continuing in 10s -- ctrl-c to abort.
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8100 is free...
+      port 8100 free.
+[1/3] Starting vLLM on GPU 0 (port 8100)...
+      pid 28943, log /home/shadeform/caimms/outputs/server_20261104_191001_28781.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 28943, model verified).
+[3/3] Starting eval on GPU 0...
+[init] MAX_SAMPLES=4  OUTPUT_FILE='/home/shadeform/caimms/outputs/C5_locomo4_combined_episodic_document.jsonl'
+[init] Loading base model from /home/shadeform/caimms/models/Qwen3-4B-Instruct-2507
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.29it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.49it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.15it/s]
+[init] Attaching Delta-Mem adapter from /home/shadeform/caimms/models/delta-mem-adapter
+[init] Delta-Mem model ready.
+
+[init] Loading dataset from /home/shadeform/caimms/del-mem/delta-Mem/data/locomo10.json
+[init] 10 samples loaded.
+[sample 0] Loading cached CTC graph from /home/shadeform/caimms/outputs/graph_cache/sample_0.json...
+[sample 0] Graph ready: ? nodes.
+[sample 0] Experience bank: empty.
+[sample 0] dates_resolved=True
+[sample 0.0] evidence after filter: 8 strings
+[sample 0.0] score=0.857 n_ev=8 osam_ratio=0.0344 pred='yesterday (7 May, 2023)'
+[sample 0.1] evidence after filter: 26 strings
+[sample 0.1] score=1.000 n_ev=26 osam_ratio=0.0368 pred='2022'
+[sample 0.2] evidence after filter: 46 strings
+[sample 0.2] score=0.286 n_ev=46 osam_ratio=0.0349 pred='Counseling or mental health'
+[sample 0.3] evidence after filter: 58 strings
+[sample 0.3] score=0.667 n_ev=58 osam_ratio=0.0365 pred='Caroline researched adoption agencies.'
+[sample 0.4] evidence after filter: 44 strings
+[sample 0.4] score=1.000 n_ev=44 osam_ratio=0.0366 pred='transgender woman'
+[sample 0.5] evidence after filter: 59 strings
+[sample 0.5] score=0.667 n_ev=59 osam_ratio=0.0360 pred='last Saturday (the Saturday before 25 May, 2023)'
+[sample 0.6] evidence after filter: 18 strings
+[sample 0.6] score=0.667 n_ev=18 osam_ratio=0.0348 pred='next month (June 2023)'
+[sample 0.7] evidence after filter: 47 strings
+[sample 0.7] score=0.000 n_ev=47 osam_ratio=0.0370 pred='Caroline is in the adoption process.'
+[sample 0.8] evidence after filter: 12 strings
+[sample 0.8] score=1.000 n_ev=12 osam_ratio=0.0349 pred='The week before 9 June, 2023.'
+[sample 0.9] evidence after filter: 50 strings
+[sample 0.9] score=1.000 n_ev=50 osam_ratio=0.0331 pred='the week before 9 June, 2023'
+[sample 0.10] evidence after filter: 38 strings
+[sample 0.10] score=0.250 n_ev=38 osam_ratio=0.0339 pred="I've known these friends for 4 years, since I moved from my "
+[sample 0.11] evidence after filter: 27 strings
+[sample 0.11] score=0.000 n_ev=27 osam_ratio=0.0367 pred="No information about Caroline's move is provided in the conv"
+[sample 0.12] evidence after filter: 30 strings
+[sample 0.12] score=0.000 n_ev=30 osam_ratio=0.0356 pred='Since I was 17 or so.'
+[sample 0.13] evidence after filter: 43 strings
+[sample 0.13] score=0.600 n_ev=43 osam_ratio=0.0353 pred='counseling and mental health'
+[sample 0.14] evidence after filter: 65 strings
+[sample 0.14] score=0.182 n_ev=65 osam_ratio=0.0325 pred='No, she would not. The support she received was invaluable.'
+[sample 0.15] evidence after filter: 55 strings
+[sample 0.15] score=0.750 n_ev=55 osam_ratio=0.0360 pred='Painting, pottery, family outings, camping, playing clarinet'
+[sample 0.16] evidence after filter: 30 strings
+[sample 0.16] score=1.000 n_ev=30 osam_ratio=0.0346 pred='2 July, 2023'
+[sample 0.17] evidence after filter: 25 strings
+[sample 0.17] score=0.667 n_ev=25 osam_ratio=0.0358 pred='This month (July 2023).'
+[sample 0.18] evidence after filter: 38 strings
+[sample 0.18] score=1.000 n_ev=38 osam_ratio=0.0373 pred='mountains, beach, forest'
+[sample 0.19] evidence after filter: 33 strings
+[sample 0.19] score=0.250 n_ev=33 osam_ratio=0.0365 pred='They love nature, playing games, and making things with clay'
+[sample 0.20] evidence after filter: 22 strings
+[sample 0.20] score=0.857 n_ev=22 osam_ratio=0.0354 pred='Yesterday (5 July, 2023)'
+[sample 0.21] evidence after filter: 57 strings
+[sample 0.21] score=0.833 n_ev=57 osam_ratio=0.0368 pred='Last week (the week before 6 July, 2023)'
+[sample 0.22] evidence after filter: 27 strings
+[sample 0.22] score=0.111 n_ev=27 osam_ratio=0.0342 pred='No, Caroline would not have Dr. Seuss books on her bookshelf'
+[sample 0.23] evidence after filter: 25 strings
+[sample 0.23] score=0.500 n_ev=25 osam_ratio=0.0366 pred='"Charlotte\'s Web"'
+[sample 0.24] evidence after filter: 49 strings
+[sample 0.24] score=1.000 n_ev=49 osam_ratio=0.0351 pred='Running, painting, pottery'
+[sample 0.25] evidence after filter: 14 strings
+[sample 0.25] score=1.000 n_ev=14 osam_ratio=0.0353 pred='10 July, 2023'
+[sample 0.26] evidence after filter: 38 strings
+[sample 0.26] score=0.000 n_ev=38 osam_ratio=0.0354 pred='Not mentioned in the conversation.'
+[sample 0.27] evidence after filter: 46 strings
+[sample 0.27] score=0.222 n_ev=46 osam_ratio=0.0353 pred='No mention of writing as a career option.'
+[sample 0.28] evidence after filter: 38 strings
+[sample 0.28] score=0.833 n_ev=38 osam_ratio=0.0348 pred='Last Friday (the Friday before 15 July, 2023)'
+[sample 0.29] evidence after filter: 32 strings
+[sample 0.29] score=0.000 n_ev=32 osam_ratio=0.0355 pred='Last Fri I finally took my kids to a pottery workshop.'
+[sample 0.30] evidence after filter: 59 strings
+[sample 0.30] score=0.154 n_ev=59 osam_ratio=0.0363 pred='No'
+[sample 0.31] evidence after filter: 8 strings
+[sample 0.31] score=0.833 n_ev=8 osam_ratio=0.0347 pred='last week (the week before 27 June, 2023)'
+[sample 0.32] evidence after filter: 48 strings
+[sample 0.32] score=0.533 n_ev=48 osam_ratio=0.0360 pred='LGBTQ+ pride parade, LGBTQ+ counseling workshop, LGBTQ+ supp'
+[sample 0.33] evidence after filter: 34 strings
+[sample 0.33] score=0.333 n_ev=34 osam_ratio=0.0344 pred='Last Friday (the Friday before 14 August, 2023)'
+[sample 0.34] evidence after filter: 43 strings
+[sample 0.34] score=0.143 n_ev=43 osam_ratio=0.0354 pred='Mentorship program for LGBTQ youth, volunteering at an LGBTQ'
+[sample 0.35] evidence after filter: 20 strings
+[sample 0.35] score=1.000 n_ev=20 osam_ratio=0.0357 pred='two weekends before 17 July, 2023'
+[sample 0.36] evidence after filter: 18 strings
+[sample 0.36] score=0.833 n_ev=18 osam_ratio=0.0346 pred='Last weekend (the weekend before 17 July, 2023)'
+[sample 0.37] evidence after filter: 22 strings
+[sample 0.37] score=0.000 n_ev=22 osam_ratio=0.0361 pred="Painting landscapes and still life is my favorite! Nature's "
+[sample 0.38] evidence after filter: 51 strings
+[sample 0.38] score=0.500 n_ev=51 osam_ratio=0.0356 pred='Camping, hiking, roasting marshmallows, picnics, painting, g'
+[sample 0.39] evidence after filter: 49 strings
+[sample 0.39] score=0.250 n_ev=49 osam_ratio=0.0353 pred='Giving talks, mentoring, volunteering, art shows, poetry rea'
+[sample 0.40] evidence after filter: 36 strings
+[sample 0.40] score=0.000 n_ev=36 osam_ratio=0.0322 pred='Once or twice a year.'
+[sample 0.41] evidence after filter: 47 strings
+[sample 0.41] score=0.600 n_ev=47 osam_ratio=0.0355 pred='Last Tues. (20 July, 2023)'
+[sample 0.42] evidence after filter: 43 strings
+[sample 0.42] score=0.333 n_ev=43 osam_ratio=0.0330 pred='Melanie would be more interested in going to a national park'
+[sample 0.43] evidence after filter: 63 strings
+[sample 0.43] score=1.000 n_ev=63 osam_ratio=0.0365 pred='Painting, self-portraits, stained glass windows, abstract ar'
+[sample 0.44] evidence after filter: 43 strings
+[sample 0.44] score=0.800 n_ev=43 osam_ratio=0.0362 pred='13 August, 2023'
+[sample 0.45] evidence after filter: 21 strings
+[sample 0.45] score=0.833 n_ev=21 osam_ratio=0.0347 pred='last Friday (the Friday before 14 August, 2023)'
+[sample 0.46] evidence after filter: 65 strings
+[sample 0.46] score=0.364 n_ev=65 osam_ratio=0.0355 pred='Yes, Melanie is an ally to the transgender community.'
+[sample 0.47] evidence after filter: 79 strings
+[sample 0.47] score=0.722 n_ev=79 osam_ratio=0.0347 pred='Friends, family and mentors'
+[sample 0.48] evidence after filter: 27 strings
+[sample 0.48] score=0.000 n_ev=27 osam_ratio=0.0347 pred='We all made our own pots, it was fun and therapeutic!'
+[sample 0.49] evidence after filter: 49 strings
+[sample 0.49] score=0.500 n_ev=49 osam_ratio=0.0346 pred='last year (2022)'
+[sample 0.50] evidence after filter: 55 strings
+[sample 0.50] score=0.000 n_ev=55 osam_ratio=0.0359 pred='fight for trans rights and spread awareness'
+[sample 0.51] evidence after filter: 30 strings
+[sample 0.51] score=0.556 n_ev=30 osam_ratio=0.0363 pred='lake sunrise, flowers, horse, abstract painting, pottery, su'
+[sample 0.52] evidence after filter: 39 strings
+[sample 0.52] score=0.444 n_ev=39 osam_ratio=0.0361 pred='Luna and Oliver'
+[sample 0.53] evidence after filter: 27 strings
+[sample 0.53] score=1.000 n_ev=27 osam_ratio=0.0362 pred='The week of 23 August, 2023'
+[sample 0.54] evidence after filter: 45 strings
+[sample 0.54] score=0.833 n_ev=45 osam_ratio=0.0353 pred='last week (the week before 23 August, 2023)'
+[sample 0.55] evidence after filter: 55 strings
+[sample 0.55] score=0.000 n_ev=55 osam_ratio=0.0366 pred='nature, flowers, sunset, abstract, red and blue, unity and s'
+[sample 0.56] evidence after filter: 47 strings
+[sample 0.56] score=0.400 n_ev=47 osam_ratio=0.0369 pred='The rainbow flag mural, the eagle, red and blue, the mix of '
+[sample 0.57] evidence after filter: 24 strings
+[sample 0.57] score=0.833 n_ev=24 osam_ratio=0.0333 pred='last week (the week before 25 August, 2023)'
+[sample 0.58] evidence after filter: 23 strings
+[sample 0.58] score=1.000 n_ev=23 osam_ratio=0.0344 pred='24 August, 2023'
+[sample 0.59] evidence after filter: 49 strings
+[sample 0.59] score=0.188 n_ev=49 osam_ratio=0.0370 pred='No, Caroline is not religious. She made a mural for a local '
+[sample 0.60] evidence after filter: 52 strings
+[sample 0.60] score=0.667 n_ev=52 osam_ratio=0.0366 pred='clarinet'
+[sample 0.61] evidence after filter: 29 strings
+[sample 0.61] score=0.500 n_ev=29 osam_ratio=0.0350 pred='Matt Patterson'
+[sample 0.62] evidence after filter: 35 strings
+[sample 0.62] score=1.000 n_ev=35 osam_ratio=0.0346 pred='27 August, 2023'
+[sample 0.63] evidence after filter: 33 strings
+[sample 0.63] score=0.667 n_ev=33 osam_ratio=0.0347 pred='next month (September 2023)'
+[sample 0.64] evidence after filter: 19 strings
+[sample 0.64] score=0.100 n_ev=19 osam_ratio=0.0331 pred='Yes, Melanie would likely enjoy "The Four Seasons" by Vivald'
+[sample 0.65] evidence after filter: 39 strings
+[sample 0.65] score=0.033 n_ev=39 osam_ratio=0.0343 pred='Realizing I can be me without fear and having the courage to'
+[sample 0.66] evidence after filter: 21 strings
+[sample 0.66] score=0.682 n_ev=21 osam_ratio=0.0346 pred='We explore nature, roast marshmallows, tell stories around t'
+[sample 0.67] evidence after filter: 27 strings
+[sample 0.67] score=0.833 n_ev=27 osam_ratio=0.0348 pred='last weekend (the weekend before 13 September, 2023)'
+[sample 0.68] evidence after filter: 14 strings
+[sample 0.68] score=0.000 n_ev=14 osam_ratio=0.0345 pred='Seven years now'
+[sample 0.69] evidence after filter: 59 strings
+[sample 0.69] score=0.000 n_ev=59 osam_ratio=0.0362 pred='caring, brave, supportive, resilient, loving, strong, inspir'
+[sample 0.70] evidence after filter: 41 strings
+[sample 0.70] score=0.733 n_ev=41 osam_ratio=0.0363 pred='LGBTQ+ counseling workshop, LGBTQ+ pride parade, transgender'
+[sample 0.71] evidence after filter: 25 strings
+[sample 0.71] score=1.000 n_ev=25 osam_ratio=0.0352 pred='Becoming Nicole'
+[sample 0.72] evidence after filter: 37 strings
+[sample 0.72] score=0.500 n_ev=37 osam_ratio=0.0344 pred='last year (2022)'
+[sample 0.73] evidence after filter: 41 strings
+[sample 0.73] score=0.000 n_ev=41 osam_ratio=0.0364 pred='We were all freaked when my son got into an accident.'
+[sample 0.74] evidence after filter: 31 strings
+[sample 0.74] score=1.000 n_ev=31 osam_ratio=0.0340 pred='the weekend before 20 October, 2023'
+[sample 0.75] evidence after filter: 23 strings
+[sample 0.75] score=0.000 n_ev=23 osam_ratio=0.0364 pred='Luna and Oliver'
+[sample 0.76] evidence after filter: 11 strings
+[sample 0.76] score=0.800 n_ev=11 osam_ratio=0.0336 pred='19 October, 2023'
+[sample 0.77] evidence after filter: 34 strings
+[sample 0.77] score=0.182 n_ev=34 osam_ratio=0.0356 pred='No, Melanie would not go on another roadtrip soon.'
+[sample 0.78] evidence after filter: 55 strings
+[sample 0.78] score=0.333 n_ev=55 osam_ratio=0.0369 pred='new shoes, a horse painting'
+[sample 0.79] evidence after filter: 40 strings
+[sample 0.79] score=0.833 n_ev=40 osam_ratio=0.0350 pred='last Friday (the Friday before 22 October, 2023)'
+[sample 0.80] evidence after filter: 63 strings
+[sample 0.80] score=1.000 n_ev=63 osam_ratio=0.0367 pred='21 October, 2023'
+[sample 0.81] evidence after filter: 46 strings
+[sample 0.81] score=0.154 n_ev=46 osam_ratio=0.0346 pred='No mention of Caroline wanting to move back to her home coun'
+[sample 0.82] evidence after filter: 45 strings
+[sample 0.82] score=1.000 n_ev=45 osam_ratio=0.0355 pred='mental health'
+[sample 0.83] evidence after filter: 29 strings
+[sample 0.83] score=0.600 n_ev=29 osam_ratio=0.0357 pred='Melanie realized that self-care is really important.'
+[sample 0.84] evidence after filter: 33 strings
+[sample 0.84] score=0.400 n_ev=33 osam_ratio=0.0366 pred='Running, reading, playing my violin'
+[sample 0.85] evidence after filter: 45 strings
+[sample 0.85] score=0.000 n_ev=45 osam_ratio=0.0359 pred='Plan something special!'
+[sample 0.86] evidence after filter: 54 strings
+[sample 0.86] score=0.333 n_ev=54 osam_ratio=0.0338 pred='LGBTQ+ folks with adoption'
+[sample 0.87] evidence after filter: 44 strings
+[sample 0.87] score=0.381 n_ev=44 osam_ratio=0.0354 pred='They help LGBTQ+ folks with adoption. Their inclusivity and '
+[sample 0.88] evidence after filter: 49 strings
+[sample 0.88] score=0.000 n_ev=49 osam_ratio=0.0351 pred='Passing the adoption agency interviews'
+[sample 0.89] evidence after filter: 58 strings
+[sample 0.89] score=0.105 n_ev=58 osam_ratio=0.0353 pred="Adoption sounds awesome. I'm so happy for you."
+[sample 0.90] evidence after filter: 11 strings
+[sample 0.90] score=0.333 n_ev=11 osam_ratio=0.0346 pred='5 years already!'
+[sample 0.91] evidence after filter: 38 strings
+[sample 0.91] score=1.000 n_ev=38 osam_ratio=0.0366 pred='love, faith and strength'
+[sample 0.92] evidence after filter: 7 strings
+[sample 0.92] score=1.000 n_ev=7 osam_ratio=0.0355 pred='Sweden'
+[sample 0.93] evidence after filter: 36 strings
+[sample 0.93] score=1.000 n_ev=36 osam_ratio=0.0354 pred='a necklace'
+[sample 0.94] evidence after filter: 42 strings
+[sample 0.94] score=0.000 n_ev=42 osam_ratio=0.0346 pred="Melanie's hand-painted bowl is not mentioned as a reminder o"
+[sample 0.95] evidence after filter: 48 strings
+[sample 0.95] score=0.778 n_ev=48 osam_ratio=0.0353 pred='Roasted marshmallows, told stories around the campfire, expl'
+[sample 0.96] evidence after filter: 55 strings
+[sample 0.96] score=1.000 n_ev=55 osam_ratio=0.0341 pred='working with trans people, helping them accept themselves an'
+[sample 0.97] evidence after filter: 14 strings
+[sample 0.97] score=1.000 n_ev=14 osam_ratio=0.0370 pred='LGBTQ+ counseling workshop'
+[sample 0.98] evidence after filter: 41 strings
+[sample 0.98] score=0.947 n_ev=41 osam_ratio=0.0356 pred='different therapeutic methods and how to best work with tran'
+[sample 0.99] evidence after filter: 46 strings
+[sample 0.99] score=0.286 n_ev=46 osam_ratio=0.0359 pred='My own journey and the support I got made a huge difference.'
+[sample 0.100] evidence after filter: 49 strings
+[sample 0.100] score=0.333 n_ev=49 osam_ratio=0.0342 pred='A safe and loving home for kids.'
+[sample 0.101] evidence after filter: 34 strings
+[sample 0.101] score=0.000 n_ev=34 osam_ratio=0.0342 pred='Yeah, I made it in pottery class yesterday (24 August, 2023)'
+[sample 0.102] evidence after filter: 39 strings
+[sample 0.102] score=0.737 n_ev=39 osam_ratio=0.0350 pred='Classics, stories from different cultures, educational books'
+[sample 0.103] evidence after filter: 49 strings
+[sample 0.103] score=1.000 n_ev=49 osam_ratio=0.0360 pred='"Charlotte\'s Web"'
+[sample 0.104] evidence after filter: 31 strings
+[sample 0.104] score=0.400 n_ev=31 osam_ratio=0.0362 pred='I loved "Becoming Nicole" by Amy Ellis Nutt.'
+[sample 0.105] evidence after filter: 59 strings
+[sample 0.105] score=0.000 n_ev=59 osam_ratio=0.0345 pred='It made me feel connected and gave me a lot of hope for my o'
+[sample 0.106] evidence after filter: 5 strings
+[sample 0.106] score=0.000 n_ev=5 osam_ratio=0.0338 pred='None of the messages mention the new shoes or their use.'
+[sample 0.107] evidence after filter: 28 strings
+[sample 0.107] score=0.615 n_ev=28 osam_ratio=0.0352 pred="It's a great way to destress and clear my mind."
+[sample 0.108] evidence after filter: 45 strings
+[sample 0.108] score=0.000 n_ev=45 osam_ratio=0.0349 pred='great for my headspace'
+[sample 0.109] evidence after filter: 42 strings
+[sample 0.109] score=0.182 n_ev=42 osam_ratio=0.0339 pred='We all made our own pots, it was fun and therapeutic!'
+[sample 0.110] evidence after filter: 13 strings
+[sample 0.110] score=0.125 n_ev=13 osam_ratio=0.0334 pred='We all made our own pots, it was fun and therapeutic!'
+[sample 0.111] evidence after filter: 30 strings
+[sample 0.111] score=0.667 n_ev=30 osam_ratio=0.0338 pred='painting together'
+[sample 0.112] evidence after filter: 32 strings
+[sample 0.112] score=0.000 n_ev=32 osam_ratio=0.0324 pred='nature-inspired ones'
+[sample 0.113] evidence after filter: 35 strings
+[sample 0.113] score=0.870 n_ev=35 osam_ratio=0.0341 pred='so many people wanted to create loving homes for children in'
+[sample 0.114] evidence after filter: 50 strings
+[sample 0.114] score=0.571 n_ev=50 osam_ratio=0.0354 pred='Sunflowers mean warmth and happiness, right?'
+[sample 0.115] evidence after filter: 57 strings
+[sample 0.115] score=0.550 n_ev=57 osam_ratio=0.0362 pred='Flowers bring joy. They represent growth, beauty and remindi'
+[sample 0.116] evidence after filter: 42 strings
+[sample 0.116] score=0.522 n_ev=42 osam_ratio=0.0349 pred='I painted this after I visited a LGBTQ center. I wanted to c'
+[sample 0.117] evidence after filter: 36 strings
+[sample 0.117] score=0.800 n_ev=36 osam_ratio=0.0345 pred='usually only once or twice a year'
+[sample 0.118] evidence after filter: 42 strings
+[sample 0.118] score=1.000 n_ev=42 osam_ratio=0.0334 pred='the Perseid meteor shower'
+[sample 0.119] evidence after filter: 30 strings
+[sample 0.119] score=0.444 n_ev=30 osam_ratio=0.0347 pred='It was one of those moments where I felt tiny and in awe of '
+[sample 0.120] evidence after filter: 34 strings
+[sample 0.120] score=0.000 n_ev=34 osam_ratio=0.0362 pred="Her daughter's birthday"
+[sample 0.121] evidence after filter: 43 strings
+[sample 0.121] score=0.000 n_ev=43 osam_ratio=0.0345 pred='"Summer Sounds"- The playing'
+[sample 0.122] evidence after filter: 34 strings
+[sample 0.122] score=0.857 n_ev=34 osam_ratio=0.0335 pred='To catch the eye and make people smile.'
+[sample 0.123] evidence after filter: 57 strings
+[sample 0.123] score=0.667 n_ev=57 osam_ratio=0.0361 pred='Oscar, my guinea pig.'
+[sample 0.124] evidence after filter: 33 strings
+[sample 0.124] score=0.000 n_ev=33 osam_ratio=0.0372 pred="We got another cat named Bailey too. Here's a pic of Oliver."
+[sample 0.125] evidence after filter: 42 strings
+[sample 0.125] score=0.667 n_ev=42 osam_ratio=0.0354 pred='in my slipper'
+[sample 0.126] evidence after filter: 28 strings
+[sample 0.126] score=0.190 n_ev=28 osam_ratio=0.0349 pred='I used to go horseback riding with my dad when I was a kid, '
+[sample 0.127] evidence after filter: 36 strings
+[sample 0.127] score=0.000 n_ev=36 osam_ratio=0.0349 pred='It was made for a local church and shows time changing our l'
+[sample 0.128] evidence after filter: 31 strings
+[sample 0.128] score=0.500 n_ev=31 osam_ratio=0.0347 pred='a cool rainbow sidewalk for Pride Month'
+[sample 0.129] evidence after filter: 55 strings
+[sample 0.129] score=1.000 n_ev=55 osam_ratio=0.0349 pred='"Brave" by Sara Bareilles'
+[sample 0.130] evidence after filter: 23 strings
+[sample 0.130] score=1.000 n_ev=23 osam_ratio=0.0354 pred='Bach and Mozart'
+[sample 0.131] evidence after filter: 38 strings
+[sample 0.131] score=0.400 n_ev=38 osam_ratio=0.0351 pred='Ed Sheeran\'s "Perfect"'
+[sample 0.132] evidence after filter: 16 strings
+[sample 0.132] score=0.400 n_ev=16 osam_ratio=0.0356 pred='Seven years now'
+[sample 0.133] evidence after filter: 41 strings
+[sample 0.133] score=0.143 n_ev=41 osam_ratio=0.0355 pred='The sign was just a precaution'
+[sample 0.134] evidence after filter: 54 strings
+[sample 0.134] score=0.423 n_ev=54 osam_ratio=0.0344 pred='Do your research and find an adoption agency or lawyer. They'
+[sample 0.135] evidence after filter: 31 strings
+[sample 0.135] score=0.571 n_ev=31 osam_ratio=0.0347 pred='Last month (September 2023) I got hurt and had to take a bre'
+[sample 0.136] evidence after filter: 18 strings
+[sample 0.136] score=0.000 n_ev=18 osam_ratio=0.0333 pred='Painting'
+[sample 0.137] evidence after filter: 19 strings
+[sample 0.137] score=0.727 n_ev=19 osam_ratio=0.0333 pred='a painting inspired by the sunsets'
+[sample 0.138] evidence after filter: 14 strings
+[sample 0.138] score=0.222 n_ev=14 osam_ratio=0.0325 pred='abstract stuff'
+[sample 0.139] evidence after filter: 43 strings
+[sample 0.139] score=0.917 n_ev=43 osam_ratio=0.0350 pred='It was a transgender poetry reading where transgender people'
+[sample 0.140] evidence after filter: 33 strings
+[sample 0.140] score=0.000 n_ev=33 osam_ratio=0.0352 pred='The posters were amazing, so much pride and strength!'
+[sample 0.141] evidence after filter: 43 strings
+[sample 0.141] score=0.348 n_ev=43 osam_ratio=0.0360 pred="It stands for freedom and being real. It's like a nudge to a"
+[sample 0.142] evidence after filter: 62 strings
+[sample 0.142] score=0.041 n_ev=62 osam_ratio=0.0357 pred='"Being ourselves is the best thing ever." "Life\'s about lear'
+[sample 0.143] evidence after filter: 24 strings
+[sample 0.143] score=0.667 n_ev=24 osam_ratio=0.0345 pred='My son got into an accident.'
+[sample 0.144] evidence after filter: 23 strings
+[sample 0.144] score=0.267 n_ev=23 osam_ratio=0.0350 pred='We were so lucky he was okay.'
+[sample 0.145] evidence after filter: 47 strings
+[sample 0.145] score=0.296 n_ev=47 osam_ratio=0.0348 pred="I've thought a lot about how much I need them. They mean the"
+[sample 0.146] evidence after filter: 23 strings
+[sample 0.146] score=0.381 n_ev=23 osam_ratio=0.0350 pred='They were scared but we reassured them and explained their b'
+[sample 0.147] evidence after filter: 54 strings
+[sample 0.147] score=0.000 n_ev=54 osam_ratio=0.0351 pred='Really scared when we got into the accident.'
+[sample 0.148] evidence after filter: 28 strings
+[sample 0.148] score=0.000 n_ev=28 osam_ratio=0.0344 pred='Thankfully, they enjoyed the Grand Canyon a lot!'
+[sample 0.149] evidence after filter: 42 strings
+[sample 0.149] score=0.000 n_ev=42 osam_ratio=0.0364 pred='love and support'
+[sample 0.150] evidence after filter: 32 strings
+[sample 0.150] score=0.000 n_ev=32 osam_ratio=0.0340 pred="My fam's been awesome - they helped out and showed lots of l"
+[sample 0.151] evidence after filter: 26 strings
+[sample 0.151] score=0.000 n_ev=26 osam_ratio=0.0342 pred='We did it yesterday (19 October, 2023)! The kids loved it an'
+[sample 1] Loading cached CTC graph from /home/shadeform/caimms/outputs/graph_cache/sample_1.json...
+[sample 1] Graph ready: ? nodes.
+[sample 1] Experience bank: empty.
+[sample 1] dates_resolved=True
+[sample 1.0] evidence after filter: 47 strings
+[sample 1.0] score=0.857 n_ev=47 osam_ratio=0.0345 pred='yesterday (19 January, 2023)'
+[sample 1.1] evidence after filter: 59 strings
+[sample 1.1] score=1.000 n_ev=59 osam_ratio=0.0347 pred='January 2023'
+[sample 1.2] evidence after filter: 26 strings
+[sample 1.2] score=0.000 n_ev=26 osam_ratio=0.0353 pred='Dance it out'
+[sample 1.3] evidence after filter: 36 strings
+[sample 1.3] score=0.000 n_ev=36 osam_ratio=0.0358 pred='Support each other'
+[sample 1.4] evidence after filter: 39 strings
+[sample 1.4] score=0.083 n_ev=39 osam_ratio=0.0345 pred="Because I'm passionate about dancing and it's been my passio"
+[sample 1.5] evidence after filter: 38 strings
+[sample 1.5] score=0.750 n_ev=38 osam_ratio=0.0350 pred='by the water, great natural light, good dance floor, with en'
+[sample 1.6] evidence after filter: 54 strings
+[sample 1.6] score=1.000 n_ev=54 osam_ratio=0.0356 pred='February 2023'
+[sample 1.7] evidence after filter: 5 strings
+[sample 1.7] score=0.120 n_ev=5 osam_ratio=0.0337 pred='[29 January, 2023] Gina: Hey Jon! Long time no see! Things h'
+[sample 1.8] evidence after filter: 16 strings
+[sample 1.8] score=0.857 n_ev=16 osam_ratio=0.0361 pred='Yesterday (28 January, 2023)'
+[sample 1.9] evidence after filter: 21 strings
+[sample 1.9] score=1.000 n_ev=21 osam_ratio=0.0350 pred='Paris, Rome'
+[sample 1.10] evidence after filter: 35 strings
+[sample 1.10] score=0.800 n_ev=35 osam_ratio=0.0340 pred='8 February, 2023'
+[sample 1.11] evidence after filter: 35 strings
+[sample 1.11] score=1.000 n_ev=35 osam_ratio=0.0365 pred='a few years ago'
+[sample 1.12] evidence after filter: 21 strings
+[sample 1.12] score=0.333 n_ev=21 osam_ratio=0.0347 pred='Started hitting the gym last week (the week before 16 March,'
+[sample 1.13] evidence after filter: 27 strings
+[sample 1.13] score=1.000 n_ev=27 osam_ratio=0.0351 pred='16 March, 2023'
+[sample 1.14] evidence after filter: 19 strings
+[sample 1.14] score=0.800 n_ev=19 osam_ratio=0.0338 pred='[3 April, 2023]'
+[sample 1.15] evidence after filter: 31 strings
+[sample 1.15] score=0.667 n_ev=31 osam_ratio=0.0363 pred='next month (May 2023)'
+[sample 1.16] evidence after filter: 33 strings
+[sample 1.16] score=0.000 n_ev=33 osam_ratio=0.0327 pred='No fair mentioned.'
+[sample 1.17] evidence after filter: 52 strings
+[sample 1.17] score=0.333 n_ev=52 osam_ratio=0.0346 pred='Passionate about fashion trends and finding unique pieces. P'
+[sample 1.18] evidence after filter: 49 strings
+[sample 1.18] score=1.000 n_ev=49 osam_ratio=0.0345 pred='Yes, Jon and Gina start businesses out of what they love.'
+[sample 1.19] evidence after filter: 25 strings
+[sample 1.19] score=1.000 n_ev=25 osam_ratio=0.0348 pred='10 May, 2023'
+[sample 1.20] evidence after filter: 33 strings
+[sample 1.20] score=1.000 n_ev=33 osam_ratio=0.0350 pred='27 May, 2023'
+[sample 1.21] evidence after filter: 29 strings
+[sample 1.21] score=0.800 n_ev=29 osam_ratio=0.0341 pred='27 May, 2023'
+[sample 1.22] evidence after filter: 38 strings
+[sample 1.22] score=0.800 n_ev=38 osam_ratio=0.0330 pred='13 June, 2023'
+[sample 1.23] evidence after filter: 29 strings
+[sample 1.23] score=0.113 n_ev=29 osam_ratio=0.0355 pred='Working with a local artist, doing ads, working with fashion'
+[sample 1.24] evidence after filter: 20 strings
+[sample 1.24] score=0.667 n_ev=20 osam_ratio=0.0347 pred='dance comp, fair, dance competition, event with investors'
+[sample 1.25] evidence after filter: 53 strings
+[sample 1.25] score=0.393 n_ev=53 osam_ratio=0.0356 pred='dance classes, workshops, one-on-one mentoring and training'
+[sample 1.26] evidence after filter: 45 strings
+[sample 1.26] score=0.000 n_ev=45 osam_ratio=0.0349 pred='Never'
+[sample 1.27] evidence after filter: 42 strings
+[sample 1.27] score=1.000 n_ev=42 osam_ratio=0.0351 pred='Yes, Jon and Gina both participated in dance competitions.'
+[sample 1.28] evidence after filter: 35 strings
+[sample 1.28] score=0.571 n_ev=35 osam_ratio=0.0364 pred='the week before 19 June, 2023'
+[sample 1.29] evidence after filter: 17 strings
+[sample 1.29] score=1.000 n_ev=17 osam_ratio=0.0358 pred='Paris, Rome'
+[sample 1.30] evidence after filter: 30 strings
+[sample 1.30] score=0.545 n_ev=30 osam_ratio=0.0347 pred='The official opening night is tomorrow (20 June, 2023).'
+[sample 1.31] evidence after filter: 55 strings
+[sample 1.31] score=0.000 n_ev=55 osam_ratio=0.0356 pred='From 20 January 2023 to 20 June 2023.'
+[sample 1.32] evidence after filter: 45 strings
+[sample 1.32] score=0.571 n_ev=45 osam_ratio=0.0344 pred='the week before 21 June, 2023'
+[sample 1.33] evidence after filter: 23 strings
+[sample 1.33] score=0.857 n_ev=23 osam_ratio=0.0344 pred='Yesterday (20 June, 2023)'
+[sample 1.34] evidence after filter: 21 strings
+[sample 1.34] score=0.444 n_ev=21 osam_ratio=0.0344 pred='Last week (the week before 9 July, 2023)'
+[sample 1.35] evidence after filter: 36 strings
+[sample 1.35] score=0.667 n_ev=36 osam_ratio=0.0348 pred='today (9 July, 2023)'
+[sample 1.36] evidence after filter: 48 strings
+[sample 1.36] score=1.000 n_ev=48 osam_ratio=0.0345 pred='21 July, 2023'
+[sample 1.37] evidence after filter: 25 strings
+[sample 1.37] score=0.600 n_ev=25 osam_ratio=0.0358 pred="[23 July, 2023] Gina: It's Shia Labeouf!"
+[sample 1.38] evidence after filter: 54 strings
+[sample 1.38] score=0.400 n_ev=54 osam_ratio=0.0341 pred='Last Friday (the Friday before 23 July, 2023)'
+[sample 1.39] evidence after filter: 37 strings
+[sample 1.39] score=0.667 n_ev=37 osam_ratio=0.0354 pred='contemporary dance'
+[sample 1.40] evidence after filter: 49 strings
+[sample 1.40] score=0.200 n_ev=49 osam_ratio=0.0356 pred="Contemporary is my top pick. It's so expressive and powerful"
+[sample 1.41] evidence after filter: 25 strings
+[sample 1.41] score=0.364 n_ev=25 osam_ratio=0.0361 pred='My fav memory was when my team won first place at a regional'
+[sample 1.42] evidence after filter: 38 strings
+[sample 1.42] score=0.000 n_ev=38 osam_ratio=0.0330 pred='exact words from the conversation: "I don\'t know what kind o'
+[sample 1.43] evidence after filter: 40 strings
+[sample 1.43] score=0.000 n_ev=40 osam_ratio=0.0355 pred='Dancers in the photo represent students succeeding and expre'
+[sample 1.44] evidence after filter: 46 strings
+[sample 1.44] score=0.000 n_ev=46 osam_ratio=0.0347 pred='None of the messages mention a photo of dancers.'
+[sample 1.45] evidence after filter: 42 strings
+[sample 1.45] score=0.000 n_ev=42 osam_ratio=0.0345 pred='"super stoked!" "can\'t wait!" "awesome" "so many people ther'
+[sample 1.46] evidence after filter: 32 strings
+[sample 1.46] score=1.000 n_ev=32 osam_ratio=0.0345 pred='Marley flooring'
+[sample 1.47] evidence after filter: 13 strings
+[sample 1.47] score=0.000 n_ev=13 osam_ratio=0.0330 pred='a wholesaler who said yes'
+[sample 1.48] evidence after filter: 40 strings
+[sample 1.48] score=0.000 n_ev=40 osam_ratio=0.0356 pred='Cozy and inviting - perfect for customers to check out all t'
+[sample 1.49] evidence after filter: 33 strings
+[sample 1.49] score=0.500 n_ev=33 osam_ratio=0.0337 pred='cozy and inviting'
+[sample 1.50] evidence after filter: 29 strings
+[sample 1.50] score=0.000 n_ev=29 osam_ratio=0.0341 pred="Store's going good, just been keeping up with fashion trends"
+[sample 1.51] evidence after filter: 33 strings
+[sample 1.51] score=0.053 n_ev=33 osam_ratio=0.0340 pred='I wanted to make the place look like my own style and make m'
+[sample 1.52] evidence after filter: 40 strings
+[sample 1.52] score=0.696 n_ev=40 osam_ratio=0.0349 pred='Creating a special experience for customers is the key to ma'
+[sample 1.53] evidence after filter: 41 strings
+[sample 1.53] score=0.286 n_ev=41 osam_ratio=0.0344 pred='Making my spot comfortable and inviting for my customers is '
+[sample 1.54] evidence after filter: 43 strings
+[sample 1.54] score=0.000 n_ev=43 osam_ratio=0.0355 pred="Store's going good, just been keeping up with fashion trends"
+[sample 1.55] evidence after filter: 29 strings
+[sample 1.55] score=0.167 n_ev=29 osam_ratio=0.0357 pred='freedom - dancing without worrying what people think'
+[sample 1.56] evidence after filter: 51 strings
+[sample 1.56] score=0.000 n_ev=51 osam_ratio=0.0353 pred='balancing act, roller coaster, tough road, go-to spot'
+[sample 1.57] evidence after filter: 54 strings
+[sample 1.57] score=0.312 n_ev=54 osam_ratio=0.0343 pred='Brand identity, build relationships, stay positive, marketin'
+[sample 1.58] evidence after filter: 47 strings
+[sample 1.58] score=0.000 n_ev=47 osam_ratio=0.0350 pred="I thought it'd help my biz grow."
+[sample 1.59] evidence after filter: 53 strings
+[sample 1.59] score=0.242 n_ev=53 osam_ratio=0.0344 pred="I'm passionate about dance and fashion so combining them let"
+[sample 1.60] evidence after filter: 57 strings
+[sample 1.60] score=0.133 n_ev=57 osam_ratio=0.0356 pred='Dancing makes me so happy, and now I get to share that with '
+[sample 1.61] evidence after filter: 39 strings
+[sample 1.61] score=0.000 n_ev=39 osam_ratio=0.0354 pred='one of my trophies from a dance contest'
+[sample 1.62] evidence after filter: 54 strings
+[sample 1.62] score=0.381 n_ev=54 osam_ratio=0.0352 pred='Reminding myself of my successes and progress.'
+[sample 1.63] evidence after filter: 55 strings
+[sample 1.63] score=0.200 n_ev=55 osam_ratio=0.0325 pred='part-time position in the fashion department of an internati'
+[sample 1.64] evidence after filter: 36 strings
+[sample 1.64] score=0.769 n_ev=36 osam_ratio=0.0359 pred='part-time position in the fashion department of an internati'
+[sample 1.65] evidence after filter: 37 strings
+[sample 1.65] score=1.000 n_ev=37 osam_ratio=0.0357 pred='"The Lean Startup"'
+[sample 1.66] evidence after filter: 34 strings
+[sample 1.66] score=0.667 n_ev=34 osam_ratio=0.0348 pred='dance classes, workshops, one-on-one mentoring and training'
+[sample 1.67] evidence after filter: 24 strings
+[sample 1.67] score=0.476 n_ev=24 osam_ratio=0.0338 pred='It sets goals, tracks my achievements and helps me find area'
+[sample 1.68] evidence after filter: 29 strings
+[sample 1.68] score=0.500 n_ev=29 osam_ratio=0.0346 pred="I won't quit."
+[sample 1.69] evidence after filter: 29 strings
+[sample 1.69] score=0.667 n_ev=29 osam_ratio=0.0351 pred='To clear my mind a little.'
+[sample 1.70] evidence after filter: 48 strings
+[sample 1.70] score=1.000 n_ev=48 osam_ratio=0.0357 pred='dance studio'
+[sample 1.71] evidence after filter: 24 strings
+[sample 1.71] score=0.000 n_ev=24 osam_ratio=0.0344 pred='"awesome"'
+[sample 1.72] evidence after filter: 32 strings
+[sample 1.72] score=0.222 n_ev=32 osam_ratio=0.0342 pred="Excited, can't wait, fun, unforgettable, see you there!"
+[sample 1.73] evidence after filter: 29 strings
+[sample 1.73] score=0.000 n_ev=29 osam_ratio=0.0346 pred='Dance is my stress fix too. As soon as I start, all my worri'
+[sample 1.74] evidence after filter: 39 strings
+[sample 1.74] score=0.000 n_ev=39 osam_ratio=0.0334 pred='Make some awesome memories and have fun.'
+[sample 1.75] evidence after filter: 50 strings
+[sample 1.75] score=0.000 n_ev=50 osam_ratio=0.0351 pred="Can't wait for tomorrow (20 June, 2023)'s grand opening!"
+[sample 1.76] evidence after filter: 46 strings
+[sample 1.76] score=0.000 n_ev=46 osam_ratio=0.0363 pred="Excited, pumped, can't wait, fun, awesome memories"
+[sample 1.77] evidence after filter: 19 strings
+[sample 1.77] score=0.000 n_ev=19 osam_ratio=0.0343 pred='a hoodie'
+[sample 1.78] evidence after filter: 39 strings
+[sample 1.78] score=0.333 n_ev=39 osam_ratio=0.0348 pred='Your positivity and determination will make your dance studi'
+[sample 1.80] evidence after filter: 35 strings
+[sample 1.80] score=0.611 n_ev=35 osam_ratio=0.0347 pred='sprucing up my biz plan and tweaking my pitch to investors. '
+[sample 1.81] evidence after filter: 36 strings
+[sample 1.81] score=0.421 n_ev=36 osam_ratio=0.0355 pred="Let's create some cool content and manage your social media "
+[sample 2] Loading cached CTC graph from /home/shadeform/caimms/outputs/graph_cache/sample_2.json...
+[sample 2] Graph ready: ? nodes.
+[sample 2] Experience bank: empty.
+[sample 2] dates_resolved=True
+[sample 2.0] evidence after filter: 21 strings
+[sample 2.0] score=0.000 n_ev=21 osam_ratio=0.0331 pred='My mom'
+[sample 2.1] evidence after filter: 46 strings
+[sample 2.1] score=1.000 n_ev=46 osam_ratio=0.0363 pred='21 December, 2022'
+[sample 2.2] evidence after filter: 40 strings
+[sample 2.2] score=1.000 n_ev=40 osam_ratio=0.0362 pred='Kickboxing, Taekwondo, Weight training'
+[sample 2.3] evidence after filter: 47 strings
+[sample 2.3] score=1.000 n_ev=47 osam_ratio=0.0348 pred='volunteering at a homeless shelter'
+[sample 2.4] evidence after filter: 26 strings
+[sample 2.4] score=1.000 n_ev=26 osam_ratio=0.0360 pred='the week before 1 January, 2023'
+[sample 2.5] evidence after filter: 45 strings
+[sample 2.5] score=0.364 n_ev=45 osam_ratio=0.0366 pred='I took it at the beach last month (December 2022).'
+[sample 2.6] evidence after filter: 47 strings
+[sample 2.6] score=1.000 n_ev=47 osam_ratio=0.0365 pred='Homeless shelter, church, gym'
+[sample 2.7] evidence after filter: 11 strings
+[sample 2.7] score=0.333 n_ev=11 osam_ratio=0.0350 pred='a little doll'
+[sample 2.8] evidence after filter: 61 strings
+[sample 2.8] score=0.000 n_ev=61 osam_ratio=0.0371 pred='putting a strain on my wallet'
+[sample 2.9] evidence after filter: 40 strings
+[sample 2.9] score=0.500 n_ev=40 osam_ratio=0.0311 pred='My aunt'
+[sample 2.10] evidence after filter: 44 strings
+[sample 2.10] score=1.000 n_ev=44 osam_ratio=0.0364 pred='24 February, 2023'
+[sample 2.11] evidence after filter: 45 strings
+[sample 2.11] score=0.750 n_ev=45 osam_ratio=0.0360 pred='Laura, Cindy, Jean, shelter residents'
+[sample 2.12] evidence after filter: 49 strings
+[sample 2.12] score=1.000 n_ev=49 osam_ratio=0.0359 pred='military aptitude test'
+[sample 2.13] evidence after filter: 42 strings
+[sample 2.13] score=0.833 n_ev=42 osam_ratio=0.0360 pred='Last week (the week before 6 March, 2023)'
+[sample 2.14] evidence after filter: 48 strings
+[sample 2.14] score=0.001 n_ev=48 osam_ratio=0.0369 pred='Yes, John is patriotic. He respects our military and wants t'
+[sample 2.15] evidence after filter: 44 strings
+[sample 2.15] score=0.733 n_ev=44 osam_ratio=0.0373 pred='creative writing class, poetry class'
+[sample 2.16] evidence after filter: 21 strings
+[sample 2.16] score=0.714 n_ev=21 osam_ratio=0.0362 pred='I graduated last week (the week before 2 April, 2023)!'
+[sample 2.17] evidence after filter: 31 strings
+[sample 2.17] score=0.000 n_ev=31 osam_ratio=0.0369 pred='John: Improving education and infrastructure is particularly'
+[sample 2.18] evidence after filter: 37 strings
+[sample 2.18] score=0.000 n_ev=37 osam_ratio=0.0345 pred='a colleague'
+[sample 2.19] evidence after filter: 40 strings
+[sample 2.19] score=0.143 n_ev=40 osam_ratio=0.0362 pred='car trouble and money problems'
+[sample 2.20] evidence after filter: 10 strings
+[sample 2.20] score=0.222 n_ev=10 osam_ratio=0.0341 pred='The road trip to the Pacific Northwest was in 2022.'
+[sample 2.21] evidence after filter: 51 strings
+[sample 2.21] score=0.500 n_ev=51 osam_ratio=0.0336 pred='East Coast'
+[sample 2.22] evidence after filter: 4 strings
+[sample 2.22] score=0.667 n_ev=4 osam_ratio=0.0337 pred='last month (March 2023)'
+[sample 2.23] evidence after filter: 47 strings
+[sample 2.23] score=1.000 n_ev=47 osam_ratio=0.0371 pred='peach cobbler, banana split sundae'
+[sample 2.24] evidence after filter: 9 strings
+[sample 2.24] score=0.000 n_ev=9 osam_ratio=0.0340 pred='last month (April 2023)'
+[sample 2.25] evidence after filter: 44 strings
+[sample 2.25] score=0.500 n_ev=44 osam_ratio=0.0359 pred='Spain'
+[sample 2.26] evidence after filter: 59 strings
+[sample 2.26] score=0.154 n_ev=59 osam_ratio=0.0352 pred='I bought a cross necklace to feel closer to my faith.'
+[sample 2.27] evidence after filter: 39 strings
+[sample 2.27] score=0.833 n_ev=39 osam_ratio=0.0357 pred='Last Friday (the Friday before 20 May, 2023)'
+[sample 2.28] evidence after filter: 40 strings
+[sample 2.28] score=0.095 n_ev=40 osam_ratio=0.0366 pred='Improving education and infrastructure in our community.'
+[sample 2.29] evidence after filter: 32 strings
+[sample 2.29] score=1.000 n_ev=32 osam_ratio=0.0343 pred='ring-toss tournament, chili cook-off'
+[sample 2.30] evidence after filter: 36 strings
+[sample 2.30] score=1.000 n_ev=36 osam_ratio=0.0367 pred='homeless shelter, dog shelter'
+[sample 2.31] evidence after filter: 50 strings
+[sample 2.31] score=0.333 n_ev=50 osam_ratio=0.0361 pred='Not specified in the conversation.'
+[sample 2.32] evidence after filter: 31 strings
+[sample 2.32] score=0.333 n_ev=31 osam_ratio=0.0352 pred='hiking trip'
+[sample 2.33] evidence after filter: 39 strings
+[sample 2.33] score=0.667 n_ev=39 osam_ratio=0.0349 pred='aerial yoga, kundalini yoga'
+[sample 2.34] evidence after filter: 51 strings
+[sample 2.34] score=0.833 n_ev=51 osam_ratio=0.0365 pred='Last week (the week before 16 June, 2023)'
+[sample 2.35] evidence after filter: 12 strings
+[sample 2.35] score=1.000 n_ev=12 osam_ratio=0.0351 pred='Spain, Oregon, Florida'
+[sample 2.36] evidence after filter: 49 strings
+[sample 2.36] score=0.200 n_ev=49 osam_ratio=0.0362 pred='Last week (the week before 6 March, 2023), I found a violin '
+[sample 2.37] evidence after filter: 57 strings
+[sample 2.37] score=0.086 n_ev=57 osam_ratio=0.0357 pred="marching event for veterans' rights, community event to rais"
+[sample 2.38] evidence after filter: 20 strings
+[sample 2.38] score=1.000 n_ev=20 osam_ratio=0.0352 pred='2 July, 2023'
+[sample 2.39] evidence after filter: 24 strings
+[sample 2.39] score=0.000 n_ev=24 osam_ratio=0.0346 pred='No US holiday mentioned.'
+[sample 2.40] evidence after filter: 17 strings
+[sample 2.40] score=0.500 n_ev=17 osam_ratio=0.0351 pred='Kyle'
+[sample 2.41] evidence after filter: 32 strings
+[sample 2.41] score=0.250 n_ev=32 osam_ratio=0.0347 pred='Yes, John has been to the beach and mountains.'
+[sample 2.42] evidence after filter: 17 strings
+[sample 2.42] score=0.000 n_ev=17 osam_ratio=0.0355 pred='My old area'
+[sample 2.43] evidence after filter: 68 strings
+[sample 2.43] score=0.833 n_ev=68 osam_ratio=0.0341 pred='last week (the week before 7 July, 2023)'
+[sample 2.44] evidence after filter: 36 strings
+[sample 2.44] score=0.042 n_ev=36 osam_ratio=0.0346 pred='Chilled under the trees, played games, and ate yummy food. S'
+[sample 2.45] evidence after filter: 43 strings
+[sample 2.45] score=0.100 n_ev=43 osam_ratio=0.0363 pred='No mention of moving to another country.'
+[sample 2.46] evidence after filter: 23 strings
+[sample 2.46] score=0.833 n_ev=23 osam_ratio=0.0348 pred='last weekend (the weekend before 22 July, 2023)'
+[sample 2.47] evidence after filter: 53 strings
+[sample 2.47] score=0.917 n_ev=53 osam_ratio=0.0369 pred="Kickboxing, weight training, beginner's yoga, circuit traini"
+[sample 2.48] evidence after filter: 33 strings
+[sample 2.48] score=0.667 n_ev=33 osam_ratio=0.0340 pred='Last Sunday (the Sunday before 31 July, 2023)'
+[sample 2.49] evidence after filter: 28 strings
+[sample 2.49] score=0.000 n_ev=28 osam_ratio=0.0345 pred='that stuff I baked'
+[sample 2.50] evidence after filter: 77 strings
+[sample 2.50] score=0.167 n_ev=77 osam_ratio=0.0369 pred='Dedicated, motivated, supportive, resilient, kind, passionat'
+[sample 2.51] evidence after filter: 29 strings
+[sample 2.51] score=0.182 n_ev=29 osam_ratio=0.0361 pred='I started volunteering here about a year ago (2022)'
+[sample 2.52] evidence after filter: 24 strings
+[sample 2.52] score=1.000 n_ev=24 osam_ratio=0.0356 pred='Laura, Cindy'
+[sample 2.53] evidence after filter: 44 strings
+[sample 2.53] score=0.500 n_ev=44 osam_ratio=0.0344 pred='Last year (2022)'
+[sample 2.54] evidence after filter: 22 strings
+[sample 2.54] score=0.857 n_ev=22 osam_ratio=0.0339 pred='Yesterday (4 August, 2023)'
+[sample 2.55] evidence after filter: 39 strings
+[sample 2.55] score=0.833 n_ev=39 osam_ratio=0.0341 pred='Last week (the week before 9 August, 2023)'
+[sample 2.56] evidence after filter: 25 strings
+[sample 2.56] score=0.500 n_ev=25 osam_ratio=0.0341 pred='Last weekend (the weekend before 9 August, 2023)'
+[sample 2.57] evidence after filter: 56 strings
+[sample 2.57] score=0.475 n_ev=56 osam_ratio=0.0363 pred='Education, infrastructure, homeless shelter, toy drive, dome'
+[sample 2.58] evidence after filter: 53 strings
+[sample 2.58] score=0.800 n_ev=53 osam_ratio=0.0372 pred='Two weeks ago (two weeks before 11 August, 2023)'
+[sample 2.59] evidence after filter: 51 strings
+[sample 2.59] score=0.750 n_ev=51 osam_ratio=0.0339 pred='last summer (the summer of 2022)'
+[sample 2.60] evidence after filter: 2 strings
+[sample 2.60] score=1.000 n_ev=2 osam_ratio=0.0326 pred='Coco, Shadow'
+[sample 2.61] evidence after filter: 25 strings
+[sample 2.61] score=0.000 n_ev=25 osam_ratio=0.0369 pred='Not mentioned in the conversation.'
+[sample 2.62] evidence after filter: 11 strings
+[sample 2.62] score=1.000 n_ev=11 osam_ratio=0.0339 pred='two'
+[sample 2.63] evidence after filter: 43 strings
+[sample 2.63] score=1.000 n_ev=43 osam_ratio=0.0351 pred='two weeks'
+[sample 2.64] evidence after filter: 58 strings
+[sample 2.64] score=0.000 n_ev=58 osam_ratio=0.0360 pred='volunteer at shelters'
+[sample 2.65] evidence after filter: 34 strings
+[sample 2.65] score=0.667 n_ev=34 osam_ratio=0.0361 pred='Improving education and infrastructure in our community.'
+[sample 2.66] evidence after filter: 51 strings
+[sample 2.66] score=0.769 n_ev=51 osam_ratio=0.0343 pred='Growing up, I saw how lack of education and crumbling infras'
+[sample 2.67] evidence after filter: 41 strings
+[sample 2.67] score=0.960 n_ev=41 osam_ratio=0.0340 pred='It enabled needed repairs and renovations, making the learni'
+[sample 2.68] evidence after filter: 24 strings
+[sample 2.68] score=1.000 n_ev=24 osam_ratio=0.0323 pred='aerial yoga'
+[sample 2.69] evidence after filter: 23 strings
+[sample 2.69] score=0.800 n_ev=23 osam_ratio=0.0336 pred='her old car'
+[sample 2.70] evidence after filter: 22 strings
+[sample 2.70] score=0.500 n_ev=22 osam_ratio=0.0324 pred='We made pizza!'
+[sample 2.71] evidence after filter: 40 strings
+[sample 2.71] score=1.000 n_ev=40 osam_ratio=0.0355 pred='service-focused online group'
+[sample 2.72] evidence after filter: 36 strings
+[sample 2.72] score=0.333 n_ev=36 osam_ratio=0.0322 pred='Going to a homeless shelter to give out food and supplies, o'
+[sample 2.73] evidence after filter: 17 strings
+[sample 2.73] score=0.500 n_ev=17 osam_ratio=0.0362 pred='My aunt'
+[sample 2.74] evidence after filter: 25 strings
+[sample 2.74] score=0.364 n_ev=25 osam_ratio=0.0325 pred='She seemed so sad.'
+[sample 2.75] evidence after filter: 49 strings
+[sample 2.75] score=0.235 n_ev=49 osam_ratio=0.0358 pred='She had a tough time, going through a divorce, losing her jo'
+[sample 2.76] evidence after filter: 48 strings
+[sample 2.76] score=0.500 n_ev=48 osam_ratio=0.0356 pred='After my last run, I saw the impact I could make in the comm'
+[sample 2.77] evidence after filter: 25 strings
+[sample 2.77] score=1.000 n_ev=25 osam_ratio=0.0337 pred="beginner's yoga class"
+[sample 2.78] evidence after filter: 52 strings
+[sample 2.78] score=1.000 n_ev=52 osam_ratio=0.0346 pred='Kyle'
+[sample 2.79] evidence after filter: 11 strings
+[sample 2.79] score=0.667 n_ev=11 osam_ratio=0.0337 pred='Three times a week'
+[sample 2.80] evidence after filter: 65 strings
+[sample 2.80] score=0.333 n_ev=65 osam_ratio=0.0334 pred='a painting'
+[sample 2.81] evidence after filter: 39 strings
+[sample 2.81] score=0.167 n_ev=39 osam_ratio=0.0338 pred='The trip to England a few years ago - I was mesmerized by th'
+[sample 2.82] evidence after filter: 26 strings
+[sample 2.82] score=0.000 n_ev=26 osam_ratio=0.0355 pred='John did not receive a certificate.'
+[sample 2.83] evidence after filter: 39 strings
+[sample 2.83] score=1.000 n_ev=39 osam_ratio=0.0356 pred='education and infrastructure'
+[sample 2.84] evidence after filter: 18 strings
+[sample 2.84] score=0.000 n_ev=18 osam_ratio=0.0323 pred='She participated in a community meeting and involvement.'
+[sample 2.85] evidence after filter: 10 strings
+[sample 2.85] score=0.769 n_ev=10 osam_ratio=0.0351 pred='John volunteered at a career fair at a local school.'
+[sample 2.86] evidence after filter: 60 strings
+[sample 2.86] score=0.214 n_ev=60 osam_ratio=0.0347 pred='My car broke down last Fri on my way to work. Trying to get '
+[sample 2.87] evidence after filter: 16 strings
+[sample 2.87] score=0.333 n_ev=16 osam_ratio=0.0348 pred='The coast up in the Pacific Northwest and hit some cool nati'
+[sample 2.88] evidence after filter: 42 strings
+[sample 2.88] score=1.000 n_ev=42 osam_ratio=0.0364 pred='politics and the government'
+[sample 2.89] evidence after filter: 46 strings
+[sample 2.89] score=0.762 n_ev=46 osam_ratio=0.0351 pred='To make a real impact. To raise awareness and start conversa'
+[sample 2.90] evidence after filter: 41 strings
+[sample 2.90] score=0.667 n_ev=41 osam_ratio=0.0346 pred='education and infrastructure'
+[sample 2.91] evidence after filter: 23 strings
+[sample 2.91] score=0.000 n_ev=23 osam_ratio=0.0335 pred='John chatted with his family and friends about it.'
+[sample 2.92] evidence after filter: 37 strings
+[sample 2.92] score=0.000 n_ev=37 osam_ratio=0.0352 pred='last month (April 2023)'
+[sample 2.93] evidence after filter: 35 strings
+[sample 2.93] score=0.706 n_ev=35 osam_ratio=0.0334 pred="We've had lots more energy and noticed some gains in strengt"
+[sample 2.94] evidence after filter: 17 strings
+[sample 2.94] score=0.533 n_ev=17 osam_ratio=0.0328 pred='salads, sandwiches, and homemade desserts. My favorite is th'
+[sample 2.95] evidence after filter: 24 strings
+[sample 2.95] score=0.000 n_ev=24 osam_ratio=0.0339 pred="planning a ring-toss tournament for the homeless shelter's f"
+[sample 2.96] evidence after filter: 68 strings
+[sample 2.96] score=1.000 n_ev=68 osam_ratio=0.0333 pred='Joined a nearby church.'
+[sample 2.97] evidence after filter: 44 strings
+[sample 2.97] score=0.667 n_ev=44 osam_ratio=0.0359 pred='Maria joined a nearby church because she wanted to feel clos'
+[sample 2.98] evidence after filter: 48 strings
+[sample 2.98] score=0.600 n_ev=48 osam_ratio=0.0330 pred='We had a great time throwing a small party and inviting some'
+[sample 2.99] evidence after filter: 22 strings
+[sample 2.99] score=0.364 n_ev=22 osam_ratio=0.0335 pred='John and the veterans shared their stories and made connecti'
+[sample 2.100] evidence after filter: 45 strings
+[sample 2.100] score=0.111 n_ev=45 osam_ratio=0.0348 pred='It was awesome seeing them make connections and find camarad'
+[sample 2.101] evidence after filter: 12 strings
+[sample 2.101] score=0.400 n_ev=12 osam_ratio=0.0324 pred='a chili cook-off at the fundraiser'
+[sample 2.102] evidence after filter: 41 strings
+[sample 2.102] score=0.308 n_ev=41 osam_ratio=0.0329 pred='We need to get the word out about the chili cook-off at the '
+[sample 2.103] evidence after filter: 31 strings
+[sample 2.103] score=1.000 n_ev=31 osam_ratio=0.0319 pred='Max'
+[sample 2.104] evidence after filter: 45 strings
+[sample 2.104] score=1.000 n_ev=45 osam_ratio=0.0339 pred='10 years'
+[sample 2.105] evidence after filter: 45 strings
+[sample 2.105] score=0.444 n_ev=45 osam_ratio=0.0341 pred="We're considering adopting a rescue dog - for love and to te"
+[sample 2.106] evidence after filter: 64 strings
+[sample 2.106] score=1.000 n_ev=64 osam_ratio=0.0330 pred='responsibility and compassion'
+[sample 2.107] evidence after filter: 22 strings
+[sample 2.107] score=0.000 n_ev=22 osam_ratio=0.0333 pred='hiking'
+[sample 2.108] evidence after filter: 1 strings
+[sample 2.108] score=0.615 n_ev=1 osam_ratio=0.0294 pred='I felt like I was in a fairy tale!'
+[sample 2.109] evidence after filter: 37 strings
+[sample 2.109] score=1.000 n_ev=37 osam_ratio=0.0327 pred='free and light'
+[sample 2.110] evidence after filter: 10 strings
+[sample 2.110] score=0.000 n_ev=10 osam_ratio=0.0329 pred='Congrats on the promotion!'
+[sample 2.111] evidence after filter: 34 strings
+[sample 2.111] score=0.500 n_ev=34 osam_ratio=0.0330 pred='aerial yoga'
+[sample 2.112] evidence after filter: 26 strings
+[sample 2.112] score=1.000 n_ev=26 osam_ratio=0.0354 pred='assistant manager'
+[sample 2.113] evidence after filter: 55 strings
+[sample 2.113] score=1.000 n_ev=55 osam_ratio=0.0335 pred='self-doubt'
+[sample 2.114] evidence after filter: 51 strings
+[sample 2.114] score=0.588 n_ev=51 osam_ratio=0.0328 pred='With support at home and my own grit, I powered through.'
+[sample 2.115] evidence after filter: 22 strings
+[sample 2.115] score=0.250 n_ev=22 osam_ratio=0.0329 pred='arts and crafts at a community event'
+[sample 2.116] evidence after filter: 58 strings
+[sample 2.116] score=0.667 n_ev=58 osam_ratio=0.0330 pred='She had to leave and find a new place in a hurry, which has '
+[sample 2.117] evidence after filter: 24 strings
+[sample 2.117] score=0.571 n_ev=24 osam_ratio=0.0343 pred="marching event for veterans' rights"
+[sample 2.118] evidence after filter: 56 strings
+[sample 2.118] score=0.375 n_ev=56 osam_ratio=0.0335 pred="I've always had a great respect for our military and wanted "
+[sample 2.119] evidence after filter: 55 strings
+[sample 2.119] score=0.727 n_ev=55 osam_ratio=0.0324 pred='I see them at least once a week.'
+[sample 2.120] evidence after filter: 31 strings
+[sample 2.120] score=1.000 n_ev=31 osam_ratio=0.0327 pred='flood'
+[sample 2.121] evidence after filter: 17 strings
+[sample 2.121] score=1.000 n_ev=17 osam_ratio=0.0346 pred='lots of homes were ruined'
+[sample 2.122] evidence after filter: 28 strings
+[sample 2.122] score=0.000 n_ev=28 osam_ratio=0.0325 pred='Maria asked if she could join the meeting and contribute to '
+[sample 2.123] evidence after filter: 19 strings
+[sample 2.123] score=0.000 n_ev=19 osam_ratio=0.0329 pred='join the meeting and contribute to making our community bett'
+[sample 2.124] evidence after filter: 49 strings
+[sample 2.124] score=0.667 n_ev=49 osam_ratio=0.0332 pred='charades and a scavenger hunt.'
+[sample 2.125] evidence after filter: 25 strings
+[sample 2.125] score=0.316 n_ev=25 osam_ratio=0.0354 pred='It was inspiring and heartbreaking, but seeing their resilie'
+[sample 2.126] evidence after filter: 64 strings
+[sample 2.126] score=0.000 n_ev=64 osam_ratio=0.0350 pred='It reminded me why I wanted to join the military.'
+[sample 2.127] evidence after filter: 68 strings
+[sample 2.127] score=0.000 n_ev=68 osam_ratio=0.0332 pred='It reminded me why I wanted to join the military.'
+[sample 2.128] evidence after filter: 31 strings
+[sample 2.128] score=0.000 n_ev=31 osam_ratio=0.0329 pred='Picnic, played charades and a scavenger hunt.'
+[sample 2.129] evidence after filter: 39 strings
+[sample 2.129] score=0.522 n_ev=39 osam_ratio=0.0338 pred='Trying new stuff is a great way to push yourself and mix thi'
+[sample 2.130] evidence after filter: 19 strings
+[sample 2.130] score=0.667 n_ev=19 osam_ratio=0.0339 pred='Rock climbing, weight training'
+[sample 2.131] evidence after filter: 20 strings
+[sample 2.131] score=0.750 n_ev=20 osam_ratio=0.0321 pred='work at the homeless shelter'
+[sample 2.132] evidence after filter: 34 strings
+[sample 2.132] score=0.348 n_ev=34 osam_ratio=0.0359 pred='I started volunteering here about a year ago (2022) after wi'
+[sample 2.133] evidence after filter: 47 strings
+[sample 2.133] score=0.000 n_ev=47 osam_ratio=0.0326 pred='He participated in a community event to raise money for a go'
+[sample 2.134] evidence after filter: 26 strings
+[sample 2.134] score=0.667 n_ev=26 osam_ratio=0.0343 pred='They were awestruck and humbled.'
+[sample 2.135] evidence after filter: 33 strings
+[sample 2.135] score=0.706 n_ev=33 osam_ratio=0.0331 pred="It's important for younger generations to remember and appre"
+[sample 2.136] evidence after filter: 44 strings
+[sample 2.136] score=0.545 n_ev=44 osam_ratio=0.0353 pred="John believes it's important to show kids how to respect and"
+[sample 2.137] evidence after filter: 46 strings
+[sample 2.137] score=1.000 n_ev=46 osam_ratio=0.0349 pred='John lost his job at the mechanical engineering company.'
+[sample 2.138] evidence after filter: 15 strings
+[sample 2.138] score=0.000 n_ev=15 osam_ratio=0.0321 pred='picnic, hiking'
+[sample 2.139] evidence after filter: 41 strings
+[sample 2.139] score=0.833 n_ev=41 osam_ratio=0.0339 pred='helped renovate a rundown community center back home'
+[sample 2.140] evidence after filter: 29 strings
+[sample 2.140] score=0.750 n_ev=29 osam_ratio=0.0345 pred='help out veterans and their families'
+[sample 2.141] evidence after filter: 34 strings
+[sample 2.141] score=0.400 n_ev=34 osam_ratio=0.0326 pred='a local organization that helps victims of domestic abuse'
+[sample 2.142] evidence after filter: 34 strings
+[sample 2.142] score=0.500 n_ev=34 osam_ratio=0.0339 pred='a medal'
+[sample 2.143] evidence after filter: 1 strings
+[sample 2.143] score=0.500 n_ev=1 osam_ratio=0.0278 pred="Her name's Coco"
+[sample 2.144] evidence after filter: 35 strings
+[sample 2.144] score=0.000 n_ev=35 osam_ratio=0.0353 pred='We hiked, swam, and made great memories.'
+[sample 2.145] evidence after filter: 25 strings
+[sample 2.145] score=0.800 n_ev=25 osam_ratio=0.0345 pred='peaceful and awesome experience'
+[sample 2.146] evidence after filter: 58 strings
+[sample 2.146] score=0.435 n_ev=58 osam_ratio=0.0331 pred="Don't feel like I'm making much of an impact here, which has"
+[sample 2.147] evidence after filter: 52 strings
+[sample 2.147] score=1.000 n_ev=52 osam_ratio=0.0358 pred='Shadow'
+[sample 2.148] evidence after filter: 32 strings
+[sample 2.148] score=0.316 n_ev=32 osam_ratio=0.0327 pred="She's always there to greet me when I come home. It's defini"
+[sample 2.149] evidence after filter: 30 strings
+[sample 2.149] score=0.364 n_ev=30 osam_ratio=0.0347 pred='volunteering as a mentor for a local school'
+[sample 2.150] evidence after filter: 48 strings
+[sample 2.150] score=0.938 n_ev=48 osam_ratio=0.0347 pred='Going for hikes, hanging out at the park, having picnics, pl'
+[sample 2.151] evidence after filter: 37 strings
+[sample 2.151] score=1.000 n_ev=37 osam_ratio=0.0330 pred='a brand new fire truck!'
+[sample 3] Loading cached CTC graph from /home/shadeform/caimms/outputs/graph_cache/sample_3.json...
+[sample 3] Graph ready: ? nodes.
+[sample 3] Experience bank: empty.
+[sample 3] dates_resolved=True
+[sample 3.0] evidence after filter: 47 strings
+[sample 3.0] score=0.000 n_ev=47 osam_ratio=0.0350 pred='Yes, Nate has friends besides Joanna.'
+[sample 3.1] evidence after filter: 51 strings
+[sample 3.1] score=0.333 n_ev=51 osam_ratio=0.0358 pred='Writing, movies, nature, baking, turtles'
+[sample 3.2] evidence after filter: 60 strings
+[sample 3.2] score=0.333 n_ev=60 osam_ratio=0.0331 pred='around 3 years ago (2019)'
+[sample 3.3] evidence after filter: 38 strings
+[sample 3.3] score=0.667 n_ev=38 osam_ratio=0.0342 pred='The week before 21 January, 2022'
+[sample 3.4] evidence after filter: 53 strings
+[sample 3.4] score=0.118 n_ev=53 osam_ratio=0.0344 pred='None. She is allergic to most reptiles and animals with fur.'
+[sample 3.5] evidence after filter: 48 strings
+[sample 3.5] score=0.250 n_ev=48 osam_ratio=0.0357 pred='Writing, reading, watching movies, exploring nature, hiking,'
+[sample 3.6] evidence after filter: 27 strings
+[sample 3.6] score=0.400 n_ev=27 osam_ratio=0.0339 pred='3 years now'
+[sample 3.7] evidence after filter: 48 strings
+[sample 3.7] score=0.545 n_ev=48 osam_ratio=0.0355 pred='last Friday (the Friday before 23 January, 2022)'
+[sample 3.8] evidence after filter: 39 strings
+[sample 3.8] score=0.000 n_ev=39 osam_ratio=0.0350 pred="Nate didn't mention when he got his first two turtles."
+[sample 3.9] evidence after filter: 24 strings
+[sample 3.9] score=0.333 n_ev=24 osam_ratio=0.0346 pred='Finished the project and submitted it to film festivals'
+[sample 3.10] evidence after filter: 55 strings
+[sample 3.10] score=0.467 n_ev=55 osam_ratio=0.0348 pred='relief, excitement and worry'
+[sample 3.11] evidence after filter: 38 strings
+[sample 3.11] score=0.160 n_ev=38 osam_ratio=0.0371 pred='allergic to most reptiles and animals with fur. It can be a '
+[sample 3.12] evidence after filter: 44 strings
+[sample 3.12] score=0.000 n_ev=44 osam_ratio=0.0352 pred='allergic to most reptiles and animals with fur'
+[sample 3.13] evidence after filter: 26 strings
+[sample 3.13] score=1.000 n_ev=26 osam_ratio=0.0344 pred='23 March, 2022'
+[sample 3.14] evidence after filter: 47 strings
+[sample 3.14] score=0.000 n_ev=47 osam_ratio=0.0363 pred='No nickname used'
+[sample 3.15] evidence after filter: 20 strings
+[sample 3.15] score=0.667 n_ev=20 osam_ratio=0.0354 pred='The week before 15 April, 2022'
+[sample 3.16] evidence after filter: 19 strings
+[sample 3.16] score=0.444 n_ev=19 osam_ratio=0.0341 pred='Dyed my hair last week'
+[sample 3.17] evidence after filter: 4 strings
+[sample 3.17] score=0.857 n_ev=4 osam_ratio=0.0320 pred='"The Lord of the Rings" Trilogy'
+[sample 3.18] evidence after filter: 40 strings
+[sample 3.18] score=0.800 n_ev=40 osam_ratio=0.0358 pred='Whispering Falls'
+[sample 3.19] evidence after filter: 32 strings
+[sample 3.19] score=1.000 n_ev=32 osam_ratio=0.0357 pred='twice'
+[sample 3.20] evidence after filter: 39 strings
+[sample 3.20] score=0.800 n_ev=39 osam_ratio=0.0359 pred='20 May, 2022'
+[sample 3.21] evidence after filter: 41 strings
+[sample 3.21] score=1.000 n_ev=41 osam_ratio=0.0328 pred='Max'
+[sample 3.22] evidence after filter: 24 strings
+[sample 3.22] score=0.000 n_ev=24 osam_ratio=0.0350 pred='I just finished with the intro to my next movie script, and '
+[sample 3.23] evidence after filter: 34 strings
+[sample 3.23] score=0.205 n_ev=34 osam_ratio=0.0346 pred='The screenplay that was rejected from production companies w'
+[sample 3.24] evidence after filter: 16 strings
+[sample 3.24] score=0.000 n_ev=16 osam_ratio=0.0351 pred='two weekends later'
+[sample 3.25] evidence after filter: 25 strings
+[sample 3.25] score=0.444 n_ev=25 osam_ratio=0.0351 pred='the weekend of 3 June, 2022'
+[sample 3.26] evidence after filter: 25 strings
+[sample 3.26] score=0.545 n_ev=25 osam_ratio=0.0344 pred='Last week (the week before 3 June, 2022)'
+[sample 3.27] evidence after filter: 39 strings
+[sample 3.27] score=0.000 n_ev=39 osam_ratio=0.0356 pred='producers'
+[sample 3.28] evidence after filter: 39 strings
+[sample 3.28] score=0.545 n_ev=39 osam_ratio=0.0329 pred='last Friday (the Friday before 24 June, 2022)'
+[sample 3.29] evidence after filter: 18 strings
+[sample 3.29] score=0.667 n_ev=18 osam_ratio=0.0327 pred='the weekend of 24 June, 2022'
+[sample 3.30] evidence after filter: 52 strings
+[sample 3.30] score=0.000 n_ev=52 osam_ratio=0.0367 pred='movie scripts, stories, personal experiences, writing about '
+[sample 3.31] evidence after filter: 38 strings
+[sample 3.31] score=0.667 n_ev=38 osam_ratio=0.0344 pred='Friday before 10 July, 2022'
+[sample 3.32] evidence after filter: 10 strings
+[sample 3.32] score=0.333 n_ev=10 osam_ratio=0.0336 pred='Woodhaven, a small town in the Midwest.'
+[sample 3.33] evidence after filter: 38 strings
+[sample 3.33] score=0.545 n_ev=38 osam_ratio=0.0349 pred='Last week (the week before 14 August, 2022)'
+[sample 3.34] evidence after filter: 24 strings
+[sample 3.34] score=0.000 n_ev=24 osam_ratio=0.0351 pred='fantasy book series, that series, that one'
+[sample 3.35] evidence after filter: 35 strings
+[sample 3.35] score=0.667 n_ev=35 osam_ratio=0.0342 pred='the weekend of 22 August, 2022'
+[sample 3.36] evidence after filter: 10 strings
+[sample 3.36] score=0.667 n_ev=10 osam_ratio=0.0333 pred='the week before 22 August, 2022'
+[sample 3.37] evidence after filter: 33 strings
+[sample 3.37] score=1.000 n_ev=33 osam_ratio=0.0347 pred='21 August, 2022'
+[sample 3.38] evidence after filter: 15 strings
+[sample 3.38] score=0.545 n_ev=15 osam_ratio=0.0348 pred='Last Friday (the Friday before 14 September, 2022)'
+[sample 3.39] evidence after filter: 31 strings
+[sample 3.39] score=0.545 n_ev=31 osam_ratio=0.0350 pred='Last Monday (the Monday before 14 September, 2022)'
+[sample 3.40] evidence after filter: 46 strings
+[sample 3.40] score=0.545 n_ev=46 osam_ratio=0.0358 pred='last week (the week before 14 September, 2022)'
+[sample 3.41] evidence after filter: 23 strings
+[sample 3.41] score=0.333 n_ev=23 osam_ratio=0.0345 pred='14 September, 2022'
+[sample 3.42] evidence after filter: 47 strings
+[sample 3.42] score=0.500 n_ev=47 osam_ratio=0.0350 pred='Little Women'
+[sample 3.43] evidence after filter: 36 strings
+[sample 3.43] score=0.000 n_ev=36 osam_ratio=0.0339 pred='Put in a ton of late nights and edits but finally got it don'
+[sample 3.44] evidence after filter: 34 strings
+[sample 3.44] score=0.047 n_ev=34 osam_ratio=0.0326 pred='I won my fourth video game tournament on Friday (the Friday '
+[sample 3.45] evidence after filter: 46 strings
+[sample 3.45] score=0.545 n_ev=46 osam_ratio=0.0347 pred='last week (the week before 6 October, 2022)'
+[sample 3.46] evidence after filter: 30 strings
+[sample 3.46] score=0.500 n_ev=30 osam_ratio=0.0350 pred='Catan'
+[sample 3.47] evidence after filter: 39 strings
+[sample 3.47] score=0.400 n_ev=39 osam_ratio=0.0350 pred='Video game tournament, game convention'
+[sample 3.48] evidence after filter: 28 strings
+[sample 3.48] score=0.545 n_ev=28 osam_ratio=0.0340 pred='last Friday (the Friday before 9 October, 2022)'
+[sample 3.49] evidence after filter: 33 strings
+[sample 3.49] score=0.000 n_ev=33 osam_ratio=0.0348 pred="It's the third time it's happened"
+[sample 3.50] evidence after filter: 24 strings
+[sample 3.50] score=0.333 n_ev=24 osam_ratio=0.0328 pred='a cute stuffed animal'
+[sample 3.51] evidence after filter: 34 strings
+[sample 3.51] score=0.000 n_ev=34 osam_ratio=0.0351 pred='Not mentioned in the conversation.'
+[sample 3.52] evidence after filter: 25 strings
+[sample 3.52] score=0.000 n_ev=25 osam_ratio=0.0333 pred='three'
+[sample 3.53] evidence after filter: 51 strings
+[sample 3.53] score=0.000 n_ev=51 osam_ratio=0.0339 pred='Once (25 October, 2022)'
+[sample 3.54] evidence after filter: 28 strings
+[sample 3.54] score=0.545 n_ev=28 osam_ratio=0.0334 pred='last Sunday (the Sunday before 25 October, 2022)'
+[sample 3.55] evidence after filter: 50 strings
+[sample 3.55] score=0.086 n_ev=50 osam_ratio=0.0366 pred='personal experiences and my own journey of self-discovery'
+[sample 3.56] evidence after filter: 50 strings
+[sample 3.56] score=0.000 n_ev=50 osam_ratio=0.0346 pred='Pets'
+[sample 3.57] evidence after filter: 29 strings
+[sample 3.57] score=0.462 n_ev=29 osam_ratio=0.0335 pred="I'll come over tomorrow (5 November, 2022) if that's fine."
+[sample 3.58] evidence after filter: 19 strings
+[sample 3.58] score=0.100 n_ev=19 osam_ratio=0.0346 pred='coconut ice cream, recipe'
+[sample 3.59] evidence after filter: 53 strings
+[sample 3.59] score=0.111 n_ev=53 osam_ratio=0.0348 pred='She writes down her favorite memories.'
+[sample 3.60] evidence after filter: 25 strings
+[sample 3.60] score=0.500 n_ev=25 osam_ratio=0.0364 pred='Nintendo games'
+[sample 3.61] evidence after filter: 30 strings
+[sample 3.61] score=0.000 n_ev=30 osam_ratio=0.0356 pred='video games, movies, boardgame, fantasy RPG'
+[sample 3.62] evidence after filter: 27 strings
+[sample 3.62] score=0.000 n_ev=27 osam_ratio=0.0360 pred='three'
+[sample 3.63] evidence after filter: 31 strings
+[sample 3.63] score=0.367 n_ev=31 osam_ratio=0.0365 pred='Counter-Strike: Global Offensive, Street Fighter, Catan, Cyb'
+[sample 3.64] evidence after filter: 44 strings
+[sample 3.64] score=0.545 n_ev=44 osam_ratio=0.0340 pred='last Saturday (the Saturday before 7 November, 2022)'
+[sample 3.65] evidence after filter: 14 strings
+[sample 3.65] score=0.333 n_ev=14 osam_ratio=0.0322 pred='final of a big Valorant tournament'
+[sample 3.66] evidence after filter: 56 strings
+[sample 3.66] score=0.000 n_ev=56 osam_ratio=0.0354 pred='Creating gaming content for YouTube.'
+[sample 3.67] evidence after filter: 29 strings
+[sample 3.67] score=0.000 n_ev=29 osam_ratio=0.0361 pred='Turtles, Max, and a new pup (Tilly)'
+[sample 3.68] evidence after filter: 32 strings
+[sample 3.68] score=0.000 n_ev=32 osam_ratio=0.0371 pred='hiking with some buddies this weekend'
+[sample 3.69] evidence after filter: 26 strings
+[sample 3.69] score=1.000 n_ev=26 osam_ratio=0.0354 pred='three'
+[sample 3.70] evidence after filter: 31 strings
+[sample 3.70] score=0.225 n_ev=31 osam_ratio=0.0351 pred='Take them out for a walk, feed them, watch them enjoy snacks'
+[sample 3.71] evidence after filter: 65 strings
+[sample 3.71] score=0.400 n_ev=65 osam_ratio=0.0352 pred='The beauty of nature and animals'
+[sample 3.72] evidence after filter: 17 strings
+[sample 3.72] score=0.571 n_ev=17 osam_ratio=0.0318 pred='Tomorrow (5 November, 2022)'
+[sample 3.73] evidence after filter: 16 strings
+[sample 3.73] score=0.000 n_ev=16 osam_ratio=0.0344 pred='No information about summer 2021.'
+[sample 3.74] evidence after filter: 46 strings
+[sample 3.74] score=0.046 n_ev=46 osam_ratio=0.0368 pred='Movies can be so powerful! Do you have any recommendations f'
+[sample 3.75] evidence after filter: 53 strings
+[sample 3.75] score=0.601 n_ev=53 osam_ratio=0.0364 pred='Coconut milk ice cream, dairy-free chocolate mousse'
+[sample 3.76] evidence after filter: 29 strings
+[sample 3.76] score=0.750 n_ev=29 osam_ratio=0.0340 pred='Teaching people, sharing recipes, cooking show'
+[sample 3.77] evidence after filter: 30 strings
+[sample 3.77] score=0.833 n_ev=30 osam_ratio=0.0355 pred='Last week (the week before 2 May, 2022)'
+[sample 3.78] evidence after filter: 37 strings
+[sample 3.78] score=0.000 n_ev=37 osam_ratio=0.0349 pred='Nate has participated in at least 8 video game tournaments.'
+[sample 3.79] evidence after filter: 22 strings
+[sample 3.79] score=0.000 n_ev=22 osam_ratio=0.0351 pred='third'
+[sample 3.80] evidence after filter: 45 strings
+[sample 3.80] score=0.000 n_ev=45 osam_ratio=0.0359 pred='four'
+[sample 3.81] evidence after filter: 35 strings
+[sample 3.81] score=0.510 n_ev=35 osam_ratio=0.0352 pred='dairy-free vanilla with strawberry filling and coconut cream'
+[sample 3.82] evidence after filter: 38 strings
+[sample 3.82] score=0.786 n_ev=38 osam_ratio=0.0366 pred='Coconut milk ice cream, chocolate and vanilla swirl, dairy-f'
+[sample 3.83] evidence after filter: 37 strings
+[sample 3.83] score=0.133 n_ev=37 osam_ratio=0.0341 pred='How to improve their game, making dairy-free desserts, creat'
+[sample 3.84] evidence after filter: 6 strings
+[sample 3.84] score=1.000 n_ev=6 osam_ratio=0.0316 pred='No'
+[sample 3.85] evidence after filter: 42 strings
+[sample 3.85] score=0.000 n_ev=42 osam_ratio=0.0319 pred='writing'
+[sample 3.86] evidence after filter: 37 strings
+[sample 3.86] score=0.857 n_ev=37 osam_ratio=0.0342 pred='yesterday (10 November, 2022)'
+[sample 3.87] evidence after filter: 15 strings
+[sample 3.87] score=0.000 n_ev=15 osam_ratio=0.0364 pred='Nate never visited a state.'
+[sample 3.88] evidence after filter: 46 strings
+[sample 3.88] score=0.000 n_ev=46 osam_ratio=0.0350 pred='Little Women'
+[sample 3.89] evidence after filter: 26 strings
+[sample 3.89] score=0.000 n_ev=26 osam_ratio=0.0354 pred='bright and bold - like me!'
+[sample 3.90] evidence after filter: 17 strings
+[sample 3.90] score=0.857 n_ev=17 osam_ratio=0.0356 pred='The Lord of the Rings trilogy'
+[sample 3.91] evidence after filter: 30 strings
+[sample 3.91] score=0.000 n_ev=30 osam_ratio=0.0347 pred='fantasy and sci-fi movies, battles, and storytelling'
+[sample 3.92] evidence after filter: 22 strings
+[sample 3.92] score=0.167 n_ev=22 osam_ratio=0.0344 pred="None of the messages mention the lighting in Nate's gaming r"
+[sample 3.93] evidence after filter: 33 strings
+[sample 3.93] score=0.000 n_ev=33 osam_ratio=0.0341 pred='The game was called Counter-Strike: Global Offensive, and me'
+[sample 3.94] evidence after filter: 26 strings
+[sample 3.94] score=0.000 n_ev=26 osam_ratio=0.0357 pred="It's a love story with lots of challenges."
+[sample 3.95] evidence after filter: 27 strings
+[sample 3.95] score=0.500 n_ev=27 osam_ratio=0.0355 pred='Xeonoblade Chronicles'
+[sample 3.96] evidence after filter: 30 strings
+[sample 3.96] score=0.800 n_ev=30 osam_ratio=0.0341 pred='action and sci-fi movies'
+[sample 3.97] evidence after filter: 24 strings
+[sample 3.97] score=0.400 n_ev=24 osam_ratio=0.0330 pred='her first full screenplay'
+[sample 3.98] evidence after filter: 18 strings
+[sample 3.98] score=0.500 n_ev=18 osam_ratio=0.0357 pred='romantic drama'
+[sample 3.99] evidence after filter: 33 strings
+[sample 3.99] score=0.923 n_ev=33 osam_ratio=0.0334 pred='Submit it to some film festivals and (hopefully) get produce'
+[sample 3.100] evidence after filter: 32 strings
+[sample 3.100] score=0.800 n_ev=32 osam_ratio=0.0351 pred='3 years now'
+[sample 3.101] evidence after filter: 28 strings
+[sample 3.101] score=0.286 n_ev=28 osam_ratio=0.0339 pred='It was rich and creamy - might be my new favorite snack!'
+[sample 3.102] evidence after filter: 40 strings
+[sample 3.102] score=0.154 n_ev=40 osam_ratio=0.0353 pred='coconut milk ice cream, chocolate, vanilla swirl, dairy-free'
+[sample 3.103] evidence after filter: 22 strings
+[sample 3.103] score=0.000 n_ev=22 osam_ratio=0.0324 pred='Nothing'
+[sample 3.104] evidence after filter: 14 strings
+[sample 3.104] score=0.750 n_ev=14 osam_ratio=0.0348 pred="It's a great story about sisterhood, love, and reaching for "
+[sample 3.105] evidence after filter: 33 strings
+[sample 3.105] score=1.000 n_ev=33 osam_ratio=0.0315 pred='chocolate and vanilla swirl'
+[sample 3.106] evidence after filter: 24 strings
+[sample 3.106] score=0.000 n_ev=24 osam_ratio=0.0337 pred="It's about loss, identity, and connection. It's a story I've"
+[sample 3.107] evidence after filter: 57 strings
+[sample 3.107] score=0.125 n_ev=57 osam_ratio=0.0353 pred='They bring me joy and peace. They are calming. They remind m'
+[sample 3.108] evidence after filter: 17 strings
+[sample 3.108] score=0.571 n_ev=17 osam_ratio=0.0337 pred='No, not really. Just keep their area clean, feed them proper'
+[sample 3.109] evidence after filter: 25 strings
+[sample 3.109] score=1.000 n_ev=25 osam_ratio=0.0360 pred='writing gig'
+[sample 3.110] evidence after filter: 53 strings
+[sample 3.110] score=0.273 n_ev=53 osam_ratio=0.0343 pred="I picked this color because it's bright and bold - like me! "
+[sample 3.111] evidence after filter: 29 strings
+[sample 3.111] score=0.857 n_ev=29 osam_ratio=0.0340 pred='coconut milk, vanilla extract, sugar, and a pinch of salt'
+[sample 3.112] evidence after filter: 26 strings
+[sample 3.112] score=0.000 n_ev=26 osam_ratio=0.0352 pred='None of the messages mention a project called in the writers'
+[sample 3.113] evidence after filter: 41 strings
+[sample 3.113] score=0.400 n_ev=41 osam_ratio=0.0352 pred='action and sci-fi movies'
+[sample 3.114] evidence after filter: 29 strings
+[sample 3.114] score=0.333 n_ev=29 osam_ratio=0.0355 pred='fantasy and sci-fi movies, action scenes, interesting charac'
+[sample 3.115] evidence after filter: 22 strings
+[sample 3.115] score=0.400 n_ev=22 osam_ratio=0.0351 pred='dramas and romcoms'
+[sample 3.116] evidence after filter: 45 strings
+[sample 3.116] score=0.444 n_ev=45 osam_ratio=0.0346 pred='Playing video games and watching movies'
+[sample 3.117] evidence after filter: 32 strings
+[sample 3.117] score=0.667 n_ev=32 osam_ratio=0.0325 pred='strawberry filling'
+[sample 3.118] evidence after filter: 17 strings
+[sample 3.118] score=0.800 n_ev=17 osam_ratio=0.0319 pred='coconut cream frosting'
+[sample 3.119] evidence after filter: 31 strings
+[sample 3.119] score=0.000 n_ev=31 osam_ratio=0.0325 pred='Relaxing with them is a great way to chill.'
+[sample 3.120] evidence after filter: 34 strings
+[sample 3.120] score=0.000 n_ev=34 osam_ratio=0.0325 pred='Playing video games'
+[sample 3.121] evidence after filter: 19 strings
+[sample 3.121] score=1.000 n_ev=19 osam_ratio=0.0343 pred='Joanna'
+[sample 3.122] evidence after filter: 16 strings
+[sample 3.122] score=0.000 n_ev=16 osam_ratio=0.0323 pred='Nate said: "Well done, Joanna! It takes guts to explore your'
+[sample 3.123] evidence after filter: 21 strings
+[sample 3.123] score=0.941 n_ev=21 osam_ratio=0.0342 pred="It's a stuffed animal to remind you of the good vibes."
+[sample 3.124] evidence after filter: 35 strings
+[sample 3.124] score=1.000 n_ev=35 osam_ratio=0.0348 pred='gaming party'
+[sample 3.125] evidence after filter: 16 strings
+[sample 3.125] score=0.308 n_ev=16 osam_ratio=0.0317 pred='Definitely! And some old friends and teamates from other tou'
+[sample 3.126] evidence after filter: 16 strings
+[sample 3.126] score=0.000 n_ev=16 osam_ratio=0.0334 pred='cute stuffed animal'
+[sample 3.127] evidence after filter: 16 strings
+[sample 3.127] score=0.667 n_ev=16 osam_ratio=0.0337 pred='a screenplay'
+[sample 3.128] evidence after filter: 36 strings
+[sample 3.128] score=0.250 n_ev=36 osam_ratio=0.0357 pred='Spider-Man has always been a favorite of mine'
+[sample 3.129] evidence after filter: 17 strings
+[sample 3.129] score=1.000 n_ev=17 osam_ratio=0.0345 pred='Iron Man'
+[sample 3.130] evidence after filter: 58 strings
+[sample 3.130] score=0.889 n_ev=58 osam_ratio=0.0344 pred='Quotes, photos, and little keepsakes.'
+[sample 3.131] evidence after filter: 25 strings
+[sample 3.131] score=0.545 n_ev=25 osam_ratio=0.0342 pred='the love and encouragement from them every day'
+[sample 3.132] evidence after filter: 29 strings
+[sample 3.132] score=1.000 n_ev=29 osam_ratio=0.0343 pred='vegan ice cream'
+[sample 3.133] evidence after filter: 22 strings
+[sample 3.133] score=0.667 n_ev=22 osam_ratio=0.0325 pred='7 people'
+[sample 3.134] evidence after filter: 31 strings
+[sample 3.134] score=0.667 n_ev=31 osam_ratio=0.0350 pred='coconut milk ice cream recipe'
+[sample 3.135] evidence after filter: 41 strings
+[sample 3.135] score=0.182 n_ev=41 osam_ratio=0.0340 pred='She planned to try making it.'
+[sample 3.136] evidence after filter: 43 strings
+[sample 3.136] score=1.000 n_ev=43 osam_ratio=0.0324 pred='four'
+[sample 3.137] evidence after filter: 22 strings
+[sample 3.137] score=0.333 n_ev=22 osam_ratio=0.0343 pred='Woodhaven, a small town in the Midwest.'
+[sample 3.138] evidence after filter: 50 strings
+[sample 3.138] score=0.333 n_ev=50 osam_ratio=0.0338 pred='a super cool book from the 1900s with stories and sketches'
+[sample 3.139] evidence after filter: 58 strings
+[sample 3.139] score=0.333 n_ev=58 osam_ratio=0.0359 pred='loss, identity, and connection'
+[sample 3.140] evidence after filter: 22 strings
+[sample 3.140] score=0.240 n_ev=22 osam_ratio=0.0352 pred='Woodhaven has had an interesting past with lots of cool peop'
+[sample 3.141] evidence after filter: 40 strings
+[sample 3.141] score=0.750 n_ev=40 osam_ratio=0.0341 pred='Winning a video game tournament'
+[sample 3.142] evidence after filter: 28 strings
+[sample 3.142] score=0.667 n_ev=28 osam_ratio=0.0337 pred='Winning video game tournaments'
+[sample 3.143] evidence after filter: 48 strings
+[sample 3.143] score=0.154 n_ev=48 osam_ratio=0.0318 pred='Their words touched me; they said my story had brought them '
+[sample 3.144] evidence after filter: 35 strings
+[sample 3.144] score=0.031 n_ev=35 osam_ratio=0.0342 pred='It gives me a chance to put all my thoughts and feelings dow'
+[sample 3.145] evidence after filter: 48 strings
+[sample 3.145] score=0.737 n_ev=48 osam_ratio=0.0330 pred='an online blog post I made about a hard moment in my life'
+[sample 3.146] evidence after filter: 72 strings
+[sample 3.146] score=0.083 n_ev=72 osam_ratio=0.0347 pred='Writing has become like an escape and a way to express my fe'
+[sample 3.147] evidence after filter: 36 strings
+[sample 3.147] score=1.000 n_ev=36 osam_ratio=0.0334 pred='coconut milk ice cream'
+[sample 3.148] evidence after filter: 50 strings
+[sample 3.148] score=0.000 n_ev=50 osam_ratio=0.0341 pred='Sharing my love for dairy-free desserts has been fun and rew'
+[sample 3.149] evidence after filter: 16 strings
+[sample 3.149] score=1.000 n_ev=16 osam_ratio=0.0337 pred='Her book'
+[sample 3.150] evidence after filter: 12 strings
+[sample 3.150] score=0.000 n_ev=12 osam_ratio=0.0333 pred="Got some great feedback. My hard work is paying off, it's su"
+[sample 3.151] evidence after filter: 34 strings
+[sample 3.151] score=0.000 n_ev=34 osam_ratio=0.0350 pred="I'm loving it."
+[sample 3.152] evidence after filter: 42 strings
+[sample 3.152] score=0.333 n_ev=42 osam_ratio=0.0345 pred="Because she's lactose intolerant."
+[sample 3.153] evidence after filter: 29 strings
+[sample 3.153] score=1.000 n_ev=29 osam_ratio=0.0343 pred='dairy-free margarine or coconut oil'
+[sample 3.154] evidence after filter: 46 strings
+[sample 3.154] score=1.000 n_ev=46 osam_ratio=0.0328 pred='cooking show'
+[sample 3.155] evidence after filter: 31 strings
+[sample 3.155] score=0.000 n_ev=31 osam_ratio=0.0341 pred='favorite dish from the show?'
+[sample 3.156] evidence after filter: 38 strings
+[sample 3.156] score=1.000 n_ev=38 osam_ratio=0.0325 pred='dairy-free chocolate mousse'
+[sample 3.157] evidence after filter: 3 strings
+[sample 3.157] score=1.000 n_ev=3 osam_ratio=0.0290 pred='chocolate raspberry tart'
+[sample 3.158] evidence after filter: 15 strings
+[sample 3.158] score=0.889 n_ev=15 osam_ratio=0.0324 pred='dairy-free chocolate cake with raspberries'
+[sample 3.159] evidence after filter: 13 strings
+[sample 3.159] score=1.000 n_ev=13 osam_ratio=0.0299 pred='blueberries, coconut milk'
+[sample 3.160] evidence after filter: 36 strings
+[sample 3.160] score=1.000 n_ev=36 osam_ratio=0.0324 pred='"Little Women"'
+[sample 3.161] evidence after filter: 31 strings
+[sample 3.161] score=0.500 n_ev=31 osam_ratio=0.0336 pred='a cute little bookmark'
+[sample 3.162] evidence after filter: 13 strings
+[sample 3.162] score=1.000 n_ev=13 osam_ratio=0.0316 pred='Catan'
+[sample 3.163] evidence after filter: 17 strings
+[sample 3.163] score=1.000 n_ev=17 osam_ratio=0.0343 pred='" Inception"'
+[sample 3.164] evidence after filter: 20 strings
+[sample 3.164] score=1.000 n_ev=20 osam_ratio=0.0311 pred='Cyberpunk 2077'
+[sample 3.165] evidence after filter: 16 strings
+[sample 3.165] score=0.000 n_ev=16 osam_ratio=0.0332 pred='a videogame controller'
+[sample 3.166] evidence after filter: 28 strings
+[sample 3.166] score=0.545 n_ev=28 osam_ratio=0.0358 pred='the story was so gripping and the actors were great!'
+[sample 3.167] evidence after filter: 33 strings
+[sample 3.167] score=0.667 n_ev=33 osam_ratio=0.0344 pred='Couch that can sit multiple people, really fluffy, and a bla'
+[sample 3.168] evidence after filter: 65 strings
+[sample 3.168] score=0.133 n_ev=65 osam_ratio=0.0343 pred='Tilly helps me stay focused and brings me so much joy.'
+[sample 3.169] evidence after filter: 56 strings
+[sample 3.169] score=0.154 n_ev=56 osam_ratio=0.0353 pred='Joanna writes and hangs with friends.'
+[sample 3.170] evidence after filter: 43 strings
+[sample 3.170] score=0.167 n_ev=43 osam_ratio=0.0341 pred='I used to have a dog back in Michigan with that name, but th'
+[sample 3.171] evidence after filter: 30 strings
+[sample 3.171] score=0.000 n_ev=30 osam_ratio=0.0337 pred='She keeps going and believing in herself.'
+[sample 3.172] evidence after filter: 48 strings
+[sample 3.172] score=0.609 n_ev=48 osam_ratio=0.0342 pred='I really respect you for that and being able to bounce back '
+[sample 3.173] evidence after filter: 42 strings
+[sample 3.173] score=0.071 n_ev=42 osam_ratio=0.0352 pred="You've got this, and don't ever forget that you have people "
+[sample 3.174] evidence after filter: 57 strings
+[sample 3.174] score=0.250 n_ev=57 osam_ratio=0.0347 pred='My turtles always cheer me up.'
+[sample 3.175] evidence after filter: 43 strings
+[sample 3.175] score=0.083 n_ev=43 osam_ratio=0.0334 pred='The name helps me remember her back when I used to be able t'
+[sample 3.176] evidence after filter: 17 strings
+[sample 3.176] score=0.444 n_ev=17 osam_ratio=0.0301 pred='Another movie script that I contributed to'
+[sample 3.177] evidence after filter: 60 strings
+[sample 3.177] score=0.774 n_ev=60 osam_ratio=0.0348 pred="They're visuals of the characters to help bring them alive i"
+[sample 3.178] evidence after filter: 49 strings
+[sample 3.178] score=0.222 n_ev=49 osam_ratio=0.0348 pred='people I know, stuff I saw, even what I imagined'
+[sample 3.179] evidence after filter: 25 strings
+[sample 3.179] score=0.083 n_ev=25 osam_ratio=0.0306 pred='It was such a cool feeling. Having all the hard work and det'
+[sample 3.180] evidence after filter: 36 strings
+[sample 3.180] score=0.345 n_ev=36 osam_ratio=0.0353 pred='They eat a combination of vegetables, fruits, and insects. T'
+[sample 3.181] evidence after filter: 45 strings
+[sample 3.181] score=1.000 n_ev=45 osam_ratio=0.0338 pred='coconut milk'
+[sample 3.182] evidence after filter: 50 strings
+[sample 3.182] score=0.800 n_ev=50 osam_ratio=0.0319 pred='her early writings'
+[sample 3.183] evidence after filter: 7 strings
+[sample 3.183] score=0.500 n_ev=7 osam_ratio=0.0322 pred='"Xeonoblade Chronicles"'
+[sample 3.184] evidence after filter: 25 strings
+[sample 3.184] score=0.000 n_ev=25 osam_ratio=0.0333 pred='cute notes'
+[sample 3.185] evidence after filter: 34 strings
+[sample 3.185] score=1.000 n_ev=34 osam_ratio=0.0322 pred='fantasy RPG'
+[sample 3.186] evidence after filter: 26 strings
+[sample 3.186] score=1.000 n_ev=26 osam_ratio=0.0334 pred='homemade coconut ice cream'
+[sample 3.187] evidence after filter: 31 strings
+[sample 3.187] score=1.000 n_ev=31 osam_ratio=0.0330 pred='a suspenseful thriller set in a small Midwestern town'
+[sample 3.188] evidence after filter: 27 strings
+[sample 3.188] score=1.000 n_ev=27 osam_ratio=0.0343 pred='gaming content'
+[sample 3.189] evidence after filter: 47 strings
+[sample 3.189] score=0.000 n_ev=47 osam_ratio=0.0348 pred="It's a cool way to entertain folks and satisfy my video game"
+[sample 3.190] evidence after filter: 52 strings
+[sample 3.190] score=0.286 n_ev=52 osam_ratio=0.0353 pred='creating gaming content for YouTube'
+[sample 3.191] evidence after filter: 17 strings
+[sample 3.191] score=0.389 n_ev=17 osam_ratio=0.0345 pred='Make sure you watch other peoples videos first so you get a '
+[sample 3.192] evidence after filter: 28 strings
+[sample 3.192] score=0.500 n_ev=28 osam_ratio=0.0341 pred='sunset and the surrounding beauty'
+[sample 3.193] evidence after filter: 37 strings
+[sample 3.193] score=0.471 n_ev=37 osam_ratio=0.0329 pred='The sunset and the surrounding beauty were just incredible. '
+[sample 3.194] evidence after filter: 44 strings
+[sample 3.194] score=0.286 n_ev=44 osam_ratio=0.0352 pred='Turtles really bring me joy and peace. They have such an eff'
+[sample 3.195] evidence after filter: 26 strings
+[sample 3.195] score=0.900 n_ev=26 osam_ratio=0.0327 pred='Watch one of your movies together or go to the park!'
+[sample 3.196] evidence after filter: 29 strings
+[sample 3.196] score=0.667 n_ev=29 osam_ratio=0.0341 pred='My turtles'
+[sample 3.197] evidence after filter: 44 strings
+[sample 3.197] score=0.077 n_ev=44 osam_ratio=0.0347 pred="They're like zen masters! They always remind me to slow down"
+[sample 3.198] evidence after filter: 31 strings
+[sample 3.198] score=0.545 n_ev=31 osam_ratio=0.0320 pred='homemade coconut ice cream'
+
+============================================================
+OVERALL F1 (all 584 incl. skipped): 0.4748
+OVERALL F1 (answered only, 584):  0.4748
+  [MULTI_HOP] 0.4370  (111 questions)
+  [TEMPORAL] 0.6253  (130 questions)
+  [OPEN_DOMAIN] 0.1378  (32 questions)
+  [SINGLE_HOP] 0.4601  (311 questions)
+==============================================
+  Done at Thu Nov  5 02:23:10 UTC 2026 | exit 0
+  Rows written: 584 (expect 1540)
+  Results: /home/shadeform/caimms/outputs/C5_locomo4_combined_episodic_document.jsonl
+==============================================
+Stopping vLLM (process group 28943)...
+C5 LOCOMO DONE Thu Nov  5 02:23:12 UTC 2026
+================ MemoryAgentBench longmemeval_s* mode=combined adapter=/home/shadeform/caimms/models/delta-mem-adapter -> /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_C5_sessions_nofusion.jsonl
+==============================================
+  C-AIMMS eval_mab_iterret -> mab_longmemeval_sstar_combined_released_C5_sessions_nofusion.jsonl
+  run  : 20261105_022312_67902 on brev-yrkrbdvsl at Thu Nov  5 02:23:13 UTC 2026
+  out  : /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_C5_sessions_nofusion.jsonl
+  logs : /home/shadeform/caimms/outputs/run_20261105_022312_67902.log
+==============================================
+GPU 0: 60350 MiB free -- OK
+GPUs (vLLM on 0, eval on 0, SINGLE-GPU mode, vLLM capped at 0.504):
+  0, NVIDIA A100-SXM4-80GB, 20803 MiB, 81920 MiB
+  NOTE: 2 compute process(es) already on these GPUs:
+    67178, /home/shadeform/miniconda3/envs/workmem/bin/python3, 20180 MiB
+    67314, python3, 608 MiB
+  Continuing in 10s -- ctrl-c to abort.
+preflight: MiniLM retrieval encoder OK
+Ensuring port 8100 is free...
+      port 8100 free.
+[1/3] Starting vLLM on GPU 0 (port 8100)...
+      pid 68035, log /home/shadeform/caimms/outputs/server_20261105_022312_67902.log
+[2/3] Waiting for server (up to 600s)...
+      ...10s
+      ...20s
+      ...30s
+      server online (pid 68035, model verified).
+[3/3] Starting eval on GPU 0...
+[init] source=longmemeval_s* mode=combined split=sessions write=message_mean prompt_tokens=32768 out=/home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_C5_sessions_nofusion.jsonl
+[init] adapter=/home/shadeform/caimms/models/delta-mem-adapter graph_cache=/home/shadeform/caimms/outputs/mab_graph_cache/longmemeval_sstar_sessions
+[init] 5 histories, 300 questions, 0 done, 5 histories with work left
+[data] history 0: 1,600,183 chars, ~241,530 words, 60 questions {'multi-session': 15, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-assistant': 6, 'single-session-preference': 6, 'single-session-user': 9}
+[data] history 1: 1,589,693 chars, ~239,616 words, 60 questions {'multi-session': 15, 'single-session-user': 9, 'knowledge-update': 9, 'temporal-reasoning': 15, 'single-session-preference': 6, 'single-session-assistant': 6}
+[data] history 2: 1,715,268 chars, ~260,208 words, 60 questions {'single-session-preference': 6, 'single-session-assistant': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9}
+[data] history 3: 1,588,305 chars, ~237,896 words, 60 questions {'temporal-reasoning': 15, 'single-session-preference': 6, 'multi-session': 15, 'single-session-assistant': 6, 'knowledge-update': 9, 'single-session-user': 9}
+[data] history 4: 1,646,919 chars, ~244,890 words, 60 questions {'single-session-preference': 6, 'temporal-reasoning': 15, 'knowledge-update': 9, 'multi-session': 15, 'single-session-user': 9, 'single-session-assistant': 6}
+[data] history 0 starts: '[\'Chat Time: 2022/11/17 (Thu) 12:04\', [{\'role\': \'user\', \'content\': "I\'m planning a trip to Miami and I want to redeem my Delta SkyMiles for a free trip. Can you help me find the best redemption options? By the way, I just got back from a red-eye flight on JetBlue from San Francisco to Boston and managed to sleep for almost the entire flight, which was a nice surprise."}, {\'role\': \'assistant\', \'con'
+[graphs] building history 1 ...
+[graphs] history 1: 1244 passages, 5828 facts, 1298s
+[graphs] building history 2 ...
+[graphs] history 2: 1365 passages, 6671 facts, 1477s
+[graphs] building history 3 ...
+[graphs] history 3: 1260 passages, 5996 facts, 1331s
+[graphs] building history 4 ...
+[graphs] history 4: 1295 passages, 6313 facts, 1377s
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.25it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.46it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.11it/s]
+[0.0] subEM=0 F1=0.00 judge=0 pred='10 hours' gold='50'
+[0.1] subEM=0 F1=0.00 judge=0 pred='10 neon tetras, 5 golden honey gouramis, 1 pleco catfish, 1 ' gold='17'
+[0.2] subEM=0 F1=0.00 judge=0 pred="One free night's stay" gold='Two'
+[0.3] subEM=1 F1=0.40 judge=1 pred='Tomatoes were started first.' gold='Tomatoes'
+[0.4] subEM=1 F1=1.00 judge=1 pred='June 3rd' gold='June 3rd'
+[0.5] subEM=0 F1=0.71 judge=1 pred='The center is any one of its hexagons, and the circumference' gold="According to Borges, 'The Library is a s"
+[0.6] subEM=0 F1=0.03 judge=0 pred='Virtual coffee breaks' gold='The user would prefer responses that ack'
+[0.7] subEM=0 F1=0.17 judge=0 pred='18 days' gold='7 days. 8 days (including the last day) '
+[0.8] subEM=1 F1=1.00 judge=1 pred='3 weeks ago' gold='3 weeks ago'
+[0.9] subEM=0 F1=0.00 judge=0 pred='Three sessions' gold='five'
+[0.10] subEM=0 F1=0.03 judge=0 pred='Bake a chocolate mocha cake' gold='The user would prefer baking suggestions'
+[0.11] subEM=0 F1=0.55 judge=1 pred='Pilsner or lager' gold='I recommended using a Pilsner or Lager f'
+[0.12] subEM=1 F1=1.00 judge=1 pred='"Nu, pogodi!"' gold='Nu, pogodi!'
+[0.13] subEM=0 F1=0.00 judge=0 pred='Try Korean-style BBQ beef short ribs with a tangy gochujang ' gold='The user would prefer responses that sug'
+[0.14] subEM=1 F1=1.00 judge=1 pred='Three months' gold='three months'
+[0.15] subEM=0 F1=0.00 judge=0 pred='$1,200' gold='$800'
+[0.16] subEM=0 F1=0.00 judge=0 pred='3' gold='4'
+[0.17] subEM=0 F1=0.60 judge=1 pred='narrator received their new phone case' gold='Receiving the new phone case'
+[0.18] subEM=1 F1=1.00 judge=1 pred='9 months' gold='9 months'
+[0.19] subEM=0 F1=0.67 judge=1 pred='GR-90' gold='The GR-90 trail.'
+[0.20] subEM=0 F1=0.09 judge=1 pred='Listen to history podcasts' gold='The user would prefer suggestions relate'
+[0.21] subEM=1 F1=1.00 judge=1 pred='The Glass Menagerie' gold='The Glass Menagerie'
+[0.22] subEM=0 F1=0.00 judge=0 pred='300 points' gold='100'
+[0.23] subEM=0 F1=0.00 judge=0 pred="I don't have the information to determine the age difference" gold='43'
+[0.24] subEM=1 F1=0.57 judge=1 pred='The start of my Spanish classes' gold='Spanish classes'
+[0.25] subEM=0 F1=0.00 judge=0 pred='BodyPump on Mondays, Zumba on Tuesdays and Thursdays, and yo' gold='5'
+[0.26] subEM=1 F1=1.00 judge=1 pred='Roscioli' gold='Roscioli'
+[0.27] subEM=0 F1=0.00 judge=1 pred='Four' gold='4'
+[0.28] subEM=0 F1=0.50 judge=0 pred='United Airlines' gold='American Airlines'
+[0.29] subEM=0 F1=0.35 judge=1 pred="I don't have information about your travel days in Hawaii an" gold='The information provided is not enough. '
+[0.30] subEM=0 F1=0.00 judge=0 pred='10 weeks ago' gold='4'
+[0.31] subEM=0 F1=0.10 judge=0 pred='Alex' gold='The information provided is not enough. '
+[0.32] subEM=1 F1=1.00 judge=1 pred='Page Turners' gold='Page Turners'
+[0.33] subEM=0 F1=0.17 judge=0 pred='14 days' gold='18 days. 19 days (including the last day'
+[0.34] subEM=0 F1=0.11 judge=1 pred='Basil and mint infused grilled chicken with roasted vegetabl' gold='The user would prefer dinner suggestions'
+[0.35] subEM=0 F1=0.00 judge=1 pred='5 tops' gold='five'
+[0.36] subEM=1 F1=1.00 judge=1 pred='Xfinity Center' gold='Xfinity Center'
+[0.37] subEM=0 F1=0.00 judge=1 pred='3' gold='I visited three different doctors: a pri'
+[0.38] subEM=0 F1=0.33 judge=1 pred='3 days' gold='2 days. 3 days (including the last day) '
+[0.39] subEM=0 F1=0.00 judge=0 pred='1' gold='17 days'
+[0.40] subEM=1 F1=0.17 judge=1 pred='The book was originally priced at $30 and you got a 20% disc' gold='20%'
+[0.41] subEM=1 F1=1.00 judge=1 pred='Serenity Yoga' gold='Serenity Yoga'
+[0.42] subEM=1 F1=0.67 judge=1 pred='30 videos' gold='30'
+[0.43] subEM=0 F1=0.12 judge=0 pred='Explore new themes and techniques' gold='The user would prefer responses that bui'
+[0.44] subEM=0 F1=0.00 judge=0 pred='The total amount you spent on luxury items in the past few m' gold='$2,500'
+[0.45] subEM=1 F1=1.00 judge=1 pred='500 Mbps' gold='500 Mbps'
+[0.46] subEM=1 F1=1.00 judge=1 pred='16GB' gold='16GB'
+[0.47] subEM=1 F1=0.50 judge=1 pred='3 months ago' gold='3'
+[0.48] subEM=1 F1=1.00 judge=1 pred='train' gold='train'
+[0.49] subEM=1 F1=0.33 judge=1 pred='$15 + $5 + $10 + $20 = $50' gold='$50'
+[0.50] subEM=0 F1=0.50 judge=0 pred='124 points' gold='132 points'
+[0.51] subEM=1 F1=1.00 judge=1 pred='+49 (0) 62 32 / 14 23 - 0' gold='+49 (0) 62 32 / 14 23 - 0'
+[0.52] subEM=1 F1=1.00 judge=1 pred='Lavender gin fizz' gold='lavender gin fizz'
+[0.53] subEM=0 F1=0.00 judge=1 pred='You use 3 health-related devices in a day: Fitbit Versa 3, A' gold='4'
+[0.54] subEM=0 F1=0.06 judge=0 pred='The order of the sports events you watched in January is not' gold='First, I attended a NBA game at the Stap'
+[0.55] subEM=1 F1=0.67 judge=1 pred='7 shirts' gold='7'
+[0.56] subEM=1 F1=1.00 judge=1 pred='$420' gold='$420'
+[0.57] subEM=0 F1=0.40 judge=0 pred='2 years and 4 months' gold='1 year and 5 months'
+[0.58] subEM=0 F1=0.00 judge=0 pred='2 pieces' gold='3'
+[0.59] subEM=1 F1=1.00 judge=1 pred='Nine months' gold='nine months'
+[1.0] subEM=0 F1=0.00 judge=0 pred='440 pages' gold='856'
+[1.1] subEM=1 F1=0.50 judge=1 pred='18 years old' gold='18'
+[1.2] subEM=1 F1=1.00 judge=1 pred='Premier Silver' gold='Premier Silver'
+[1.3] subEM=0 F1=0.00 judge=1 pred='5 tomato plants, 3 cucumber plants' gold='8'
+[1.4] subEM=0 F1=0.50 judge=0 pred='12 months' gold='6 months'
+[1.5] subEM=1 F1=1.00 judge=1 pred='Yes' gold='Yes'
+[1.6] subEM=1 F1=1.00 judge=1 pred='A coffee shop in the city.' gold='a coffee shop in the city'
+[1.7] subEM=0 F1=0.10 judge=0 pred='Look for a guitar that matches your playing style and musica' gold='The user would prefer responses that hig'
+[1.8] subEM=0 F1=0.00 judge=1 pred='32 (me), 56.5 (parents), 76.5 (grandparents)' gold='59.6'
+[1.9] subEM=0 F1=0.75 judge=1 pred='Emma graduated first, then Rachel, then Alex.' gold='Emma graduated first, followed by Rachel'
+[1.10] subEM=1 F1=1.00 judge=1 pred='5-2' gold='5-2'
+[1.11] subEM=0 F1=0.00 judge=0 pred='2' gold='I attended three weddings. The couples w'
+[1.12] subEM=1 F1=1.00 judge=1 pred='Dr. Arati Prabhakar' gold='Dr. Arati Prabhakar'
+[1.13] subEM=0 F1=0.00 judge=0 pred='Online survey taker' gold='Transcriptionist.'
+[1.14] subEM=0 F1=0.50 judge=0 pred='7:00 AM' gold='6:45 AM'
+[1.15] subEM=0 F1=0.00 judge=0 pred='10 weeks ago' gold='2'
+[1.16] subEM=0 F1=0.20 judge=0 pred='The purchase of the coffee maker happened first.' gold='The malfunction of the stand mixer'
+[1.17] subEM=1 F1=1.00 judge=1 pred='Wednesday' gold='Wednesday'
+[1.18] subEM=1 F1=1.00 judge=1 pred='Emma' gold='Emma'
+[1.19] subEM=1 F1=1.00 judge=1 pred='Yes' gold='Yes'
+[1.20] subEM=1 F1=1.00 judge=1 pred='My sister' gold='my sister'
+[1.21] subEM=0 F1=0.17 judge=1 pred='Phone wallet cases, power banks, and wireless charging pads' gold='The user would prefer suggestions of acc'
+[1.22] subEM=0 F1=0.17 judge=1 pred='10 days in Hawaii, 5 days in New York City' gold='15 days'
+[1.23] subEM=0 F1=0.00 judge=0 pred='The Ritz-Carlton, South Beach' gold='The user would prefer suggestions of hot'
+[1.24] subEM=1 F1=0.33 judge=1 pred='The party will face 4 mummies.' gold='4'
+[1.25] subEM=0 F1=0.00 judge=0 pred="I don't have information about your usual work hours or when" gold='6:30 pm'
+[1.26] subEM=0 F1=0.17 judge=0 pred='4 days' gold='7 days. 8 days (including the last day) '
+[1.27] subEM=1 F1=1.00 judge=1 pred='Johnson' gold='Johnson'
+[1.28] subEM=0 F1=0.00 judge=0 pred='One (you have one brother)' gold='4'
+[1.29] subEM=0 F1=0.40 judge=1 pred='Twice' gold="We've met up twice."
+[1.30] subEM=0 F1=0.91 judge=1 pred='In a shoe rack in the closet.' gold='in a shoe rack in my closet'
+[1.31] subEM=1 F1=1.00 judge=1 pred='TikTok' gold='TikTok'
+[1.32] subEM=0 F1=0.00 judge=0 pred='2' gold='20'
+[1.33] subEM=0 F1=0.08 judge=0 pred='10 weeks' gold="2 weeks for 'The Nightingale', 4 weeks f"
+[1.34] subEM=1 F1=0.25 judge=1 pred='$15 (car wash) + $50 (parking ticket) = $65' gold='$65'
+[1.35] subEM=0 F1=0.40 judge=1 pred='After 5:00 PM' gold='7 pm'
+[1.36] subEM=0 F1=0.03 judge=1 pred='Reduce screen brightness and avoid using your phone in brigh' gold='The user would prefer responses that bui'
+[1.37] subEM=1 F1=1.00 judge=1 pred='5' gold='5'
+[1.38] subEM=0 F1=0.00 judge=0 pred='coffee grinder and milk frother' gold='a smoker'
+[1.39] subEM=0 F1=0.00 judge=0 pred='No specific budget was mentioned for influencer marketing.' gold='$2,000'
+[1.40] subEM=0 F1=0.17 judge=0 pred='10 days' gold='29 days. 30 days (including the last day'
+[1.41] subEM=0 F1=0.17 judge=1 pred='It took 5 days for your laptop backpack to arrive after you ' gold='5 days. 6 days (including the last day) '
+[1.42] subEM=0 F1=0.00 judge=0 pred='Hawaii' gold='Paris'
+[1.43] subEM=1 F1=1.00 judge=1 pred='family road trip across the American Southwest' gold='The family road trip across the American'
+[1.44] subEM=1 F1=0.25 judge=1 pred='$50 more than the initial goal of $200' gold='$50'
+[1.45] subEM=1 F1=1.00 judge=1 pred='IKEA' gold='IKEA'
+[1.46] subEM=0 F1=0.00 judge=0 pred='No investment was mentioned.' gold='I got my own set of sculpting tools.'
+[1.47] subEM=0 F1=0.05 judge=0 pred='Clean regularly and organize daily.' gold='The user would prefer responses that ack'
+[1.48] subEM=0 F1=0.50 judge=1 pred='Once a week' gold='every week'
+[1.49] subEM=0 F1=0.12 judge=1 pred='Not specified' gold='You did not mention this information. Yo'
+[1.50] subEM=0 F1=0.04 judge=0 pred='Use a low heat setting and maintain consistent temperature' gold='The user would prefer responses that pro'
+[1.51] subEM=0 F1=0.53 judge=1 pred='Admon was on the Day Shift on Sunday.' gold='Admon was assigned to the 8 am - 4 pm (D'
+[1.52] subEM=0 F1=0.17 judge=0 pred='2 days' gold='14 days. 15 days (including the last day'
+[1.53] subEM=1 F1=1.00 judge=1 pred='2 hours' gold='2 hours'
+[1.54] subEM=0 F1=0.00 judge=0 pred='1' gold='2'
+[1.55] subEM=0 F1=0.29 judge=0 pred='16 days ago' gold='12 days ago. 13 days (including the last'
+[1.56] subEM=0 F1=0.43 judge=0 pred='1. Big Sur and Monterey road trip  \n2. Solo camping trip to ' gold='I went on a day hike to Muir Woods Natio'
+[1.57] subEM=0 F1=0.00 judge=0 pred="I don't have information about your previous year's 5K time." gold='10 minutes'
+[1.58] subEM=0 F1=0.57 judge=1 pred='The Sugar Factory' gold='The Sugar Factory at Icon Park.'
+[1.59] subEM=0 F1=0.00 judge=0 pred="I don't know the exact time you went to bed the day before y" gold='2 AM'
+[2.0] subEM=0 F1=0.08 judge=0 pred="Try a Pimm's Cup with a Twist" gold='Considering their mixology class backgro'
+[2.1] subEM=0 F1=0.86 judge=1 pred='sexual fixations, problematic sexual behaviors, sexual impul' gold="I suggested 'sexual fixations', 'problem"
+[2.2] subEM=0 F1=0.60 judge=1 pred='Charity bake sale' gold='I participated in the charity bake sale '
+[2.3] subEM=1 F1=1.00 judge=1 pred='Manolo García' gold='Manolo García'
+[2.4] subEM=1 F1=0.00 judge=0 pred='The provided chat history does not contain information about' gold='7'
+[2.5] subEM=1 F1=1.00 judge=1 pred='Jaipur Rugs' gold='Jaipur Rugs'
+[2.6] subEM=0 F1=0.00 judge=0 pred="I don't have access to your personal fundraising totals." gold='$5,850'
+[2.7] subEM=0 F1=0.29 judge=0 pred='10 days ago' gold='3 days ago. 4 days (including the last d'
+[2.8] subEM=1 F1=0.67 judge=1 pred='20 dozen' gold='20'
+[2.9] subEM=0 F1=0.17 judge=0 pred='1 day' gold='14 days. 15 days (including the last day'
+[2.10] subEM=1 F1=0.25 judge=1 pred='$50 (vet visit) + $25 (flea medication) = $75' gold='$75'
+[2.11] subEM=1 F1=0.89 judge=1 pred='The solo trip to Thailand first.' gold='The solo trip to Thailand'
+[2.12] subEM=1 F1=0.67 judge=1 pred='3:1 ratio' gold='3:1'
+[2.13] subEM=0 F1=0.00 judge=0 pred='Harvard University' gold='The information provided is not enough. '
+[2.14] subEM=0 F1=0.23 judge=1 pred='Try a probiotic creamer with almond milk and a touch of hone' gold='The user would prefer responses that sug'
+[2.15] subEM=0 F1=0.17 judge=0 pred='0 days' gold='21 days. 22 days (including the last day'
+[2.16] subEM=1 F1=1.00 judge=1 pred='4 weeks' gold='4 weeks'
+[2.17] subEM=0 F1=0.00 judge=0 pred='None' gold='Marketing specialist at a small startup'
+[2.18] subEM=1 F1=0.17 judge=1 pred='Yes, your mom is using the same grocery list app as you.' gold='Yes.'
+[2.19] subEM=0 F1=0.00 judge=0 pred='30 minutes' gold='an hour and a half'
+[2.20] subEM=0 F1=0.35 judge=0 pred='G G G G A G F' gold='C D E F G A B A G F E D C'
+[2.21] subEM=0 F1=0.12 judge=0 pred='It depends on your current storage needs and budget.' gold='The user would prefer responses that tak'
+[2.22] subEM=1 F1=1.00 judge=1 pred='Sarah' gold='Sarah'
+[2.23] subEM=0 F1=0.00 judge=0 pred='The user did not mention their degree.' gold='Business Administration'
+[2.24] subEM=0 F1=0.00 judge=0 pred='tripod, lens filters, flash, external battery' gold='The user would prefer suggestions of Son'
+[2.25] subEM=0 F1=0.75 judge=1 pred='Irish and Italian' gold='A mix of Irish and Italian'
+[2.26] subEM=0 F1=0.00 judge=0 pred="I didn't attend my cousin's wedding." gold='The Grand Ballroom'
+[2.27] subEM=0 F1=0.50 judge=0 pred='300 miles' gold='3,000 miles'
+[2.28] subEM=0 F1=0.24 judge=0 pred="I don't know how long you've been collecting vintage films." gold='You did not mention this information. Yo'
+[2.29] subEM=0 F1=0.00 judge=0 pred='$40' gold='$185'
+[2.30] subEM=0 F1=0.00 judge=0 pred='2' gold='three'
+[2.31] subEM=0 F1=0.60 judge=0 pred='26 minutes and 30 seconds' gold='27 minutes and 45 seconds'
+[2.32] subEM=0 F1=0.50 judge=0 pred='70 hours' gold='140 hours'
+[2.33] subEM=0 F1=0.91 judge=1 pred='Yes, you have a road bike.' gold='Yes. (You have a road bike too.)'
+[2.34] subEM=0 F1=0.50 judge=0 pred='Jazz night at a local bar, outdoor concert series in the par' gold='The order of the concerts I attended is:'
+[2.35] subEM=1 F1=1.00 judge=1 pred='MusicTheory.net' gold='MusicTheory.net'
+[2.36] subEM=0 F1=0.00 judge=0 pred='$60' gold='$12'
+[2.37] subEM=1 F1=1.00 judge=1 pred='bike' gold='bike'
+[2.38] subEM=0 F1=0.50 judge=0 pred='3 weeks' gold='Two weeks'
+[2.39] subEM=1 F1=1.00 judge=1 pred='smart thermostat' gold='Smart thermostat'
+[2.40] subEM=0 F1=0.13 judge=0 pred='11 hours' gold='15 hours for getting to the three destin'
+[2.41] subEM=0 F1=0.20 judge=0 pred="I don't know how many musical instruments you currently own." gold='I currently own 4 musical instruments. I'
+[2.42] subEM=1 F1=1.00 judge=1 pred='10 minutes' gold='10 minutes'
+[2.43] subEM=1 F1=1.00 judge=1 pred='20%' gold='20%'
+[2.44] subEM=0 F1=0.02 judge=0 pred='It depends on your current feelings and priorities.' gold='The user would prefer responses that dra'
+[2.45] subEM=0 F1=0.29 judge=0 pred='Promoting a charity event on social media' gold='You participated in a social media chall'
+[2.46] subEM=0 F1=0.91 judge=0 pred='American Airlines, United Airlines, Delta, JetBlue' gold='JetBlue, Delta, United, American Airline'
+[2.47] subEM=0 F1=0.00 judge=1 pred='From 250 to 350 followers.' gold='100'
+[2.48] subEM=1 F1=0.67 judge=1 pred='10% discount' gold='10%'
+[2.49] subEM=0 F1=0.29 judge=1 pred='2.5 weeks and 3 weeks' gold='5.5 weeks'
+[2.50] subEM=0 F1=0.17 judge=0 pred='10 days' gold='4 days. 5 days (including the last day) '
+[2.51] subEM=1 F1=0.75 judge=1 pred='Kansas City Masterpiece BBQ sauce' gold='Kansas City Masterpiece'
+[2.52] subEM=0 F1=0.80 judge=1 pred='Under the bed' gold='under my bed'
+[2.53] subEM=0 F1=0.00 judge=0 pred='24-inch' gold='55-inch'
+[2.54] subEM=1 F1=1.00 judge=1 pred="My cousin's wedding" gold="my cousin's wedding"
+[2.55] subEM=0 F1=0.00 judge=0 pred='One pair of boots' gold='3'
+[2.56] subEM=0 F1=0.00 judge=0 pred='Toyota Corolla Hybrid' gold='Ford F-150 pickup truck'
+[2.57] subEM=1 F1=0.33 judge=1 pred='5 goals and 2 assists' gold='5'
+[2.58] subEM=0 F1=0.12 judge=1 pred='Improved chain and cassette performance' gold='The user would prefer responses that ref'
+[2.59] subEM=1 F1=1.00 judge=1 pred='The Hate U Give' gold="'The Hate U Give'"
+[3.0] subEM=0 F1=0.15 judge=0 pred='10 days ago' gold='26 days. 27 days (including the last day'
+[3.1] subEM=0 F1=0.67 judge=0 pred='2 months ago' gold='Five months ago'
+[3.2] subEM=0 F1=0.08 judge=0 pred='Visit Red Rocks Amphitheater, explore local music venues, an' gold='The user would prefer responses that tak'
+[3.3] subEM=0 F1=0.08 judge=0 pred='The user did not specify the number of days it took to finis' gold='21 days. 22 days (including the last day'
+[3.4] subEM=1 F1=0.67 judge=1 pred='2/5 = 40%' gold='40%'
+[3.5] subEM=0 F1=0.00 judge=0 pred="I don't have enough information to determine which grocery s" gold='Thrive Market'
+[3.6] subEM=1 F1=1.00 judge=1 pred='2' gold='2'
+[3.7] subEM=1 F1=1.00 judge=1 pred='28. Kg3' gold='28. Kg3'
+[3.8] subEM=0 F1=0.00 judge=0 pred='$0.47' gold='$0.75'
+[3.9] subEM=0 F1=0.00 judge=0 pred='Two' gold='3'
+[3.10] subEM=0 F1=0.50 judge=0 pred='4 years' gold='10 years'
+[3.11] subEM=0 F1=0.40 judge=0 pred='10 days ago' gold='4 days.'
+[3.12] subEM=0 F1=0.50 judge=0 pred='50 pounds' gold='70 pounds'
+[3.13] subEM=1 F1=1.00 judge=1 pred='Friday' gold='Friday'
+[3.14] subEM=0 F1=0.10 judge=1 pred='Not specified in the chat history' gold='The information provided is not enough. '
+[3.15] subEM=1 F1=0.33 judge=1 pred='Two sports: tennis and soccer.' gold='two'
+[3.16] subEM=0 F1=0.17 judge=0 pred='18 days' gold='14 days. 15 days (including the last day'
+[3.17] subEM=0 F1=0.11 judge=1 pred="Adobe Premiere Pro's official documentation and tutorials, Y" gold='The user would prefer responses that sug'
+[3.18] subEM=0 F1=0.00 judge=0 pred='1' gold='2'
+[3.19] subEM=1 F1=1.00 judge=1 pred='Memrise' gold='Memrise'
+[3.20] subEM=0 F1=0.24 judge=1 pred='1:10 ratio' gold='The recommended ratio is 1:10, meaning o'
+[3.21] subEM=0 F1=0.00 judge=0 pred='Mark and Sarah' gold='Tom'
+[3.22] subEM=0 F1=0.00 judge=0 pred='1 month' gold='5'
+[3.23] subEM=1 F1=0.67 judge=1 pred='1300 followers' gold='1300'
+[3.24] subEM=0 F1=0.00 judge=0 pred='$302.99' gold='$720'
+[3.25] subEM=0 F1=0.00 judge=0 pred='The Killers' gold='a bluegrass band that features a banjo p'
+[3.26] subEM=1 F1=0.80 judge=1 pred='Data Science certification' gold='Data Science'
+[3.27] subEM=1 F1=1.00 judge=1 pred='"Evolution"' gold='Evolution'
+[3.28] subEM=0 F1=0.40 judge=1 pred='gray' gold='a lighter shade of gray'
+[3.29] subEM=1 F1=1.00 judge=1 pred='TechCorp' gold='TechCorp'
+[3.30] subEM=0 F1=0.62 judge=0 pred='Science Museum, Natural History Museum, Modern Art Museum, T' gold='Science Museum, Museum of Contemporary A'
+[3.31] subEM=0 F1=0.10 judge=0 pred='1 toaster, 1 shelf' gold='I replaced or fixed five items: the kitc'
+[3.32] subEM=0 F1=0.00 judge=0 pred="Trimming the goats' hooves" gold='Fixing the fence'
+[3.33] subEM=0 F1=0.00 judge=0 pred='Explore the waterfront path after your volleyball game.' gold='The user would prefer suggestions that i'
+[3.34] subEM=0 F1=0.50 judge=0 pred='3 months' gold='2 months'
+[3.35] subEM=0 F1=0.20 judge=1 pred='Check local Facebook groups or Meetup for language exchange ' gold='The user would prefer responses that sug'
+[3.36] subEM=0 F1=0.42 judge=1 pred='The chat history does not mention the initial number of plan' gold='The information provided is not enough. '
+[3.37] subEM=1 F1=1.00 judge=1 pred='30 minutes' gold='30 minutes'
+[3.38] subEM=1 F1=1.00 judge=1 pred='$200' gold='$200'
+[3.39] subEM=0 F1=0.40 judge=1 pred='Landed first client' gold='I signed a contract with my first client'
+[3.40] subEM=1 F1=0.20 judge=1 pred='Yes, you go to the gym more frequently than before.' gold='Yes'
+[3.41] subEM=1 F1=1.00 judge=1 pred='Luna' gold='Luna'
+[3.42] subEM=0 F1=0.00 judge=0 pred='No savings on Jimmy Choo heels' gold='$300'
+[3.43] subEM=0 F1=0.00 judge=0 pred='"Chasing Coral"' gold='The user would prefer documentary recomm'
+[3.44] subEM=0 F1=0.40 judge=1 pred='The user did not mention practicing violin.' gold='You did not mention this information. Yo'
+[3.45] subEM=0 F1=0.00 judge=1 pred='7' gold='seven'
+[3.46] subEM=1 F1=1.00 judge=1 pred='10 pounds' gold='10 pounds'
+[3.47] subEM=1 F1=0.67 judge=1 pred='Five trips' gold='five'
+[3.48] subEM=0 F1=0.32 judge=1 pred='The chat history does not mention the number of fish in a 30' gold='The information provided is not enough. '
+[3.49] subEM=0 F1=0.53 judge=1 pred='Ruby, Python, or PHP' gold='I recommended learning Ruby, Python, or '
+[3.50] subEM=0 F1=0.08 judge=0 pred='Tennis, volleyball, soccer' gold='I first completed the Spring Sprint Tria'
+[3.51] subEM=0 F1=0.67 judge=1 pred='February' gold='February 14th'
+[3.52] subEM=0 F1=0.00 judge=0 pred='You re-watched four Marvel movies.' gold='2'
+[3.53] subEM=0 F1=0.26 judge=0 pred="Check for upcoming events at Disneyland, Knott's Berry Farm," gold='The user would prefer theme park suggest'
+[3.54] subEM=0 F1=0.00 judge=0 pred='Last Sunday' gold='Target'
+[3.55] subEM=0 F1=0.17 judge=0 pred='less' gold='You switched to less water (5 ounces) pe'
+[3.56] subEM=0 F1=0.29 judge=1 pred='UCLA' gold='University of California, Los Angeles (U'
+[3.57] subEM=0 F1=0.50 judge=0 pred='6 weeks' gold='Four weeks'
+[3.58] subEM=1 F1=0.67 judge=1 pred='10 hours' gold='10'
+[3.59] subEM=0 F1=0.33 judge=1 pred='Sound effects' gold="The 27th parameter was 'Sound effects (e"
+[4.0] subEM=0 F1=0.11 judge=0 pred='Add a touch of sea salt or a hint of vanilla extract to enha' gold='The user would prefer responses that bui'
+[4.1] subEM=0 F1=0.17 judge=0 pred='10 days' gold='7 days. 8 days (including the last day) '
+[4.2] subEM=0 F1=0.00 judge=0 pred='4' gold='The information provided is not enough. '
+[4.3] subEM=0 F1=0.67 judge=0 pred='Cooking and birding' gold='photography and cooking'
+[4.4] subEM=0 F1=0.50 judge=1 pred="Above the user's bed in the bedroom." gold='in my bedroom'
+[4.5] subEM=0 F1=0.00 judge=0 pred='MICCAI, NeurIPS, ICML' gold='The user would prefer suggestions relate'
+[4.6] subEM=1 F1=1.00 judge=1 pred='Nike' gold='Nike'
+[4.7] subEM=0 F1=0.32 judge=0 pred='The user did not receive a birthday gift from their dad. The' gold='You did not mention this information. Yo'
+[4.8] subEM=0 F1=0.27 judge=0 pred="4 years (Bachelor's) + 2 years (Master's) = 6 years" gold='The information provided is not enough. '
+[4.9] subEM=0 F1=0.00 judge=0 pred='1 week' gold='3 weeks'
+[4.10] subEM=1 F1=1.00 judge=1 pred='white Adidas sneakers' gold='white Adidas sneakers'
+[4.11] subEM=0 F1=0.29 judge=0 pred='13 days ago' gold='3 days ago. 4 days (including the last d'
+[4.12] subEM=0 F1=0.00 judge=0 pred="I don't have enough information to determine your age when A" gold='11'
+[4.13] subEM=0 F1=0.29 judge=0 pred='103 days ago' gold='10 days ago. 11 days (including the last'
+[4.14] subEM=0 F1=0.50 judge=0 pred='3 times' gold='10 times'
+[4.15] subEM=0 F1=0.74 judge=1 pred='1. Identify molecular subtypes using genomic and transcripto' gold='The three objectives were: 1) to identif'
+[4.16] subEM=0 F1=0.00 judge=0 pred='The provided chat history does not contain information about' gold='over a year'
+[4.17] subEM=1 F1=0.67 judge=1 pred='$5 discount' gold='$5'
+[4.18] subEM=0 F1=0.25 judge=1 pred='approximately 20%' gold='The average improvement in framerate was'
+[4.19] subEM=1 F1=1.00 judge=1 pred='5 hours' gold='5 hours'
+[4.20] subEM=0 F1=0.00 judge=0 pred='Four times' gold='six'
+[4.21] subEM=0 F1=0.00 judge=0 pred='2' gold='I have worked on or bought five model ki'
+[4.22] subEM=0 F1=0.17 judge=0 pred='The user did not specify the location of the art-related eve' gold='The Metropolitan Museum of Art.'
+[4.23] subEM=0 F1=0.29 judge=0 pred='104 days ago' gold='19 days ago. 20 days (including the last'
+[4.24] subEM=0 F1=0.00 judge=0 pred='$120' gold='$495'
+[4.25] subEM=0 F1=0.00 judge=0 pred='No' gold='Yes.'
+[4.26] subEM=1 F1=0.50 judge=1 pred='$800 + $500 = $1300' gold='$1,300'
+[4.27] subEM=1 F1=1.00 judge=1 pred='Lemon blueberry cake' gold='a lemon blueberry cake'
+[4.28] subEM=0 F1=0.00 judge=0 pred='Not specified in the chat history.' gold='12'
+[4.29] subEM=0 F1=0.00 judge=1 pred='$20-30' gold='$50'
+[4.30] subEM=0 F1=0.00 judge=0 pred='The Liquor Store' gold='Revolution Hall'
+[4.31] subEM=1 F1=0.67 judge=1 pred='32 species' gold='32'
+[4.32] subEM=0 F1=0.67 judge=0 pred='11 months ago' gold='4 months ago'
+[4.33] subEM=0 F1=0.00 judge=0 pred="I don't know your age when you moved to the United States." gold='27'
+[4.34] subEM=0 F1=0.00 judge=0 pred='I presented a poster at an academic conference on consumer p' gold='Harvard University'
+[4.35] subEM=0 F1=0.08 judge=1 pred='Use Suica card, check schedules, stay alert' gold='The user would prefer responses that uti'
+[4.36] subEM=1 F1=1.00 judge=1 pred='Miss Bee Providore' gold='Miss Bee Providore'
+[4.37] subEM=0 F1=0.00 judge=0 pred="I don't know how long you've been bird watching." gold='Two months'
+[4.38] subEM=0 F1=0.12 judge=0 pred='15 autographed baseballs' gold='The information provided is not enough. '
+[4.39] subEM=1 F1=1.00 judge=1 pred='Patagonia and Southwest Airlines' gold='Patagonia and Southwest Airlines.'
+[4.40] subEM=0 F1=0.00 judge=0 pred='Halloween Horror Nights' gold="The company's annual charity soccer tour"
+[4.41] subEM=0 F1=0.03 judge=0 pred='Focus on flow, lighting, and personal touches.' gold='The user would prefer responses that tak'
+[4.42] subEM=0 F1=0.00 judge=0 pred='Lemon bars with a shortbread crust and lemon curd' gold='a chocolate cake'
+[4.43] subEM=1 F1=1.00 judge=1 pred='bronchitis' gold='bronchitis'
+[4.44] subEM=0 F1=0.50 judge=0 pred='2 days' gold='3 days.'
+[4.45] subEM=0 F1=0.12 judge=0 pred="No, it's likely due to dust or allergens in the air." gold='The user would prefer responses that con'
+[4.46] subEM=0 F1=0.00 judge=0 pred='2' gold='3'
+[4.47] subEM=1 F1=1.00 judge=1 pred='Oahu' gold='Oahu'
+[4.48] subEM=0 F1=0.44 judge=0 pred='The necklace for my sister.' gold='the photo album for my mom'
+[4.49] subEM=0 F1=0.00 judge=0 pred='None' gold='2'
+[4.50] subEM=1 F1=1.00 judge=1 pred='38 subjects' gold='38 subjects'
+[4.51] subEM=0 F1=0.23 judge=0 pred='Every other week' gold='Previously, you play tennis with your fr'
+[4.52] subEM=0 F1=0.17 judge=0 pred='120 days' gold='24 days. 25 days (including the last day'
+[4.53] subEM=1 F1=1.00 judge=1 pred="Michael's engagement party" gold="Michael's engagement party"
+[4.54] subEM=0 F1=0.00 judge=0 pred='"Love, Actually"' gold='The user would prefer recommendations fo'
+[4.55] subEM=1 F1=1.00 judge=1 pred='15' gold='15'
+[4.56] subEM=0 F1=0.00 judge=0 pred='Chicago' gold='the suburbs'
+[4.57] subEM=0 F1=0.50 judge=0 pred='0 hours' gold='0.5 hours'
+[4.58] subEM=1 F1=1.00 judge=1 pred='24 hours' gold='24 hours'
+[4.59] subEM=1 F1=1.00 judge=1 pred='The Seven Husbands of Evelyn Hugo' gold='The Seven Husbands of Evelyn Hugo'
+==============================================================================
+MemoryAgentBench longmemeval_s* | mode=combined | prompt_tokens=32768 | adapter=/home/shadeform/caimms/models/delta-mem-adapter
+ALL                          n= 300  substringEM=0.3200  EM=0.2200  F1=0.4021  judge=0.4967  skipped=0
+  knowledge-update           n=  45  substringEM=0.5111  EM=0.3111  F1=0.5353  judge=0.6889  skipped=0
+  multi-session              n=  75  substringEM=0.2000  EM=0.0667  F1=0.2061  judge=0.3467  skipped=0
+  single-session-assistant   n=  30  substringEM=0.5000  EM=0.4667  F1=0.6885  judge=0.8667  skipped=0
+  single-session-preference  n=  30  substringEM=0.0000  EM=0.0000  F1=0.0774  judge=0.3000  skipped=0
+  single-session-user        n=  45  substringEM=0.6000  EM=0.4667  F1=0.6345  judge=0.7556  skipped=0
+  temporal-reasoning         n=  75  substringEM=0.2133  EM=0.1600  F1=0.3939  judge=0.3067  skipped=0
+==============================================================================
+==============================================
+  Done at Thu Nov  5 08:38:42 UTC 2026 | exit 0
+  Rows written: 300
+  Results: /home/shadeform/caimms/outputs/mab_longmemeval_sstar_combined_released_C5_sessions_nofusion.jsonl
+==============================================
+Stopping vLLM (process group 68035)...
+
+================ summary (longmemeval_s*, released_C5_sessions_nofusion)
+        combined: n=300  substringEM=0.3200  F1=0.4021  judge=0.4967
+QUEUE C5 DONE Thu Nov  5 08:38:45 UTC 2026

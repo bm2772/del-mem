@@ -47,9 +47,9 @@ File names get a suffix automatically in `run_mab.sh`; for LoCoMo name
 |---|---|---|---|---|
 | C1 | 1 retrieval round vs 5 | the paper's core claim (iteration helps), never isolated | ✅ iteration clearly helps. LoCoMo-4 F1 0.470 → 0.345 (−0.125, CI −0.157..−0.095; multi-hop −0.257); LME judge 0.480 → 0.297 (−0.183, CI −0.24..−0.13), F1 −0.127. With 1 round 77/300 LME questions end with no evidence; on the 223 with evidence judge still −0.10 (CI −0.17..−0.04). Baselines A1 / B2 (other machines). `cached_results/stageC/` | `ITERRET_MAX_ITERATIONS=1` |
 | C2 | AFC graph vs plain embedding top-k (same encoder, same passages, matched size) | does the graph beat ordinary vector search? | ✅ k = IterRet's median evidence count (36 LoCoMo, 15 LME). LoCoMo-4 F1 0.470 → 0.412 (−0.058, CI −0.080..−0.036; multi-hop −0.094, single-hop −0.054); LME no difference: judge 0.480 → 0.463 (−0.017, CI −0.063..+0.030), F1 +0.019 (n.s.). Flat retrieval run took ~35 min total vs ~11 h. `cached_results/stageC/` | `RETRIEVER=flat FLAT_TOP_K=<IterRet's median evidence count>` |
-| C3 | experience bank: bootstrapped (held-out) vs empty | R1: contribution; R2: cost/conflicts. A 1-conversation bank previously hurt; all published runs use an empty bank | 🔧 bank from LoCoMo conversations 5–10 (`build_heldout_bank.py`), used on LoCoMo-4 and LME | `bash scripts/run_c3.sh` (`ITERRET_BANK_PATH=…`) |
-| C4 | relative-date resolution on/off | R1 praises temporal results; much of that comes from this step | 🔧 **LoCoMo only** (LME passages carry dates as text, so the switch is a no-op there) | `ITERRET_RESOLVE_DATES=0` |
-| C5 | facet ranking keyword-only vs keyword+meaning | +0.081 measured on an older config; re-measure | 🔧 | `DISABLE_TAG_EMBEDDER_FUSION=1` |
+| C3 | experience bank: bootstrapped (held-out) vs empty | R1: contribution; R2: cost/conflicts. A 1-conversation bank previously hurt; all published runs use an empty bank | ✅ bank from 90 trajectories on conversations 5–10 (~1 h to build, 9.3 MB): no effect. LoCoMo-4 vs D2 (same machine) F1 −0.003 (CI −0.021..+0.016); LME vs B2 judge −0.007 (CI −0.047..+0.033). No longer hurts, but adds nothing. `cached_results/stageC/` | `bash scripts/run_c3.sh` (`ITERRET_BANK_PATH=…`) |
+| C4 | relative-date resolution on/off | R1 praises temporal results; much of that comes from this step | ✅ LoCoMo-4 vs D2 (same machine): F1 −0.094 (CI −0.123..−0.065), almost all from temporal 0.617 → 0.207 (−0.410, 99 losses / 7 wins); other categories unchanged. `cached_results/stageC/` | `ITERRET_RESOLVE_DATES=0` |
+| C5 | facet ranking keyword-only vs keyword+meaning | +0.081 measured on an older config; re-measure | ✅ no measurable effect in the final config. LoCoMo-4 vs D2 F1 −0.010 (CI −0.032..+0.013; multi-hop −0.028 n.s.); LME vs B2 judge +0.017 (CI −0.027..+0.063). The earlier +0.081 does not carry over. `cached_results/stageC/` | `DISABLE_TAG_EMBEDDER_FUSION=1` |
 | C6 | evidence presentation | free from A1 (LoCoMo) / done on Qasper | ✅ Qasper | — |
 
 ## Stage D — generalisation and reproducibility
@@ -57,7 +57,7 @@ File names get a suffix automatically in `run_mab.sh`; for LoCoMo name
 | # | Test | Why | Status |
 |---|---|---|---|
 | D1 | Second model family (Llama-3.1-8B / Mistral-7B) for graph, search and answering | R1: another LLM family; R2: justify model choice | 🔧 `WORKMEM_ANSWER_BACKEND=vllm` (served model answers, no δ-mem) + Qwen-without-δ-mem reference arm; `D1_MODEL=<hf repo> bash scripts/run_d1.sh` (Llama/Mistral are gated: `hf auth login` first) |
-| D2 | Same configuration twice (LoCoMo-4) | R2 doubts reproducibility; quantify run-to-run noise (vLLM nondeterminism) next to released cached graphs | 🔧 |
+| D2 | Same configuration twice (LoCoMo-4) | R2 doubts reproducibility; quantify run-to-run noise (vLLM nondeterminism) next to released cached graphs | ✅ final config re-run (Brev A100, same machine as C3–C5) vs A1 (resiliente): F1 0.485 vs 0.470 (+0.015, CI −0.002..+0.032), 93/81 questions differ in each direction; B1's conversations 1–4 gave 0.486. Run-to-run / machine noise ≈ ±0.015 F1. Use D2 as the same-machine baseline for C3–C5. |
 | D3 | Cost: LLM calls / tokens / seconds per question; graph-build cost | R2: cost and scaling | 🔧 recorded in every new run; `python3 scripts/cost_report.py --results … --graphs …` |
 
 ## Stage E — remaining δ-mem questions (lower priority)
