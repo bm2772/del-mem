@@ -64,8 +64,8 @@ File names get a suffix automatically in `run_mab.sh`; for LoCoMo name
 
 | # | Test | Why | Status |
 |---|---|---|---|
-| E1 | Retrained adapter (w1024) vs base model, Qasper 200 | beat the released adapter by +0.05, never compared with plain Qwen | 🔧 |
-| E2 | S memory span with per-passage (message_mean) writes | span (~5 writes) measured only with token writes | 🔧 `TAG=spancheck MAB_MAX_QUESTIONS=1 ARMS=truncated_fullS bash scripts/run_mab.sh` |
+| E1 | Retrained adapter (w1024) vs base model, Qasper 200 | beat the released adapter by +0.05, never compared with plain Qwen | ✅ cap 1024, same machine: base 0.369, w1024 0.412 (+0.043, CI [+0.008,+0.078]). Released (uncapped, B3) 0.450 — not same cap, so w1024 vs released is unresolved |
+| E2 | S memory span with per-passage (message_mean) writes | span (~5 writes) measured only with token writes | ✅ ran 5 LME q, 32k window covers ~110 of ~1260 passages; 0/5 judge-correct, mean Δo/o ≈0.035. Smoke-level only |
 
 ## Order
 
